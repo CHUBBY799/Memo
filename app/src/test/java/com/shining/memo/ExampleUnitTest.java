@@ -1,4 +1,4 @@
-package com.zepeng.memo;
+package com.shining.memo;
 
 import org.junit.Test;
 
