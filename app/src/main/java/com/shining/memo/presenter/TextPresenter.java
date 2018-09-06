@@ -1,7 +1,12 @@
 package com.shining.memo.presenter;
 
+import android.content.Context;
+import android.content.Intent;
+import android.widget.Toast;
+
 import com.shining.memo.model.TextImpl;
 import com.shining.memo.model.TextModel;
+import com.shining.memo.view.MainActivity;
 import com.shining.memo.view.TextView;
 
 import org.json.JSONObject;
@@ -10,11 +15,13 @@ public class TextPresenter {
 
     private TextModel mModel;
     private TextView mView;
+    private Context context;
 
 
     public TextPresenter(TextView mView) {
         this.mView = mView;
         mModel = new TextImpl();
+        context = mView.getContext();
     }
 
     public void requestTextInfo(String title){
@@ -25,6 +32,9 @@ public class TextPresenter {
     public void responseTextInfo(){
         JSONObject textInfo = saveTextInfo();
         setTextInfo(textInfo);
+        Toast.makeText(context, "添加成功", Toast.LENGTH_SHORT).show();
+        Intent mainIntent = new Intent(context, MainActivity.class);
+        context.startActivity(mainIntent);
     }
 
     private void updateTextInfo(JSONObject textInfo){

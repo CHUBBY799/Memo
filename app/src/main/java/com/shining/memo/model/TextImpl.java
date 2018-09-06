@@ -18,7 +18,9 @@ public class TextImpl implements TextModel{
             String content = textInfo.getString("content");
             String color = textInfo.getString("color");
             int urgent = textInfo.getInt("urgent");
-            Log.d("TextImpl", type + " " + title + " " + content + " " + color + " " + urgent);
+            String date = textInfo.getString("date");
+            String time = textInfo.getString("time");
+            Log.d("TextImpl", type + " " + title + " " + content + " " + color + " " + urgent + " " + date + " " + time);
         }catch (JSONException e){
             e.printStackTrace();
         }

@@ -1,5 +1,6 @@
 package com.shining.memo.view;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import com.shining.memo.presenter.TextPresenter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Calendar;
 
 public class TextActivity extends AppCompatActivity implements View.OnClickListener,TextView{
 
@@ -30,8 +33,8 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
     private int urgent;
     //private int alarm;
     //private int deleted;
-    //private Date date;
-    //private Date time;
+    private String date;
+    private String time;
 
     private TextPresenter textPresenter;
 
@@ -60,8 +63,8 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.text_urgent:
                 clickUrgent();
                 break;
-            case R.id.text_clock:
-                clickClock();
+            case R.id.text_alarm:
+                clickAlarm();
                 break;
             case R.id.text_edit:
                 clickEdit();
@@ -89,8 +92,9 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void clickClock(){
-
+    private void clickAlarm(){
+        Intent alarmIntent = new Intent(this, AlarmActivity.class);
+        startActivity(alarmIntent);
     }
 
     private void clickEdit(){
@@ -104,6 +108,7 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public JSONObject onInfoSave(){
         JSONObject textInfo = new JSONObject();
+        getCalendar();
         String type = "text";
         title = editTitle.getText().toString();
         content = editContent.getText().toString();
@@ -114,6 +119,8 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
             textInfo.put("content", content);
             textInfo.put("color", color);
             textInfo.put("urgent", urgent);
+            textInfo.put("date", date);
+            textInfo.put("time", time);
         }catch (JSONException e){
             e.printStackTrace();
         }
@@ -127,6 +134,8 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
             content = textInfo.getString("content");
             color = textInfo.getString("color");
             urgent = textInfo.getInt("urgent");
+            date = textInfo.getString("date");
+            time = textInfo.getString("time");
         }catch (JSONException e){
             e.printStackTrace();
         }
@@ -136,10 +145,34 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
         editContent.setTextColor(Color.parseColor(color));
     }
 
+    private void getCalendar(){
+        Calendar calendar = Calendar.getInstance();
+        String year = singleToTen(calendar.get(Calendar.YEAR));
+        String month = singleToTen(calendar.get(Calendar.MONTH)+1);
+        String day = singleToTen(calendar.get(Calendar.DAY_OF_MONTH));
+        String hour = singleToTen(calendar.get(Calendar.HOUR_OF_DAY));
+        String minute = singleToTen(calendar.get(Calendar.MINUTE));
+        String second = singleToTen(calendar.get(Calendar.SECOND));
+        date = year+"年"+month+"月"+day+"日";
+        time = hour+":"+minute+":"+second;
+    }
+
+    private String singleToTen(int data){
+        if (data < 10){
+            return "0" + data;
+        }
+        return String.valueOf(data);
+    }
+
+    @Override
+    public Context getContext(){
+        return this;
+    }
+
     private void initView(){
         textCancel = findViewById(R.id.text_cancel);
         textUrgent = findViewById(R.id.text_urgent);
-        textClock = findViewById(R.id.text_clock);
+        textClock = findViewById(R.id.text_alarm);
         textEdit = findViewById(R.id.text_edit);
         textConfirm = findViewById(R.id.text_confirm);
         editTitle = findViewById(R.id.edit_title);
