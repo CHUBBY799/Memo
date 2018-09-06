@@ -13,9 +13,12 @@ public class TextImpl implements TextModel{
     @Override
     public  void  setInfo(JSONObject textInfo){
         try {
+            String type = textInfo.getString("type");
             String title =textInfo.getString("title");
             String content = textInfo.getString("content");
-            Log.d("TextImpl",title+"  "+content);
+            String color = textInfo.getString("color");
+            int urgent = textInfo.getInt("urgent");
+            Log.d("TextImpl", type + " " + title + " " + content + " " + color + " " + urgent);
         }catch (JSONException e){
             e.printStackTrace();
         }

@@ -1,6 +1,7 @@
 package com.shining.memo.view;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -25,6 +26,12 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
 
     private String title;
     private String content;
+    private String color;
+    private int urgent;
+    //private int alarm;
+    //private int deleted;
+    //private Date date;
+    //private Date time;
 
     private TextPresenter textPresenter;
 
@@ -73,7 +80,13 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void clickUrgent(){
-
+        if (urgent == 0){
+            urgent = 1;
+            textUrgent.setActivated(true);
+        }else {
+            urgent = 0;
+            textUrgent.setActivated(false);
+        }
     }
 
     private void clickClock(){
@@ -91,11 +104,16 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public JSONObject onInfoSave(){
         JSONObject textInfo = new JSONObject();
+        String type = "text";
         title = editTitle.getText().toString();
         content = editContent.getText().toString();
+        color = "#" + Integer.toHexString(editContent.getCurrentTextColor()).substring(2);
         try {
-            textInfo.put("title",title);
+            textInfo.put("type", type);
+            textInfo.put("title", title);
             textInfo.put("content", content);
+            textInfo.put("color", color);
+            textInfo.put("urgent", urgent);
         }catch (JSONException e){
             e.printStackTrace();
         }
@@ -107,11 +125,15 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
         try {
             title = textInfo.getString("title");
             content = textInfo.getString("content");
+            color = textInfo.getString("color");
+            urgent = textInfo.getInt("urgent");
         }catch (JSONException e){
             e.printStackTrace();
         }
         editTitle.setText(title);
         editContent.setText(content);
+        editTitle.setTextColor(Color.parseColor(color));
+        editContent.setTextColor(Color.parseColor(color));
     }
 
     private void initView(){

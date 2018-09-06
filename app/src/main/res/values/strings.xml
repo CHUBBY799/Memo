@@ -4,4 +4,8 @@
     <string name="urgent">urgent</string>
     <string name="edit_title_hint">请输入题目</string>
     <string name="edit_content_hint">请输入内容</string>
+    <string name="text_cancel">×</string>
+    <string name="text_clock">口</string>
+    <string name="text_color">T</string>
+    <string name="text_confirm">√</string>
 </resources>
