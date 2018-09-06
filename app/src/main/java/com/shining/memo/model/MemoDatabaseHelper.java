@@ -1,4 +1,4 @@
-package com.shining.memo.mode;
+package com.shining.memo.model;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
