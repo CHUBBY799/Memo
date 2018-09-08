@@ -3,4 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="main_memo">#212121</color>
+    <color name="deap_memo">#757575</color>
+    <color name="shallow_memo">#e0e0e0</color>
+    <color name="white_memo">#fafafa</color>
 </resources>
