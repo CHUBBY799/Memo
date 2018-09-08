@@ -9,4 +9,7 @@
     <string name="text_color">T</string>
     <string name="text_confirm">√</string>
     <string name="alarm_clock">Alarm Clock</string>
+    <string name="set_alarm_clock">set alarm clock</string>
+    <string name="ringtone_reminder">Ringtone reminder</string>
+    <string name="pop_ups_reminder">Pop-ups reminder</string>
 </resources>

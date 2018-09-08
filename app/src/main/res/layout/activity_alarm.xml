@@ -10,38 +10,138 @@
         android:id="@+id/include"
         layout="@layout/title_alarm" />
 
-    <TextView
+    <LinearLayout
         android:id="@+id/set_alarm"
-        android:layout_width="0dp"
-        android:layout_height="330dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/white"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorWhite"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include" />
+        app:layout_constraintTop_toBottomOf="@+id/include">
 
-    <TextView
+        <com.shining.memo.widget.DatePickerView
+            android:id="@+id/month_pv"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_weight="1" />
+
+        <View
+            android:layout_width="3dp"
+            android:layout_height="match_parent"
+            android:background="@color/line_color" />
+
+        <com.shining.memo.widget.DatePickerView
+            android:id="@+id/day_pv"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_weight="1" />
+
+        <View
+            android:layout_width="3dp"
+            android:layout_height="match_parent"
+            android:background="@color/line_color" />
+
+        <com.shining.memo.widget.DatePickerView
+            android:id="@+id/hour_pv"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_weight="1" />
+
+        <View
+            android:layout_width="3dp"
+            android:layout_height="match_parent"
+            android:background="@color/line_color" />
+
+        <com.shining.memo.widget.DatePickerView
+            android:id="@+id/minute_pv"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/set_reminder"
         android:layout_width="0dp"
         android:layout_height="110dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:background="@android:color/white"
+        android:background="@color/colorWhite"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/set_alarm" />
+        app:layout_constraintTop_toBottomOf="@+id/set_alarm">
 
-    <TextView
-        android:id="@+id/save_alarm"
+
+        <TextView
+            android:id="@+id/ringtone_reminder"
+            android:layout_width="wrap_content"
+            android:layout_height="27dp"
+            android:layout_marginStart="16dp"
+            android:text="@string/ringtone_reminder"
+            android:textColor="@color/ringtone_reminder"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/set_reminder_line"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Switch
+            android:id="@+id/ringtone_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:checked="true"
+            app:layout_constraintBottom_toTopOf="@+id/set_reminder_line"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/set_reminder_line"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginTop="53dp"
+            android:background="@color/line_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/pop_reminder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/pop_ups_reminder"
+            android:textColor="@color/pop_reminder"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/set_reminder_line" />
+
+        <Switch
+            android:id="@+id/pop_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/set_reminder_line" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/alarm_save"
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="#464646"
+        android:text="@string/set_alarm_clock"
+        android:textColor="@color/colorWhite"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/set_reminder" />

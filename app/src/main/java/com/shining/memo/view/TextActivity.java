@@ -44,7 +44,7 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_text);
 
         initView();
-        initListener();
+        initComponent();
 
         textPresenter = new TextPresenter(this);
         Intent intent = getIntent();
@@ -147,22 +147,20 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getCalendar(){
         Calendar calendar = Calendar.getInstance();
-        String year = singleToTen(calendar.get(Calendar.YEAR));
-        String month = singleToTen(calendar.get(Calendar.MONTH)+1);
-        String day = singleToTen(calendar.get(Calendar.DAY_OF_MONTH));
-        String hour = singleToTen(calendar.get(Calendar.HOUR_OF_DAY));
-        String minute = singleToTen(calendar.get(Calendar.MINUTE));
-        String second = singleToTen(calendar.get(Calendar.SECOND));
+        String year = formatTimeUnit(calendar.get(Calendar.YEAR));
+        String month = formatTimeUnit(calendar.get(Calendar.MONTH)+1);
+        String day = formatTimeUnit(calendar.get(Calendar.DAY_OF_MONTH));
+        String hour = formatTimeUnit(calendar.get(Calendar.HOUR_OF_DAY));
+        String minute = formatTimeUnit(calendar.get(Calendar.MINUTE));
+        String second = formatTimeUnit(calendar.get(Calendar.SECOND));
         date = year+"年"+month+"月"+day+"日";
         time = hour+":"+minute+":"+second;
     }
 
-    private String singleToTen(int data){
-        if (data < 10){
-            return "0" + data;
-        }
-        return String.valueOf(data);
+    private String formatTimeUnit(int unit) {
+        return unit < 10 ? "0" + String.valueOf(unit) : String.valueOf(unit);
     }
+
 
     @Override
     public Context getContext(){
@@ -179,7 +177,7 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
         editContent = findViewById(R.id.edit_content);
     }
 
-    private void initListener(){
+    private void initComponent(){
         textCancel.setOnClickListener(this);
         textUrgent.setOnClickListener(this);
         textClock.setOnClickListener(this);

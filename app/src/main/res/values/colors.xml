@@ -3,4 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
+
+    <color name="alarm_background">#464646</color>
+    <color name="alarm_selected">#59B29C</color>
+    <color name="alarm_unselected">#333333</color>
+    <color name="line_color">#EEEEEE</color>
+    <color name="ringtone_reminder">#363636</color>
+    <color name="pop_reminder">#d0d0d0</color>
 </resources>

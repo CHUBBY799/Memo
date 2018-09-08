@@ -8,7 +8,7 @@
     tools:context=".view.TextActivity"
     tools:layout_editor_absoluteY="25dp">
 
-    <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/text_title"
         android:layout_width="0dp"
         android:layout_height="60dp"

@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         initView();
-        initEvent();
+        initComponent();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         addText = findViewById(R.id.add_text);
     }
 
-    private void initEvent(){
+    private void initComponent (){
         addText.setOnClickListener(this);
     }
 }
