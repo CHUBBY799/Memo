@@ -20,8 +20,8 @@ public class TextPresenter {
 
     public TextPresenter(TextView mView) {
         this.mView = mView;
-        mModel = new TextImpl();
         context = mView.getContext();
+        mModel = new TextImpl(context);
     }
 
     public void requestTextInfo(String title){
