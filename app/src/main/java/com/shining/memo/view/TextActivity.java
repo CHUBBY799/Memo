@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,7 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 
-public class TextActivity extends AppCompatActivity implements View.OnClickListener,TextView{
+public class TextActivity extends AppCompatActivity implements View.OnClickListener,ViewText {
 
     private Button textCancel;
     private Button textUrgent;
@@ -94,7 +95,7 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
 
     private void clickAlarm(){
         Intent alarmIntent = new Intent(this, AlarmActivity.class);
-        startActivity(alarmIntent);
+        startActivityForResult(alarmIntent, 1);
     }
 
     private void clickEdit(){
@@ -103,6 +104,19 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
 
     private void clickConfirm(){
         textPresenter.responseTextInfo();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        switch (requestCode){
+            case 1:
+                if (resultCode == RESULT_OK){
+                    String year = data.getStringExtra("year");
+                    Log.d("dsafas", year);
+                }
+                break;
+            default:
+        }
     }
 
     @Override

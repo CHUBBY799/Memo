@@ -1,16 +1,21 @@
 package com.shining.memo.view;
 
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import com.shining.memo.R;
 import com.shining.memo.widget.DatePickerView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 public class AlarmActivity extends AppCompatActivity implements View.OnClickListener{
@@ -21,12 +26,18 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     private DatePickerView day_pv;
     private DatePickerView hour_pv;
     private DatePickerView minute_pv;
+    private Switch ringtoneSwitch;
+    private Switch popSwitch;
+    private TextView ringtoneReminder;
+    private TextView popReminder;
 
     private String year;
     private String month;
     private String day;
     private String hour;
     private String minute;
+    private boolean ringtone;
+    private boolean pop;
 
     private List<String> monthList;
     private List<String> dayList;
@@ -50,16 +61,34 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view){
         switch (view.getId()){
             case R.id.alarm_cancel:
-                Intent textIntent = new Intent(this, TextActivity.class);
-                startActivity(textIntent);
+                alarmCancel();
                 break;
             case R.id.alarm_save:
-
+                alarmSave();
                 break;
+
             default:
                 break;
         }
 
+    }
+
+    private void alarmCancel(){
+        Intent textIntent = new Intent();
+        setResult(RESULT_CANCELED, textIntent);
+    }
+
+    private void alarmSave(){
+        Intent textIntent = new Intent();
+        textIntent.putExtra("year", year);
+        textIntent.putExtra("month", month);
+        textIntent.putExtra("day", day);
+        textIntent.putExtra("hour", hour);
+        textIntent.putExtra("minute", minute);
+        textIntent.putExtra("ringtone", ringtone);
+        textIntent.putExtra("pop", pop);
+        setResult(RESULT_OK, textIntent);
+        finish();
     }
 
     public void setSelectedTime() {
@@ -79,24 +108,22 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initMonth(){
-        for(int i = 0 ; i < 12 ; i++){
-            monthList.add(formatTimeUnit(i+1));
-        }
+        String[] monthArray = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        Collections.addAll(monthList,monthArray);
     }
 
     private void initDay(){
         dayList.clear();
         int intYear = Integer.parseInt(year);
-        int intMonth = Integer.parseInt(month);
         for (int i = 0 ; i < 28 ; i++){
             dayList.add(formatTimeUnit(i+1) + "th");
         }
-        if (intMonth == 1 || intMonth == 3 || intMonth == 5 || intMonth == 7 || intMonth == 8 || intMonth == 10 || intMonth == 12) {
+        if (month.equals("Jan") || month.equals("Mar") || month.equals("May") || month.equals("Jul") || month.equals("Aug") || month.equals("Oct") || month.equals("Dec")) {
             dayList.add(29 + "th");
             dayList.add(30 + "th");
             dayList.add(31 + "th");
         }
-        else if (intMonth == 4 || intMonth == 6 || intMonth == 9 || intMonth == 11) {
+        else if (month.equals("Apr") || month.equals("Jun") || month.equals("Sep") || month.equals("Nov")) {
             dayList.add(29 + "th");
             dayList.add(30 + "th");
         }
@@ -142,17 +169,51 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         day_pv = findViewById(R.id.day_pv);
         hour_pv = findViewById(R.id.hour_pv);
         minute_pv = findViewById(R.id.minute_pv);
+        ringtoneSwitch = findViewById(R.id.ringtone_switch);
+        popSwitch = findViewById(R.id.pop_switch);
+        ringtoneReminder = findViewById(R.id.ringtone_reminder);
+        popReminder = findViewById(R.id.pop_reminder);
     }
+
 
     private void initComponent(){
         alarm_cancel.setOnClickListener(this);
         alarm_save.setOnClickListener(this);
+        ringtoneSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    ringtone = true;
+                    ringtoneReminder.setTextColor(ContextCompat.getColor(AlarmActivity.this, R.color.ringtone_reminder));
+                }else{
+                    ringtone = false;
+                    ringtoneReminder.setTextColor(ContextCompat.getColor(AlarmActivity.this, R.color.pop_reminder));
+                }
+                changeColor();
+            }
+        });
+        popSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    pop = true;
+                    popReminder.setTextColor(ContextCompat.getColor(AlarmActivity.this, R.color.ringtone_reminder));
+                }else{
+                    pop = false;
+                    popReminder.setTextColor(ContextCompat.getColor(AlarmActivity.this, R.color.pop_reminder));
+                }
+                changeColor();
+            }
+        });
+    }
+
+    private void changeColor(){
     }
 
     private void initParameter(){
         Calendar calendar = Calendar.getInstance();
         year = formatTimeUnit(calendar.get(Calendar.YEAR));
-        month = formatTimeUnit(calendar.get(Calendar.MONTH)+1);
+        month = formatMonthUS(calendar.get(Calendar.MONTH)+1);
         day = formatTimeUnit(calendar.get(Calendar.DAY_OF_MONTH));
         hour = formatTimeUnit(calendar.get(Calendar.HOUR_OF_DAY));
         minute = formatTimeUnit(calendar.get(Calendar.MINUTE));
@@ -160,6 +221,51 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
 
     private String formatTimeUnit(int unit) {
         return unit < 10 ? "0" + String.valueOf(unit) : String.valueOf(unit);
+    }
+
+    private String formatMonthUS(int month){
+        String resultMonth = null;
+        switch (month){
+            case 1:
+                resultMonth = "Jan";
+                break;
+            case 2:
+                resultMonth = "Feb";
+                break;
+            case 3:
+                resultMonth = "Mar";
+                break;
+            case 4:
+                resultMonth = "Apr";
+                break;
+            case 5:
+                resultMonth = "May";
+                break;
+            case 6:
+                resultMonth = "Jun";
+                break;
+            case 7:
+                resultMonth = "Jul";
+                break;
+            case 8:
+                resultMonth = "Aug";
+                break;
+            case 9:
+                resultMonth = "Sep";
+                break;
+            case 10:
+                resultMonth = "Oct";
+                break;
+            case 11:
+                resultMonth = "Nov";
+                break;
+            case 12:
+                resultMonth = "Dec";
+                break;
+            default:
+                break;
+        }
+        return resultMonth;
     }
 
     private void addListener() {

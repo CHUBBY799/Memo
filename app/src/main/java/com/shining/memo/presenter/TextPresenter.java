@@ -7,18 +7,18 @@ import android.widget.Toast;
 import com.shining.memo.model.TextImpl;
 import com.shining.memo.model.TextModel;
 import com.shining.memo.view.MainActivity;
-import com.shining.memo.view.TextView;
+import com.shining.memo.view.ViewText;
 
 import org.json.JSONObject;
 
 public class TextPresenter {
 
     private TextModel mModel;
-    private TextView mView;
+    private ViewText mView;
     private Context context;
 
 
-    public TextPresenter(TextView mView) {
+    public TextPresenter(ViewText mView) {
         this.mView = mView;
         mModel = new TextImpl();
         context = mView.getContext();
