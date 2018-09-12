@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class MemoDatabaseHelper extends SQLiteOpenHelper{
-    public static final String CREATE_MAIN="create table main("
+    public static final String CREATE_TASK="create table task("
             +"id integer primary key autoincrement, "
             +"type text, "
             +"date text, "
@@ -16,18 +16,18 @@ public class MemoDatabaseHelper extends SQLiteOpenHelper{
             +"deleted integer)";
     public static final String CREATE_ALARM="create table alarm("
             +"id integer primary key autoincrement,"
-            +"mainId integer,"
+            +"taskId integer,"
             +"date text,"
             +"time text,"
             +"path text,"
             +"pop integer)";
     public static final String CREATE_AUDIO="create table audio("
             +"id integer primary key autoincrement,"
-            +"mainId integer,"
+            +"taskId integer,"
             +"path text)";
     public static final String CREATE_TEXT="create table text("
             +"id integer primary key autoincrement,"
-            +"mainId integer,"
+            +"taskId integer,"
             +"content text,"
             +"color text)";
     private Context mContext;
@@ -43,7 +43,7 @@ public class MemoDatabaseHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(CREATE_MAIN);
+        sqLiteDatabase.execSQL(CREATE_TASK);
         sqLiteDatabase.execSQL(CREATE_ALARM);
         sqLiteDatabase.execSQL(CREATE_AUDIO);
         sqLiteDatabase.execSQL(CREATE_TEXT);

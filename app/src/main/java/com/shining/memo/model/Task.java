@@ -3,7 +3,7 @@ package com.shining.memo.model;
 import java.sql.Date;
 
 public class Task {
-    private int id;
+    private long id;
     private String type;   // audio or text
     private String date;
     private String time;
@@ -12,7 +12,7 @@ public class Task {
     private String title;
     private int deleted;  // 0：false 1：true
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
