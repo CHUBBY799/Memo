@@ -15,4 +15,17 @@
     <string name="pop_ups_reminder">Pop-ups reminder</string>
 
     <string name="memo_addtask">"Add Task"</string>
+
+    <string name="calendar">calendar</string>
+    <string name="calendar_year">2018</string>
+    <string name="calendar_month">Sep</string>
+    <string name="calendar_sunday">Sun</string>
+    <string name="calendar_monday">Mon</string>
+    <string name="calendar_tuesday">Tues</string>
+    <string name="calendar_wednesday">Wed</string>
+    <string name="calendar_thursday">Thur</string>
+    <string name="calendar_friday">Fri</string>
+    <string name="calendar_saturday">Sat</string>
+    <string name="title_date">%1$s  %2$dth,%3$d</string>
+    <string name="selected_day">-----%1$d</string>
 </resources>

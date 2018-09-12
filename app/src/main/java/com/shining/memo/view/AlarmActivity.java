@@ -66,7 +66,6 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
             case R.id.alarm_save:
                 alarmSave();
                 break;
-
             default:
                 break;
         }
@@ -76,6 +75,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     private void alarmCancel(){
         Intent textIntent = new Intent();
         setResult(RESULT_CANCELED, textIntent);
+        finish();
     }
 
     private void alarmSave(){

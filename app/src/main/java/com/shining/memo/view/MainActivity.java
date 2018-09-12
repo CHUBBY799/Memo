@@ -11,6 +11,7 @@ import com.shining.memo.R;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Button addText;
+    private Button calendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.add_text:
                 addText();
                 break;
+            case R.id.calendar:
+                calendar();
+                break;
             default:
                 break;
         }
@@ -37,11 +41,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(textIntent);
     }
 
+    private void calendar(){
+        Intent calendarIntent = new Intent(this,CalendarActivity.class);
+        startActivity(calendarIntent);
+    }
+
     private void initView(){
         addText = findViewById(R.id.add_text);
+        calendar = findViewById(R.id.calendar);
     }
 
     private void initComponent (){
         addText.setOnClickListener(this);
+        calendar.setOnClickListener(this);
     }
 }
