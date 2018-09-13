@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ff4081</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
 
@@ -17,4 +17,8 @@
     <color name="deap_memo">#757575</color>
     <color name="shallow_memo">#e0e0e0</color>
     <color name="white_memo">#fafafa</color>
+
+    <!--alarm color-->
+    <color name="alarm_true">#ff4081</color>
+    <color name="alarm_false">#e0e0e0</color>
 </resources>
