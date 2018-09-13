@@ -53,7 +53,7 @@ public abstract class CalendarPager extends ViewPager {
         Attrs.lunarTextSize = ta.getDimension(R.styleable.CalendarPager_lunarTextSize, Utils.sp2px(context, 10));
         Attrs.selectCircleRadius = ta.getDimension(R.styleable.CalendarPager_selectCircleRadius, Utils.dp2px(context, 20));
 
-        Attrs.isShowLunar = ta.getBoolean(R.styleable.CalendarPager_isShowLunar, true);
+        Attrs.isShowLunar = ta.getBoolean(R.styleable.CalendarPager_isShowLunar, false);
 
         Attrs.pointSize = ta.getDimension(R.styleable.CalendarPager_pointSize, (int) Utils.dp2px(context, 2));
         Attrs.pointColor = ta.getColor(R.styleable.CalendarPager_pointColor, ContextCompat.getColor(context, R.color.pointColor));
@@ -64,7 +64,7 @@ public abstract class CalendarPager extends ViewPager {
         Attrs.monthCalendarHeight = (int) ta.getDimension(R.styleable.CalendarPager_calendarHeight, Utils.dp2px(context, 300));
         Attrs.duration = ta.getInt(R.styleable.CalendarPager_duration, 240);
 
-        Attrs.isShowHoliday = ta.getBoolean(R.styleable.CalendarPager_isShowHoliday, true);
+        Attrs.isShowHoliday = ta.getBoolean(R.styleable.CalendarPager_isShowHoliday, false);
         Attrs.holidayColor = ta.getColor(R.styleable.CalendarPager_holidayColor, ContextCompat.getColor(context, R.color.holidayColor));
         Attrs.workdayColor = ta.getColor(R.styleable.CalendarPager_workdayColor, ContextCompat.getColor(context, R.color.workdayColor));
 

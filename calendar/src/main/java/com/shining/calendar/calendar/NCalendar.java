@@ -30,7 +30,7 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
 
     protected WeekCalendar weekCalendar;
     protected MonthCalendar monthCalendar;
-    protected View childView;//NCalendar内部包含的直接子view，直接子view并不一定是NestScrillChild
+    protected View childView;//NCalendar内部包含的直接子view，直接子view并不一定是NestScrollChild
     protected View targetView;//嵌套滑动的目标view，即RecyclerView等
     public static final int MONTH = 100;
     public static final int WEEK = 200;
