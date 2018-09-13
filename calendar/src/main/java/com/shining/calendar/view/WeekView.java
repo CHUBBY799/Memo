@@ -1,5 +1,6 @@
 package com.shining.calendar.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import org.joda.time.LocalDate;
 
 import java.util.List;
 
+@SuppressLint("ViewConstructor")
 public class WeekView extends CalendarView {
 
 
@@ -26,7 +28,7 @@ public class WeekView extends CalendarView {
         super(context);
 
         this.mInitialDate = date;
-        Utils.NCalendar weekCalendar2 = Utils.getWeekCalendar2(date, Attrs.firstDayOfWeek);
+        Utils.NCalendar weekCalendar2 = Utils.getWeekCalendar(date, Attrs.firstDayOfWeek);
 
         dates = weekCalendar2.dateList;
         lunarList = weekCalendar2.lunarList;
@@ -43,27 +45,28 @@ public class WeekView extends CalendarView {
         mRectList.clear();
 
         for (int i = 0; i < 7; i++) {
+            @SuppressWarnings("all")
             Rect rect = new Rect(i * mWidth / 7, 0, i * mWidth / 7 + mWidth / 7, mHeight);
             mRectList.add(rect);
             LocalDate date = dates.get(i);
-            Paint.FontMetricsInt fontMetrics = mSorlarPaint.getFontMetricsInt();
+            Paint.FontMetricsInt fontMetrics = mSolarPaint.getFontMetricsInt();
             int baseline = (rect.bottom + rect.top - fontMetrics.bottom - fontMetrics.top) / 2;
 
             if (Utils.isToday(date)) {
-                mSorlarPaint.setColor(mSelectCircleColor);
-                canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius, mSorlarPaint);
-                mSorlarPaint.setColor(Color.WHITE);
-                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSorlarPaint);
+                mSolarPaint.setColor(mSelectCircleColor);
+                canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius, mSolarPaint);
+                mSolarPaint.setColor(Color.WHITE);
+                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
             } else if (mSelectDate != null && date.equals(mSelectDate)) {
-                mSorlarPaint.setColor(mSelectCircleColor);
-                canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius, mSorlarPaint);
-                mSorlarPaint.setColor(mHollowCircleColor);
-                canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius - mHollowCircleStroke, mSorlarPaint);
-                mSorlarPaint.setColor(mSolarTextColor);
-                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSorlarPaint);
+                mSolarPaint.setColor(mSelectCircleColor);
+                canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius, mSolarPaint);
+                mSolarPaint.setColor(mHollowCircleColor);
+                canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius - mHollowCircleStroke, mSolarPaint);
+                mSolarPaint.setColor(mSolarTextColor);
+                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
             } else {
-                mSorlarPaint.setColor(mSolarTextColor);
-                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSorlarPaint);
+                mSolarPaint.setColor(mSolarTextColor);
+                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
                 //绘制农历
                 drawLunar(canvas, rect, baseline,i);
                 //绘制节假日
@@ -106,6 +109,7 @@ public class WeekView extends CalendarView {
 
 
     @Override
+    @SuppressWarnings("all")
     public boolean onTouchEvent(MotionEvent event) {
         return mGestureDetector.onTouchEvent(event);
     }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="NCalendar">
+    <declare-styleable name="CalendarPager">
         <attr name="solarTextColor" format="color" />
         <attr name="lunarTextColor" format="color" />
         <attr name="hintColor" format="color" />

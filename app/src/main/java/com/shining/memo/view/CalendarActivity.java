@@ -10,9 +10,11 @@ import android.widget.TextView;
 
 import com.shining.calendar.calendar.NCalendar;
 import com.shining.calendar.listener.OnCalendarChangedListener;
-import com.shining.calendar.utils.MyLog;
 
 import org.joda.time.LocalDate;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
 
     private NCalendar ncalendar;
     private RecyclerView recyclerView;
+    private CalendarAdapter calendarAdapter;
     private TextView tv_month;
     private TextView tv_date;
 
@@ -39,8 +42,7 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         initView();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        CalendarAdapter calendarAdapter = new CalendarAdapter(this);
-        recyclerView.setAdapter(calendarAdapter);
+        calendarAdapter = new CalendarAdapter(this);
         ncalendar.setOnCalendarChangedListener(this);
 
         ncalendar.post(new Runnable() {
@@ -66,9 +68,26 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
     public void onCalendarChanged(LocalDate date) {
         tv_month.setText(formatMonthUS(date.getMonthOfYear()));
         tv_date.setText(String.format(getResources().getString(R.string.title_date),formatMonthUS(date.getMonthOfYear()),date.getDayOfMonth(),date.getYear()));
-        MyLog.d("dateTime::" + date.toString("yyyy-MM-dd"));
+        queryData(date.toString("yyyy-MM-dd"));
     }
 
+    private void queryData(String date){
+        //查询数据库
+
+        JSONArray infoArr = new JSONArray();
+        String title = "周六约同学吃饭" + " " + date;
+        for (int i = 0 ; i < 10 ; i++){
+            JSONObject info = new JSONObject();
+            try {
+                info.put("title", title);
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+            infoArr.put(info);
+        }
+        calendarAdapter.setInfo(infoArr, infoArr.length());
+        recyclerView.setAdapter(calendarAdapter);
+    }
 
     public void setDate(View view) {
         ncalendar.setDate("2017-12-31");

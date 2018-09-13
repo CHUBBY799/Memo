@@ -27,7 +27,7 @@ public abstract class CalendarView extends View {
     protected int mHintColor;//不是当月的颜色
     protected float mSolarTextSize;
     protected float mLunarTextSize;
-    protected Paint mSorlarPaint;
+    protected Paint mSolarPaint;
     protected Paint mLunarPaint;
     protected float mSelectCircleRadius;//选中圆的半径
     protected int mSelectCircleColor;//选中圆的颜色
@@ -69,7 +69,7 @@ public abstract class CalendarView extends View {
         mWorkdayColor = Attrs.workdayColor;
 
         mRectList = new ArrayList<>();
-        mSorlarPaint = getPaint(mSolarTextColor, mSolarTextSize);
+        mSolarPaint = getPaint(mSolarTextColor, mSolarTextSize);
         mLunarPaint = getPaint(mLunarTextColor, mLunarTextSize);
 
         holidayList = Utils.getHolidayList(getContext());
@@ -89,14 +89,14 @@ public abstract class CalendarView extends View {
         return mInitialDate;
     }
 
-    public LocalDate getSelectDate() {
+    /*public LocalDate getSelectDate() {
         return mSelectDate;
-    }
+    }*/
 
-    public void setSelectDate(LocalDate date) {
+    /*public void setSelectDate(LocalDate date) {
         this.mSelectDate = date;
         invalidate();
-    }
+    }*/
 
     public void setDateAndPoint(LocalDate date, List<String> pointList) {
         this.mSelectDate = date;

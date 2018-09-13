@@ -10,9 +10,15 @@ import android.widget.TextView;
 
 import com.shining.memo.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyViewHolder> {
 
     private Context context;
+    private String[] title;
+    private int length;
 
     public CalendarAdapter(Context context) {
         this.context = context;
@@ -26,7 +32,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         TextView textView = holder.textView;
-        textView.setText(String.format(context.getResources().getString(R.string.selected_day),position));
+        textView.setText(title[position]);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,7 +45,20 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
 
     @Override
     public int getItemCount() {
-        return 50;
+        return length;
+    }
+
+    public void setInfo(JSONArray infoArr, int length){
+        this.length = length;
+        title = new String[length];
+        for (int i = 0 ; i < length ; i++){
+            try {
+                JSONObject info = infoArr.getJSONObject(i);
+                title[i] = info.getString("title");
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {

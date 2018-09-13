@@ -1,5 +1,6 @@
 package com.shining.calendar.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,19 +15,19 @@ import com.shining.calendar.utils.Utils;
 import org.joda.time.LocalDate;
 import java.util.List;
 
+@SuppressLint("ViewConstructor")
 public class MonthView extends CalendarView {
 
     private List<String> lunarList;
     private int mRowNum;
     private OnClickMonthViewListener mOnClickMonthViewListener;
 
-
     public MonthView(Context context, LocalDate date, OnClickMonthViewListener onClickMonthViewListener) {
         super(context);
         this.mInitialDate = date;
 
         //0周日，1周一
-        Utils.NCalendar nCalendar2 = Utils.getMonthCalendar2(date, Attrs.firstDayOfWeek);
+        Utils.NCalendar nCalendar2 = Utils.getMonthCalendar(date, Attrs.firstDayOfWeek);
         mOnClickMonthViewListener = onClickMonthViewListener;
 
         lunarList = nCalendar2.lunarList;
@@ -44,10 +45,11 @@ public class MonthView extends CalendarView {
         mRectList.clear();
         for (int i = 0; i < mRowNum; i++) {
             for (int j = 0; j < 7; j++) {
+                @SuppressWarnings("all")
                 Rect rect = new Rect(j * mWidth / 7, i * mHeight / mRowNum, j * mWidth / 7 + mWidth / 7, i * mHeight / mRowNum + mHeight / mRowNum);
                 mRectList.add(rect);
                 LocalDate date = dates.get(i * 7 + j);
-                Paint.FontMetricsInt fontMetrics = mSorlarPaint.getFontMetricsInt();
+                Paint.FontMetricsInt fontMetrics = mSolarPaint.getFontMetricsInt();
 
                 int baseline;//让6行的第一行和5行的第一行在同一直线上，处理选中第一行的滑动
                 if (mRowNum == 5) {
@@ -60,24 +62,24 @@ public class MonthView extends CalendarView {
                 if (Utils.isEqualsMonth(date, mInitialDate)) {
                     //当天和选中的日期不绘制农历
                     if (Utils.isToday(date)) {
-                        mSorlarPaint.setColor(mSelectCircleColor);
+                        mSolarPaint.setColor(mSelectCircleColor);
                         int centerY = mRowNum == 5 ? rect.centerY() : (rect.centerY() + (mHeight / 5 - mHeight / 6) / 2);
-                        canvas.drawCircle(rect.centerX(), centerY, mSelectCircleRadius, mSorlarPaint);
-                        mSorlarPaint.setColor(Color.WHITE);
-                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSorlarPaint);
+                        canvas.drawCircle(rect.centerX(), centerY, mSelectCircleRadius, mSolarPaint);
+                        mSolarPaint.setColor(Color.WHITE);
+                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
                     } else if (mSelectDate != null && date.equals(mSelectDate)) {
 
-                        mSorlarPaint.setColor(mSelectCircleColor);
+                        mSolarPaint.setColor(mSelectCircleColor);
                         int centerY = mRowNum == 5 ? rect.centerY() : (rect.centerY() + (mHeight / 5 - mHeight / 6) / 2);
-                        canvas.drawCircle(rect.centerX(), centerY, mSelectCircleRadius, mSorlarPaint);
-                        mSorlarPaint.setColor(mHollowCircleColor);
-                        canvas.drawCircle(rect.centerX(), centerY, mSelectCircleRadius - mHollowCircleStroke, mSorlarPaint);
+                        canvas.drawCircle(rect.centerX(), centerY, mSelectCircleRadius, mSolarPaint);
+                        mSolarPaint.setColor(mHollowCircleColor);
+                        canvas.drawCircle(rect.centerX(), centerY, mSelectCircleRadius - mHollowCircleStroke, mSolarPaint);
 
-                        mSorlarPaint.setColor(mSolarTextColor);
-                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSorlarPaint);
+                        mSolarPaint.setColor(mSolarTextColor);
+                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
                     } else {
-                        mSorlarPaint.setColor(mSolarTextColor);
-                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSorlarPaint);
+                        mSolarPaint.setColor(mSolarTextColor);
+                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
                         drawLunar(canvas, rect, baseline, mLunarTextColor, i, j);
                         //绘制节假日
                         drawHolidays(canvas, rect, date, baseline);
@@ -86,8 +88,8 @@ public class MonthView extends CalendarView {
                     }
 
                 } else {
-                    mSorlarPaint.setColor(mHintColor);
-                    canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSorlarPaint);
+                    mSolarPaint.setColor(mHintColor);
+                    canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
                     drawLunar(canvas, rect, baseline, mHintColor, i, j);
                     //绘制节假日
                     drawHolidays(canvas, rect, date, baseline);
@@ -101,7 +103,6 @@ public class MonthView extends CalendarView {
     /**
      * 月日历高度
      *
-     * @return
      */
     public int getMonthHeight() {
         return Attrs.monthCalendarHeight;
@@ -111,7 +112,6 @@ public class MonthView extends CalendarView {
      * 月日历的绘制高度，
      * 为了月日历6行时，绘制农历不至于太靠下，绘制区域网上压缩一下
      *
-     * @return
      */
     public int getDrawHeight() {
         return (int) (getMonthHeight() - Utils.dp2px(getContext(), 10));
@@ -175,6 +175,7 @@ public class MonthView extends CalendarView {
     });
 
     @Override
+    @SuppressWarnings("all")
     public boolean onTouchEvent(MotionEvent event) {
         return mGestureDetector.onTouchEvent(event);
     }

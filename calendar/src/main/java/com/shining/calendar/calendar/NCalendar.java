@@ -169,6 +169,7 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
      * @param isNest   是否是NestedScrollingChild的滑动
      *
      */
+    @SuppressWarnings("deprecation")
     private void move(int dy, boolean isNest, int[] consumed) {
 
         monthCalendarTop = monthCalendar.getTop();

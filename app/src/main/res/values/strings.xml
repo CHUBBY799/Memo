@@ -27,5 +27,4 @@
     <string name="calendar_friday">Fri</string>
     <string name="calendar_saturday">Sat</string>
     <string name="title_date">%1$s  %2$dth,%3$d</string>
-    <string name="selected_day">-----%1$d</string>
 </resources>

@@ -44,37 +44,37 @@ public abstract class CalendarPager extends ViewPager {
     public CalendarPager(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.NCalendar);
-        Attrs.solarTextColor = ta.getColor(R.styleable.NCalendar_solarTextColor, ContextCompat.getColor(context, R.color.solarTextColor));
-        Attrs.lunarTextColor = ta.getColor(R.styleable.NCalendar_lunarTextColor, ContextCompat.getColor(context, R.color.lunarTextColor));
-        Attrs.selectCircleColor = ta.getColor(R.styleable.NCalendar_selectCircleColor, ContextCompat.getColor(context, R.color.selectCircleColor));
-        Attrs.hintColor = ta.getColor(R.styleable.NCalendar_hintColor, ContextCompat.getColor(context, R.color.hintColor));
-        Attrs.solarTextSize = ta.getDimension(R.styleable.NCalendar_solarTextSize, Utils.sp2px(context, 18));
-        Attrs.lunarTextSize = ta.getDimension(R.styleable.NCalendar_lunarTextSize, Utils.sp2px(context, 10));
-        Attrs.selectCircleRadius = ta.getDimension(R.styleable.NCalendar_selectCircleRadius, Utils.dp2px(context, 20));
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CalendarPager);
+        Attrs.solarTextColor = ta.getColor(R.styleable.CalendarPager_solarTextColor, ContextCompat.getColor(context, R.color.solarTextColor));
+        Attrs.lunarTextColor = ta.getColor(R.styleable.CalendarPager_lunarTextColor, ContextCompat.getColor(context, R.color.lunarTextColor));
+        Attrs.selectCircleColor = ta.getColor(R.styleable.CalendarPager_selectCircleColor, ContextCompat.getColor(context, R.color.selectCircleColor));
+        Attrs.hintColor = ta.getColor(R.styleable.CalendarPager_hintColor, ContextCompat.getColor(context, R.color.hintColor));
+        Attrs.solarTextSize = ta.getDimension(R.styleable.CalendarPager_solarTextSize, Utils.sp2px(context, 18));
+        Attrs.lunarTextSize = ta.getDimension(R.styleable.CalendarPager_lunarTextSize, Utils.sp2px(context, 10));
+        Attrs.selectCircleRadius = ta.getDimension(R.styleable.CalendarPager_selectCircleRadius, Utils.dp2px(context, 20));
 
-        Attrs.isShowLunar = ta.getBoolean(R.styleable.NCalendar_isShowLunar, true);
+        Attrs.isShowLunar = ta.getBoolean(R.styleable.CalendarPager_isShowLunar, true);
 
-        Attrs.pointSize = ta.getDimension(R.styleable.NCalendar_pointSize, (int) Utils.dp2px(context, 2));
-        Attrs.pointColor = ta.getColor(R.styleable.NCalendar_pointColor, ContextCompat.getColor(context, R.color.pointColor));
-        Attrs.hollowCircleColor = ta.getColor(R.styleable.NCalendar_hollowCircleColor, Color.WHITE);
-        Attrs.hollowCircleStroke = ta.getDimension(R.styleable.NCalendar_hollowCircleStroke, Utils.dp2px(context, 1));
+        Attrs.pointSize = ta.getDimension(R.styleable.CalendarPager_pointSize, (int) Utils.dp2px(context, 2));
+        Attrs.pointColor = ta.getColor(R.styleable.CalendarPager_pointColor, ContextCompat.getColor(context, R.color.pointColor));
+        Attrs.hollowCircleColor = ta.getColor(R.styleable.CalendarPager_hollowCircleColor, Color.WHITE);
+        Attrs.hollowCircleStroke = ta.getDimension(R.styleable.CalendarPager_hollowCircleStroke, Utils.dp2px(context, 1));
 
 
-        Attrs.monthCalendarHeight = (int) ta.getDimension(R.styleable.NCalendar_calendarHeight, Utils.dp2px(context, 300));
-        Attrs.duration = ta.getInt(R.styleable.NCalendar_duration, 240);
+        Attrs.monthCalendarHeight = (int) ta.getDimension(R.styleable.CalendarPager_calendarHeight, Utils.dp2px(context, 300));
+        Attrs.duration = ta.getInt(R.styleable.CalendarPager_duration, 240);
 
-        Attrs.isShowHoliday = ta.getBoolean(R.styleable.NCalendar_isShowHoliday, true);
-        Attrs.holidayColor = ta.getColor(R.styleable.NCalendar_holidayColor, ContextCompat.getColor(context, R.color.holidayColor));
-        Attrs.workdayColor = ta.getColor(R.styleable.NCalendar_workdayColor, ContextCompat.getColor(context, R.color.workdayColor));
+        Attrs.isShowHoliday = ta.getBoolean(R.styleable.CalendarPager_isShowHoliday, true);
+        Attrs.holidayColor = ta.getColor(R.styleable.CalendarPager_holidayColor, ContextCompat.getColor(context, R.color.holidayColor));
+        Attrs.workdayColor = ta.getColor(R.styleable.CalendarPager_workdayColor, ContextCompat.getColor(context, R.color.workdayColor));
 
-        Attrs.backgroundColor = ta.getColor(R.styleable.NCalendar_backgroundColor, ContextCompat.getColor(context, R.color.white));
+        Attrs.backgroundColor = ta.getColor(R.styleable.CalendarPager_backgroundColor, ContextCompat.getColor(context, R.color.white));
 
-        String firstDayOfWeek = ta.getString(R.styleable.NCalendar_firstDayOfWeek);
-        String defaultCalendar = ta.getString(R.styleable.NCalendar_defaultCalendar);
+        String firstDayOfWeek = ta.getString(R.styleable.CalendarPager_firstDayOfWeek);
+        String defaultCalendar = ta.getString(R.styleable.CalendarPager_defaultCalendar);
 
-        String startString = ta.getString(R.styleable.NCalendar_startDate);
-        String endString = ta.getString(R.styleable.NCalendar_endDate);
+        String startString = ta.getString(R.styleable.CalendarPager_startDate);
+        String endString = ta.getString(R.styleable.CalendarPager_endDate);
 
         Attrs.firstDayOfWeek = "Monday".equals(firstDayOfWeek) ? 1 : 0;
         Attrs.defaultCalendar = "Week".equals(defaultCalendar) ? NCalendar.WEEK : NCalendar.MONTH;
@@ -92,7 +92,7 @@ public abstract class CalendarPager extends ViewPager {
             @Override
             public void onGlobalLayout() {
                 initCurrentCalendarView(mCurrPage);
-                getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
 
@@ -149,25 +149,6 @@ public abstract class CalendarPager extends ViewPager {
     protected abstract void initCurrentCalendarView(int position);
 
     protected abstract void setDate(LocalDate date);
-
-    public void toToday() {
-        setDate(new LocalDate());
-    }
-
-
-    /**
-     * 下一页，月日历即是下一月，周日历即是下一周
-     */
-    public void toNextPager() {
-        setCurrentItem(getCurrentItem() + 1, true);
-    }
-
-    /**
-     * 上一页
-     */
-    public void toLastPager() {
-        setCurrentItem(getCurrentItem() - 1, true);
-    }
 
     //设置日期
     public void setDate(String formatDate) {

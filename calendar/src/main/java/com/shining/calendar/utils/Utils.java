@@ -19,7 +19,6 @@ import java.util.List;
 
 public class Utils {
 
-
     /**
      * dp转px
      *
@@ -43,7 +42,6 @@ public class Utils {
         return date1.getYear() == date2.getYear() && date1.getMonthOfYear() == date2.getMonthOfYear();
     }
 
-
     /**
      * 第一个是不是第二个的上一个月,只在此处有效
      *
@@ -61,7 +59,6 @@ public class Utils {
         LocalDate date = date2.plusMonths(1);
         return date1.getMonthOfYear() == date.getMonthOfYear();
     }
-
 
     /**
      * 获得两个日期距离几个月
@@ -92,7 +89,6 @@ public class Utils {
 
     }
 
-
     /**
      * 是否是今天
      *
@@ -107,7 +103,7 @@ public class Utils {
      * @param type     0，周日，1周一
      *
      */
-    public static NCalendar getMonthCalendar2(LocalDate date, int type) {
+    public static NCalendar getMonthCalendar(LocalDate date, int type) {
 
         LocalDate lastMonthDate = date.plusMonths(-1);//上个月
         LocalDate nextMonthDate = date.plusMonths(1);//下个月
@@ -188,26 +184,14 @@ public class Utils {
 
     }
 
-
-    /**
-     * 某月第一天是周几
-     *
-     */
-    public static int getFirstDayOfWeekOfMonth(int year, int month) {
-        int dayOfWeek = new LocalDate(year, month, 1).getDayOfWeek();
-        if (dayOfWeek == 7) {
-            return 0;
-        }
-        return dayOfWeek;
-    }
-
     /**
      * 周视图的数据
      *
      */
-    public static NCalendar getWeekCalendar2(LocalDate date, int type) {
+    public static NCalendar getWeekCalendar(LocalDate date, int type) {
         List<LocalDate> dateList = new ArrayList<>();
         List<String> lunarStringList = new ArrayList<>();
+        @SuppressWarnings("all")
         List<String> localDateList = new ArrayList<>();
 
         if (type == 0) {
