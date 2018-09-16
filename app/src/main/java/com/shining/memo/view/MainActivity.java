@@ -12,6 +12,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button addText;
     private Button calendar;
+    private Button audio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.calendar:
                 calendar();
                 break;
+            case R.id.add_audio:
+                audio();
+                break;
             default:
                 break;
         }
@@ -46,13 +50,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(calendarIntent);
     }
 
+    private void audio(){
+        Intent calendarIntent = new Intent(this,AudioRecordingActivity.class);
+        startActivity(calendarIntent);
+    }
+
+
     private void initView(){
         addText = findViewById(R.id.add_text);
         calendar = findViewById(R.id.calendar);
+        audio = findViewById(R.id.add_audio);
     }
 
     private void initComponent (){
         addText.setOnClickListener(this);
         calendar.setOnClickListener(this);
+        audio.setOnClickListener(this);
     }
 }
