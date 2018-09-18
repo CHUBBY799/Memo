@@ -19,9 +19,9 @@ import com.shining.memo.presenter.AudioPresenter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class AudioRecordingActivity extends Activity implements ViewAudioRecording,View.OnTouchListener {
+public class AudioRecordingActivity extends Activity implements ViewAudioRecording,View.OnTouchListener,View.OnClickListener {
 
-    private Button mBtnRecord;
+    private Button mBtnRecord,mBtnBack;
     private TextView mTvTimes;
     private ImageView mIvVolume;
     private AudioPresenter audioPresenter;
@@ -37,7 +37,9 @@ public class AudioRecordingActivity extends Activity implements ViewAudioRecordi
         mBtnRecord = (Button)findViewById(R.id.recording_btn);
         mTvTimes = (TextView)findViewById(R.id.recording_times);
         mIvVolume = (ImageView)findViewById(R.id.recording_mic);
+        mBtnBack = (Button)findViewById(R.id.recording_back);
         mBtnRecord.setOnTouchListener(this);
+        mBtnBack.setOnClickListener(this);
     }
 
 
@@ -103,10 +105,20 @@ public class AudioRecordingActivity extends Activity implements ViewAudioRecordi
     public void onStop(String filePath) {
         mTvTimes.setText("00:00");
         Intent intent = new Intent();
-        intent.setClass(this,AudioSettingActivity.class);
+        intent.setClass(this,AudioEditActivity.class);
         intent.putExtra("filePath",filePath);
         startActivity(intent);
     }
 
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.recording_back:
+                Intent intent = new Intent();
+                intent.setClass(this,MainActivity.class);
+                startActivity(intent);
+                break;
+        }
+    }
 }

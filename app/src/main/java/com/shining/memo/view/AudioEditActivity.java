@@ -1,27 +1,33 @@
 package com.shining.memo.view;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.shining.memo.R;
 import com.shining.memo.model.Task;
+import com.shining.memo.model.TaskImpl;
+import com.shining.memo.model.TaskModel;
 import com.shining.memo.presenter.AudioPresenter;
 import com.shining.memo.widget.RoundProgressBar;
 
-import org.joda.time.DateTime;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.io.File;
-import java.util.Date;
+import java.util.List;
 
-public class AudioSettingActivity extends Activity implements View.OnClickListener,ViewAudioSetting{
+public class AudioEditActivity extends Activity implements View.OnClickListener,ViewAudioEdit {
 
     private Button mBtnCancel,mBtnConfirm,mBtnAlarm,mBtnEdit,mBtnUrgent,mBtnReRecording;
     private ImageView micImage;
@@ -36,18 +42,18 @@ public class AudioSettingActivity extends Activity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_audio_setting);
+        setContentView(R.layout.activity_audio_edit);
         init();
     }
 
 
     private void init(){
-        View view =  (View)findViewById(R.id.audio_view_title);
-        mBtnCancel = (Button)view.findViewById(R.id.title_cancel);
-        mBtnConfirm = (Button)view.findViewById(R.id.title_confirm);
-        mBtnAlarm = (Button)view.findViewById(R.id.title_alarm);
-        mBtnEdit = (Button)view.findViewById(R.id.title_edit);
-        mBtnUrgent = (Button)view.findViewById(R.id.title_urgent);
+        View view =  (View)findViewById(R.id.audio_edit_title);
+        mBtnCancel = (Button)view.findViewById(R.id.title_edit_cancel);
+        mBtnConfirm = (Button)view.findViewById(R.id.title_edit_confirm);
+        mBtnAlarm = (Button)view.findViewById(R.id.title_edit_alarm);
+        mBtnEdit = (Button)view.findViewById(R.id.title_edit_edit);
+        mBtnUrgent = (Button)view.findViewById(R.id.title_edit_urgent);
         mBtnReRecording = (Button)findViewById(R.id.audio_rerecording);
         micImage = (ImageView)findViewById(R.id.image_mic_audio);
         editTitle = (EditText)findViewById(R.id.edit_title_audio);
@@ -62,7 +68,6 @@ public class AudioSettingActivity extends Activity implements View.OnClickListen
         mBtnUrgent.setOnClickListener(this);
         mBtnReRecording.setOnClickListener(this);
         micImage.setOnClickListener(this);
-
     }
 
     public void deleteFile(){
@@ -85,21 +90,31 @@ public class AudioSettingActivity extends Activity implements View.OnClickListen
     }
 
     @Override
+    public void onStopPlay() {
+        isplaying = false;
+        mRoundProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.title_cancel:
+            case R.id.title_edit_cancel:
                 clickCancel();
                 break;
-            case R.id.title_confirm:
+            case R.id.title_edit_confirm:
                 clickConfirm();
                 break;
-            case R.id.title_alarm:
+            case R.id.title_edit_alarm:
                 clickAlarm();
                 break;
-            case R.id.title_edit:
-                clickEdit();
+            case R.id.title_edit_edit:
+                try {
+                    clickEdit();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 break;
-            case R.id.title_urgent:
+            case R.id.title_edit_urgent:
                 clickUrgent();
                 break;
             case R.id.audio_rerecording:
@@ -124,7 +139,15 @@ public class AudioSettingActivity extends Activity implements View.OnClickListen
         task.setAlarm(alarm);
         String title = editTitle.getText().toString();
         task.setTitle(title);
-        audioPresenter.saveAudio(task,filePath);
+        if(audioPresenter.saveAudio(task,filePath)){
+            Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent();
+            intent.setClass(this, MainActivity.class);
+            startActivity(intent);
+        }else{
+            Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private void clickAlarm(){
@@ -139,14 +162,27 @@ public class AudioSettingActivity extends Activity implements View.OnClickListen
                 if (resultCode == RESULT_OK){
                     String year = data.getStringExtra("year");
                     Log.d("dsafas", year);
+                    alarm = 1;
                 }
                 break;
             default:
+                alarm = 0;
+                break;
         }
     }
 
-    private void clickEdit(){
-
+    private void clickEdit() throws JSONException {
+        TaskModel t = new TaskImpl(this);
+        List<JSONObject> list = t.getNotAlarmTasksByUrgentDesc(0);
+        System.out.println(list.size());
+        for(int i = 0; i < list.size(); i++){
+            System.out.println(list.get(i).getString("title"));
+            System.out.println(list.get(i).getString("type"));
+        }
+        Intent intent = new Intent();
+        intent.setClass(this,AudioViewActivity.class);
+        intent.putExtra("filePath",filePath);
+        startActivity(intent);
     }
 
     private void clickUrgent(){
@@ -171,6 +207,7 @@ public class AudioSettingActivity extends Activity implements View.OnClickListen
     private void clickMicphone(){
         if(!isplaying)
         {
+            mRoundProgressBar.setVisibility(View.VISIBLE);
             audioPresenter.doPlay();
             isplaying = true;
         }

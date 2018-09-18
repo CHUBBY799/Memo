@@ -2,6 +2,7 @@ package com.shining.memo.presenter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
@@ -12,13 +13,18 @@ import android.widget.Toast;
 import com.shining.memo.model.Audio;
 import com.shining.memo.model.AudioImpl;
 import com.shining.memo.model.AudioModel;
+import com.shining.memo.model.MemoDatabaseHelper;
 import com.shining.memo.model.Task;
 import com.shining.memo.model.TaskImpl;
 import com.shining.memo.model.TaskModel;
-import com.shining.memo.view.AudioSettingActivity;
+import com.shining.memo.view.AudioEditActivity;
+import com.shining.memo.view.AudioViewActivity;
 import com.shining.memo.view.MainActivity;
 import com.shining.memo.view.ViewAudioRecording;
-import com.shining.memo.view.ViewAudioSetting;
+import com.shining.memo.view.ViewAudioEdit;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,12 +40,14 @@ public class AudioPresenter {
     private MediaPlayer mMediaPlayer;
     private static final int MAX_LENGTH = 1000 * 60 * 30;// 最大录音时长1000*60*30;
     private ViewAudioRecording viewAudioRecording;
-    private ViewAudioSetting viewAudioSetting;
+    private ViewAudioEdit viewAudioSetting;
     private Context context;
     private long startTime,endTime;
     private static final int MSG_PROGRESS_UPDATE = 0x110;
+    private static final int SEEK_CLOSEST = 0x03;
     private TaskModel taskModel;
     private AudioModel audioModel;
+    private  MemoDatabaseHelper dbHelper;
 
     public AudioPresenter(ViewAudioRecording vAudioRec){
         this(Environment.getExternalStorageDirectory()+"/record/");
@@ -47,12 +55,13 @@ public class AudioPresenter {
         context = viewAudioRecording.getContext();
     }
 
-    public AudioPresenter(ViewAudioSetting vAudioSet, String filePath){
+    public AudioPresenter(ViewAudioEdit vAudioSet, String filePath){
         this.viewAudioSetting = vAudioSet;
         context = viewAudioSetting.getContext();
         playFilePath = filePath;
         taskModel = new TaskImpl(context);
         audioModel = new AudioImpl(context);
+        dbHelper=new MemoDatabaseHelper(context,"memo.db",null,1);
     }
 
     public AudioPresenter(String filePath) {
@@ -199,7 +208,6 @@ public class AudioPresenter {
                             mMediaPlayer.reset();
                             mMediaPlayer.release();
                             mMediaPlayer = null;
-                            AudioSettingActivity.isplaying = false;
                         }
                     });
 
@@ -212,7 +220,8 @@ public class AudioPresenter {
                             mMediaPlayer.reset();
                             mMediaPlayer.release();
                             mMediaPlayer = null;
-                            AudioSettingActivity.isplaying = false;
+                            mHandlerProgress.removeMessages(MSG_PROGRESS_UPDATE);
+                            viewAudioSetting.onStopPlay();
                             //释放播放器
                             return true;
                         }
@@ -225,8 +234,7 @@ public class AudioPresenter {
                     Log.d("intervalProgress",String.valueOf(intervalProgress));
                     roundProgress = 0;
                     viewAudioSetting.onUpdateProgress(roundProgress);
-                    Log.d("reset progress", "roundprogress"+roundProgress);
-                    mHandlerProgress.sendEmptyMessage(MSG_PROGRESS_UPDATE);
+                    mHandlerProgress.sendEmptyMessageDelayed(MSG_PROGRESS_UPDATE, 100);
                     mMediaPlayer.start();
 
                 }catch (Exception e){
@@ -236,7 +244,8 @@ public class AudioPresenter {
                     mMediaPlayer.reset();
                     mMediaPlayer.release();
                     mMediaPlayer = null;
-                    AudioSettingActivity.isplaying = false;
+                    mHandlerProgress.removeMessages(MSG_PROGRESS_UPDATE);
+                    viewAudioSetting.onStopPlay();
                 }
             }else {
                 mMediaPlayer.start();
@@ -256,29 +265,113 @@ public class AudioPresenter {
 
     private void intervalCalculate(){
         int audioTime = mMediaPlayer.getDuration() / 1000;
-        intervalProgress = (float)(100 * 1.0 / audioTime /10);
+        intervalProgress = 100 * 1.0f / audioTime / 10;
     }
 
     private Handler mHandlerProgress = new Handler() {
         public void handleMessage(android.os.Message msg) {
             roundProgress += intervalProgress;
             viewAudioSetting.onUpdateProgress(roundProgress);
-            if (roundProgress >= 100) {
+            if (roundProgress >= 105) {
                 mHandlerProgress.removeMessages(MSG_PROGRESS_UPDATE);
+                viewAudioSetting.onStopPlay();
             }
-            mHandlerProgress.sendEmptyMessageDelayed(MSG_PROGRESS_UPDATE, 100);
+            else
+                mHandlerProgress.sendEmptyMessageDelayed(MSG_PROGRESS_UPDATE, 100);
         };
     };
 
-    public void saveAudio(Task task,String filePath){
-        long taskId = taskModel.addTask(task);
-        Audio audio = new Audio();
-        audio.setTaskId(taskId);
-        audio.setPath(filePath);
-        audioModel.saveAudio(audio);
-        Intent intent = new Intent();
-        intent.setClass(context, MainActivity.class);
-        context.startActivity(intent);
+
+
+    public void resetAudioPlayBeginning(int beginning){
+        if(mMediaPlayer != null){
+            mMediaPlayer.seekTo(beginning);
+        }
     }
+
+    public JSONObject getAudioInfo(int taskId){
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        JSONObject object = new JSONObject();
+        try {
+            JSONObject temp = audioModel.getAudio(taskId,db);
+            object.put("filePath",temp.getString("filePath"));
+//            Task task = taskModel.getTask(taskId,db);
+//            object.put("title",task.getTitle());
+//            object.put("urgent",task.getUrgent());
+//            object.put("alarm",task.getAlarm());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return object;
+    }
+
+
+    public boolean saveAudio(Task task,String filePath){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try{
+            long taskId = taskModel.addTask(task,db);
+            Audio audio = new Audio();
+            audio.setPath(filePath);
+            audio.setTaskId(taskId);
+            audioModel.saveAudio(audio,db);
+            db.setTransactionSuccessful();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+
+    public boolean deleteAudio(int taskId){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try{
+            audioModel.deleteAudio(taskId,db);
+//            taskModel.deleteTask(taskId,db);
+            db.setTransactionSuccessful();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    public boolean modifyAudioPath(int taskId,String newPath){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try{
+            audioModel.modifyAudio(taskId,newPath,db);
+            db.setTransactionSuccessful();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    public boolean modifyAudioTitle(String title){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try{
+//            taskModel.modifyTaskTitle(title,db);
+            db.setTransactionSuccessful();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+
 }
 

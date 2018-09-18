@@ -16,6 +16,7 @@ public class TaskImpl implements TaskModel {
         mContext=context;
         dbHelper=new MemoDatabaseHelper(mContext,"memo.db",null,1);
     }
+
     @Override
     public List<Task> getTasksByDate(String date, int limit) {
         SQLiteDatabase db=dbHelper.getReadableDatabase();
@@ -38,20 +39,21 @@ public class TaskImpl implements TaskModel {
         cursor.close();
         return tasks;
     }
+
     @Override
-    public long addTask(Task task) {
-        SQLiteDatabase db=dbHelper.getWritableDatabase();
+    public long addTask(Task task,SQLiteDatabase db) {
         db.execSQL("insert into task(type,date,time,urgent,alarm,title,deleted) " +
                 "values(?,date(?,'localtime'),time(?,'localtime'),?,?,?,0)",new Object[]{
                 task.getType(),"now","now",task.getUrgent(),task.getAlarm(),task.getTitle()
         });
         Cursor cursor=db.rawQuery("select last_insert_rowid() from task",null);
-        int strid=0;
+        int strid=-1;
         if(cursor.moveToFirst()){
             strid=cursor.getInt(0);
         }
         return strid;
     }
+
     private final String selectColNames=" t.id taskId" +
             ",t.type"+
             ",t.title" +
@@ -104,6 +106,7 @@ public class TaskImpl implements TaskModel {
         }
         return strid;
     }
+
     @Override
     public List<JSONObject> getNotAlarmTasksByUrgentDesc(int urgent) {
         SQLiteDatabase db=dbHelper.getReadableDatabase();

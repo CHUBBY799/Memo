@@ -75,4 +75,18 @@ public class Task {
     public void setDeleted(int deleted) {
         this.deleted = deleted;
     }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", type='" + type + '\'' +
+                ", date='" + date + '\'' +
+                ", time='" + time + '\'' +
+                ", urgent=" + urgent +
+                ", alarm=" + alarm +
+                ", title='" + title + '\'' +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

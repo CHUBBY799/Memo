@@ -28,4 +28,13 @@ public class Audio {
     public void setPath(String path) {
         this.path = path;
     }
+
+    @Override
+    public String toString() {
+        return "Audio{" +
+                "id=" + id +
+                ", taskId=" + taskId +
+                ", path='" + path + '\'' +
+                '}';
+    }
 }

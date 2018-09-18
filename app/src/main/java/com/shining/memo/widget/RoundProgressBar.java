@@ -2,9 +2,15 @@ package com.shining.memo.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.SweepGradient;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.ProgressBar;
@@ -17,13 +23,15 @@ public class RoundProgressBar extends ProgressBar {
     private static final int DEFAULT_TEXT_COLOR = 0XFFC4C4C4;
     private static final int DEFAULT_COLOR_UNREACHED_COLOR = 0xFFd3d6da;
     private static final int DEFAULT_HEIGHT_REACHED_PROGRESS_BAR = 2;
-    private static final int DEFAULT_HEIGHT_UNREACHED_PROGRESS_BAR = 4;
+    private static final int DEFAULT_HEIGHT_UNREACHED_PROGRESS_BAR = 3;
     private static final int DEFAULT_SIZE_TEXT_OFFSET = 10;
+    private static final int[] SECTION_COLORS = {Color.parseColor("#4DFFFF"),Color.parseColor("#0080FF"),
+            Color.parseColor("#9ACD32") ,Color.parseColor("#98FB98") ,Color.parseColor("#98F5FF")};
 
     /**
      * painter of all drawing things
      */
-    protected Paint mPaint = new Paint();
+    protected Paint mPaint = new Paint(),mPaint1 = new Paint();
     /**
      * color of progress number
      */
@@ -142,25 +150,40 @@ public class RoundProgressBar extends ProgressBar {
         attributes.recycle();
     }
 
+
     @Override
     protected synchronized void onDraw(Canvas canvas)
     {
         canvas.save();
         canvas.translate(getPaddingLeft() + mMaxPaintWidth / 2, getPaddingTop()
                 + mMaxPaintWidth / 2);
-        mPaint.setStyle(Paint.Style.STROKE);
         // draw unreaded bar
-        mPaint.setColor(mUnReachedBarColor);
-        mPaint.setStrokeWidth(mUnReachedProgressBarHeight);
-        canvas.drawCircle(mRadius, mRadius, mRadius, mPaint);
+//        mPaint1.setStyle(Paint.Style.STROKE);
+//        mPaint1.setColor(mUnReachedBarColor);
+//        mPaint1.setStrokeWidth(mUnReachedProgressBarHeight);
+//        canvas.drawCircle(mRadius, mRadius, mRadius, mPaint1);
+
         // draw reached bar
+        mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setColor(mReachedBarColor);
         mPaint.setStrokeWidth(mReachedProgressBarHeight);
+        SweepGradient sweepGradient = new SweepGradient(mRadius, mRadius, SECTION_COLORS, null);
+        Matrix matrix = new Matrix();
+        matrix.setRotate(-90, mRadius, mRadius);
+        sweepGradient.setLocalMatrix(matrix);
+        mPaint.setShader(sweepGradient);
         float sweepAngle = getProgress() * 1.0f / getMax() * 360;
-        canvas.drawArc(new RectF(0, 0, mRadius * 2, mRadius * 2), -90,
+        canvas.drawArc(new RectF(0, 0, mRadius * 2, mRadius * 2), -87,
                 sweepAngle, false, mPaint);
-        // draw text
-        mPaint.setStyle(Paint.Style.FILL);
+
+        mPaint.setShader(null);
+        mPaint.setMaskFilter(null);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.BLACK);
+        paint.setStrokeWidth(mReachedProgressBarHeight);
+
         canvas.restore();
     }
 
