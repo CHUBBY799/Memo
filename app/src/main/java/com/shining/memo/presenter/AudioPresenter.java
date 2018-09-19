@@ -7,6 +7,8 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,16 +30,17 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class AudioPresenter {
+public class AudioPresenter{
 
     private static String filePath = "";     //录音文件路径
     private String FolderPath = "";     //文件夹路径
     private String playFilePath = "";     //播放文件路径
     private MediaRecorder mMediaRecorder;   //音频录制API
-    private MediaPlayer mMediaPlayer;
+    private static MediaPlayer mMediaPlayer;
     private static final int MAX_LENGTH = 1000 * 60 * 30;// 最大录音时长1000*60*30;
     private ViewAudioRecording viewAudioRecording;
     private ViewAudioEdit viewAudioSetting;
@@ -208,6 +211,7 @@ public class AudioPresenter {
                             mMediaPlayer.reset();
                             mMediaPlayer.release();
                             mMediaPlayer = null;
+                            viewAudioSetting.onStopPlay();
                         }
                     });
 
@@ -231,9 +235,9 @@ public class AudioPresenter {
                     mMediaPlayer.setLooping(false);
                     mMediaPlayer.prepare();
                     intervalCalculate();
-                    Log.d("intervalProgress",String.valueOf(intervalProgress));
                     roundProgress = 0;
                     viewAudioSetting.onUpdateProgress(roundProgress);
+                    st = System.currentTimeMillis();
                     mHandlerProgress.sendEmptyMessageDelayed(MSG_PROGRESS_UPDATE, 100);
                     mMediaPlayer.start();
 
@@ -260,21 +264,22 @@ public class AudioPresenter {
         mHandlerProgress.removeMessages(MSG_PROGRESS_UPDATE);
     }
 
-    int roundProgress = 0;
-    float intervalProgress;
+    private static int roundProgress = 0;
+    private static float intervalProgress;
 
     private void intervalCalculate(){
         int audioTime = mMediaPlayer.getDuration() / 1000;
         intervalProgress = 100 * 1.0f / audioTime / 10;
     }
 
+    long st,en;
     private Handler mHandlerProgress = new Handler() {
         public void handleMessage(android.os.Message msg) {
-            roundProgress += intervalProgress;
-            viewAudioSetting.onUpdateProgress(roundProgress);
-            if (roundProgress >= 105) {
+            roundProgress++;
+            viewAudioSetting.onUpdateProgress((int) (roundProgress*intervalProgress));
+            if ((int) (roundProgress*intervalProgress) >= 105) {
                 mHandlerProgress.removeMessages(MSG_PROGRESS_UPDATE);
-                viewAudioSetting.onStopPlay();
+                viewAudioSetting.onRemoverPlay();
             }
             else
                 mHandlerProgress.sendEmptyMessageDelayed(MSG_PROGRESS_UPDATE, 100);

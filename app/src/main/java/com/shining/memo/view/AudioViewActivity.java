@@ -44,8 +44,8 @@ public class AudioViewActivity extends Activity implements ViewAudioEdit,View.On
     private int taskId = 0;
     private int urgent = 0;
     private int alarm = 0;
-    public static boolean isplaying = false;
-    private static boolean isView = true;
+    public  static boolean isplaying = false;
+    private boolean isView = true;
     private AudioPresenter audioPresenter;
     private RoundProgressBar mRoundProgressBar;
     @Override
@@ -53,6 +53,30 @@ public class AudioViewActivity extends Activity implements ViewAudioEdit,View.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_view);
         init();
+        if(savedInstanceState != null){
+            taskId = savedInstanceState.getInt("taskId");
+            alarm = savedInstanceState.getInt("alarm");
+            urgent = savedInstanceState.getInt("urgent");
+            filePath = savedInstanceState.getString("filePath");
+            title = savedInstanceState.getString("title");
+            isplaying = savedInstanceState.getBoolean("isplaying");
+            isView = savedInstanceState.getBoolean("isView");
+            if(isplaying)
+                audioPresenter.doPlay();
+        }
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(isplaying)
+            audioPresenter.onPausePlay();
+        outState.putInt("taskId",taskId);
+        outState.putInt("urgent",urgent);
+        outState.putInt("alarm",alarm);
+        outState.putString("filePath",filePath);
+        outState.putString("title",title);
+        outState.putBoolean("isplaying",isplaying);
+        outState.putBoolean("isView",isView);
     }
     @Override
     public Context getContext() {
@@ -66,7 +90,11 @@ public class AudioViewActivity extends Activity implements ViewAudioEdit,View.On
     @Override
     public void onStopPlay() {
         isplaying = false;
-        mRoundProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onRemoverPlay() {
+        mRoundProgressBar.setProgress(0);
     }
 
     public void onUpdateInfo(int taskId) {
