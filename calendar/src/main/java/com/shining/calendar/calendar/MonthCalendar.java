@@ -16,6 +16,8 @@ import com.shining.calendar.view.MonthView;
 
 import org.joda.time.LocalDate;
 
+import java.util.List;
+
 public class MonthCalendar extends CalendarPager implements OnClickMonthViewListener {
 
     private OnMonthCalendarChangedListener onMonthCalendarChangedListener;
@@ -89,7 +91,7 @@ public class MonthCalendar extends CalendarPager implements OnClickMonthViewList
     }
 
     @Override
-    protected void setDate(LocalDate date) {
+    protected void setDate(LocalDate date, List<LocalDate> dateList) {
         if (date.isAfter(endDate)  || date.isBefore(startDate)) {
             Toast.makeText(getContext(), R.string.illegal_date, Toast.LENGTH_SHORT).show();
             return;
@@ -116,6 +118,7 @@ public class MonthCalendar extends CalendarPager implements OnClickMonthViewList
         currentMonthView.setDateAndPoint(date, mSelectDateList, pointList);
         mSelectDate = date;
         lastSelectDate = date;
+        mSelectDateList = dateList;
 
         isPagerChanged = true;
 

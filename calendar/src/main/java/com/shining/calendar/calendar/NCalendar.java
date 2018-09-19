@@ -382,7 +382,7 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
     @Override
     public void onWeekCalendarChanged(LocalDate date,  List<LocalDate> dateList) {
         if (STATE == WEEK) {
-            monthCalendar.setDate(date);
+            monthCalendar.setDate(date, dateList);
             requestLayout();
             if (onCalendarChangedListener != null) {
                 onCalendarChangedListener.onCalendarChanged(date ,dateList);
@@ -396,7 +396,7 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
         monthCalendarOffset = getMonthCalendarOffset();
 
         if (STATE == MONTH) {
-            weekCalendar.setDate(date);
+            weekCalendar.setDate(date, dateList);
             if (onCalendarChangedListener != null) {
                 onCalendarChangedListener.onCalendarChanged(date, dateList);
             }
@@ -476,21 +476,6 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
             return monthRect.contains(x, y);
         } else {
             return weekRect.contains(x, y);
-        }
-    }
-
-
-    /**
-     * 跳转制定日期
-     *
-     * @param formatDate yyyy-MM-dd
-     */
-    public void setDate(String formatDate) {
-        LocalDate date = new LocalDate(formatDate);
-        if (STATE == MONTH) {
-            monthCalendar.setDate(date);
-        } else {
-            weekCalendar.setDate(date);
         }
     }
 

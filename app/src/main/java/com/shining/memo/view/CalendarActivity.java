@@ -89,10 +89,6 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         recyclerView.setAdapter(calendarAdapter);
     }
 
-    public void setDate(View view) {
-        ncalendar.setDate("2017-12-31");
-    }
-
     public void setPoint(View view) {
         List<String> list = new ArrayList<>();
         list.add("2017-09-21");

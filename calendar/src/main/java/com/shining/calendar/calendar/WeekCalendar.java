@@ -17,6 +17,8 @@ import com.shining.calendar.view.WeekView;
 
 import org.joda.time.LocalDate;
 
+import java.util.List;
+
 public class WeekCalendar extends CalendarPager implements OnClickWeekViewListener {
 
     private OnWeekCalendarChangedListener onWeekCalendarChangedListener;
@@ -93,7 +95,7 @@ public class WeekCalendar extends CalendarPager implements OnClickWeekViewListen
 
 
     @Override
-    protected void setDate(LocalDate date) {
+    protected void setDate(LocalDate date, List<LocalDate> dateList) {
 
         if (date.isAfter(endDate) || date.isBefore(startDate)) {
             Toast.makeText(getContext(), R.string.illegal_date, Toast.LENGTH_SHORT).show();
@@ -122,6 +124,7 @@ public class WeekCalendar extends CalendarPager implements OnClickWeekViewListen
         currectWeekView.setDateAndPoint(date, mSelectDateList, pointList);
         mSelectDate = date;
         lastSelectDate = date;
+        mSelectDateList = dateList;
 
         isPagerChanged = true;
 
@@ -143,6 +146,11 @@ public class WeekCalendar extends CalendarPager implements OnClickWeekViewListen
         weekView.setDateAndPoint(date, mSelectDateList, pointList);
         mSelectDate = date;
         lastSelectDate = date;
+        if (mSelectDateList.contains(mSelectDate)){
+            mSelectDateList.remove(mSelectDate);
+        }else {
+            mSelectDateList.add(mSelectDate);
+        }
         if (onWeekCalendarChangedListener != null) {
             onWeekCalendarChangedListener.onWeekCalendarChanged(date, mSelectDateList);
         }

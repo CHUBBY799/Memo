@@ -57,7 +57,7 @@ public class WeekView extends CalendarView {
                 canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius, mSolarPaint);
                 mSolarPaint.setColor(Color.WHITE);
                 canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
-            } else if (mSelectDate != null && date.equals(mSelectDate)) {
+            } else if (mSelectDateList != null && mSelectDateList.contains(date)) {
                 mSolarPaint.setColor(mSelectCircleColor);
                 canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius, mSolarPaint);
                 mSolarPaint.setColor(mHollowCircleColor);

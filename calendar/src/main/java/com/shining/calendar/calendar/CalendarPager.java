@@ -149,12 +149,7 @@ public abstract class CalendarPager extends ViewPager {
 
     protected abstract void initCurrentCalendarView(int position);
 
-    protected abstract void setDate(LocalDate date);
-
-    //设置日期
-    public void setDate(String formatDate) {
-        setDate(new LocalDate(formatDate));
-    }
+    protected abstract void setDate(LocalDate date, List<LocalDate> dateList);
 
     public void setPointList(List<String> pointList) {
 
