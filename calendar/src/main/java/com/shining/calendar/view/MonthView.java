@@ -66,8 +66,7 @@ public class MonthView extends CalendarView {
                         canvas.drawCircle(rect.centerX(), centerY, mSelectCircleRadius, mSolarPaint);
                         mSolarPaint.setColor(Color.WHITE);
                         canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
-                    } else if (mSelectDate != null && date.equals(mSelectDate)) {
-
+                    } else if (mSelectDateList != null && mSelectDateList.contains(date)) {
                         mSolarPaint.setColor(mSelectCircleColor);
                         int centerY = mRowNum == 5 ? rect.centerY() : (rect.centerY() + (mHeight / 5 - mHeight / 6) / 2);
                         canvas.drawCircle(rect.centerX(), centerY, mSelectCircleRadius, mSolarPaint);
@@ -190,6 +189,4 @@ public class MonthView extends CalendarView {
         int indexOf = dates.indexOf(mSelectDate);
         return indexOf / 7;
     }
-
-
 }

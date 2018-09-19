@@ -16,6 +16,7 @@ import java.util.List;
 public abstract class CalendarView extends View {
 
     protected LocalDate mSelectDate;//被选中的date
+    protected List<LocalDate> mSelectDateList;
     protected LocalDate mInitialDate;//初始传入的date
     protected int mWidth;
     protected int mHeight;
@@ -98,8 +99,9 @@ public abstract class CalendarView extends View {
         invalidate();
     }*/
 
-    public void setDateAndPoint(LocalDate date, List<String> pointList) {
+    public void setDateAndPoint(LocalDate date, List<LocalDate> datesList, List<String> pointList) {
         this.mSelectDate = date;
+        this.mSelectDateList = datesList;
         this.pointList = pointList;
         invalidate();
     }
@@ -113,7 +115,5 @@ public abstract class CalendarView extends View {
         this.pointList = pointList;
         invalidate();
     }
-
-
 
 }

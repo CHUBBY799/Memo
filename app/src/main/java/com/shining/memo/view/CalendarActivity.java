@@ -65,18 +65,18 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
 
 
     @Override
-    public void onCalendarChanged(LocalDate date) {
+    public void onCalendarChanged(LocalDate date, List<LocalDate> dateList) {
         tv_month.setText(formatMonthUS(date.getMonthOfYear()));
         tv_date.setText(String.format(getResources().getString(R.string.title_date),formatMonthUS(date.getMonthOfYear()),date.getDayOfMonth(),date.getYear()));
-        queryData(date.toString("yyyy-MM-dd"));
+        queryData(dateList);
     }
 
-    private void queryData(String date){
+    private void queryData(List<LocalDate> dateList){
         //查询数据库
 
         JSONArray infoArr = new JSONArray();
-        String title = "周六约同学吃饭" + " " + date;
-        for (int i = 0 ; i < 10 ; i++){
+        for(int i = 0 ; i < dateList.size() ; i++){
+            String title = "周六约同学吃饭" + " " + dateList.get(i);
             JSONObject info = new JSONObject();
             try {
                 info.put("title", title);

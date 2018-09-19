@@ -327,7 +327,7 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
 
     //月日历需要滑动的距离，
     private int getMonthCalendarOffset() {
-        MonthView currentMonthView = monthCalendar.getCurrectMonthView();
+        MonthView currentMonthView = monthCalendar.getCurrentMonthView();
         //该月有几行
         int rowNum = currentMonthView.getRowNum();
         //现在选中的是第几行
@@ -380,31 +380,31 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
     }
 
     @Override
-    public void onWeekCalendarChanged(LocalDate date) {
+    public void onWeekCalendarChanged(LocalDate date,  List<LocalDate> dateList) {
         if (STATE == WEEK) {
             monthCalendar.setDate(date);
             requestLayout();
             if (onCalendarChangedListener != null) {
-                onCalendarChangedListener.onCalendarChanged(date);
+                onCalendarChangedListener.onCalendarChanged(date ,dateList);
             }
         }
     }
 
     @Override
-    public void onMonthCalendarChanged(LocalDate date) {
+    public void onMonthCalendarChanged(LocalDate date, List<LocalDate> dateList) {
         //monthCalendarOffset在这里赋值，月日历改变的时候
         monthCalendarOffset = getMonthCalendarOffset();
 
         if (STATE == MONTH) {
             weekCalendar.setDate(date);
             if (onCalendarChangedListener != null) {
-                onCalendarChangedListener.onCalendarChanged(date);
+                onCalendarChangedListener.onCalendarChanged(date, dateList);
             }
         }
     }
 
 
-    private int dowmY;
+    private int downY;
     private int downX;
     private int lastY;//上次的y
     private int verticalY = 50;//竖直方向上滑动的临界值，大于这个值认为是竖直滑动
@@ -414,14 +414,14 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                dowmY = (int) ev.getY();
+                downY = (int) ev.getY();
                 downX = (int) ev.getX();
-                lastY = dowmY;
+                lastY = downY;
                 break;
             case MotionEvent.ACTION_MOVE:
                 int y = (int) ev.getY();
-                int absY = Math.abs(dowmY - y);
-                boolean inCalendar = isInCalendar(downX, dowmY);
+                int absY = Math.abs(downY - y);
+                boolean inCalendar = isInCalendar(downX, downY);
                 if (absY > verticalY && inCalendar) {
                     //onInterceptTouchEvent返回true，触摸事件交给当前的onTouchEvent处理
                     return true;

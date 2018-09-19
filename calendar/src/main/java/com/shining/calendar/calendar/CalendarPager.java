@@ -28,6 +28,7 @@ public abstract class CalendarPager extends ViewPager {
     protected int mCurrPage;
     protected LocalDate mInitialDate;//日历初始化date，即今天
     protected LocalDate mSelectDate;//当前页面选中的date
+    protected List<LocalDate> mSelectDateList = new ArrayList<>();
     protected List<String> pointList;//圆点
 
     protected boolean isPagerChanged = true;//是否是手动翻页

@@ -56,16 +56,13 @@ public class MonthCalendar extends CalendarPager implements OnClickMonthViewList
 
         //只处理翻页
         if (lastPosition == -1) {
-            currView.setDateAndPoint(mInitialDate, pointList);
+            currView.setDateAndPoint(mInitialDate, mSelectDateList, pointList);
             mSelectDate = mInitialDate;
             lastSelectDate = mInitialDate;
             if (onMonthCalendarChangedListener != null) {
-                onMonthCalendarChangedListener.onMonthCalendarChanged(mSelectDate);
+                onMonthCalendarChangedListener.onMonthCalendarChanged(mSelectDate, mSelectDateList);
             }
         } else if (isPagerChanged) {
-            int i = position - lastPosition;
-            mSelectDate = mSelectDate.plusMonths(i);
-
             if (isDefaultSelect) {
                 //日期越界
                 if (mSelectDate.isAfter(endDate)) {
@@ -73,14 +70,13 @@ public class MonthCalendar extends CalendarPager implements OnClickMonthViewList
                 } else if (mSelectDate.isBefore(startDate)) {
                     mSelectDate = startDate;
                 }
-
-                currView.setDateAndPoint(mSelectDate, pointList);
+                currView.setDateAndPoint(mSelectDate, mSelectDateList, pointList);
                 if (onMonthCalendarChangedListener != null) {
-                    onMonthCalendarChangedListener.onMonthCalendarChanged(mSelectDate);
+                    onMonthCalendarChangedListener.onMonthCalendarChanged(mSelectDate, mSelectDateList);
                 }
             } else {
                 if (Utils.isEqualsMonth(lastSelectDate, mSelectDate)) {
-                    currView.setDateAndPoint(lastSelectDate, pointList);
+                    currView.setDateAndPoint(lastSelectDate, mSelectDateList, pointList);
                 }
             }
 
@@ -106,25 +102,25 @@ public class MonthCalendar extends CalendarPager implements OnClickMonthViewList
 
         isPagerChanged = false;
 
-        MonthView currectMonthView = getCurrectMonthView();
-        LocalDate initialDate = currectMonthView.getInitialDate();
+        MonthView currentMonthView = getCurrentMonthView();
+        LocalDate initialDate = currentMonthView.getInitialDate();
 
         //不是当月
         if (!Utils.isEqualsMonth(initialDate, date)) {
             int months = Utils.getIntervalMonths(initialDate, date);
             int i = getCurrentItem() + months;
             setCurrentItem(i, Math.abs(months) < 2);
-            currectMonthView = getCurrectMonthView();
+            currentMonthView = getCurrentMonthView();
         }
 
-        currectMonthView.setDateAndPoint(date, pointList);
+        currentMonthView.setDateAndPoint(date, mSelectDateList, pointList);
         mSelectDate = date;
         lastSelectDate = date;
 
         isPagerChanged = true;
 
         if (onMonthCalendarChangedListener != null) {
-            onMonthCalendarChangedListener.onMonthCalendarChanged(mSelectDate);
+            onMonthCalendarChangedListener.onMonthCalendarChanged(mSelectDate, mSelectDateList);
         }
 
 
@@ -153,23 +149,27 @@ public class MonthCalendar extends CalendarPager implements OnClickMonthViewList
             Toast.makeText(getContext(), R.string.illegal_date, Toast.LENGTH_SHORT).show();
             return;
         }
-
         isPagerChanged = false;
         setCurrentItem(currentItem, true);
-        MonthView nMonthView = getCurrectMonthView();
-        nMonthView.setDateAndPoint(date, pointList);
+        MonthView nMonthView = getCurrentMonthView();
+        nMonthView.setDateAndPoint(date, mSelectDateList, pointList);
         mSelectDate = date;
         lastSelectDate = date;
+        if (mSelectDateList.contains(mSelectDate)){
+            mSelectDateList.remove(mSelectDate);
+        }else {
+            mSelectDateList.add(mSelectDate);
+        }
 
         isPagerChanged = true;
 
         if (onMonthCalendarChangedListener != null) {
-            onMonthCalendarChangedListener.onMonthCalendarChanged(date);
+            onMonthCalendarChangedListener.onMonthCalendarChanged(date, mSelectDateList);
         }
     }
 
 
-    public MonthView getCurrectMonthView() {
+    public MonthView getCurrentMonthView() {
         return (MonthView) calendarAdapter.getCalendarViews().get(getCurrentItem());
     }
 

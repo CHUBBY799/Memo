@@ -58,16 +58,13 @@ public class WeekCalendar extends CalendarPager implements OnClickWeekViewListen
 
         //只处理翻页
         if (lastPosition == -1) {
-            currView.setDateAndPoint(mInitialDate, pointList);
+            currView.setDateAndPoint(mInitialDate, mSelectDateList, pointList);
             mSelectDate = mInitialDate;
             lastSelectDate = mInitialDate;
             if (onWeekCalendarChangedListener != null) {
-                onWeekCalendarChangedListener.onWeekCalendarChanged(mSelectDate);
+                onWeekCalendarChangedListener.onWeekCalendarChanged(mSelectDate, mSelectDateList);
             }
         } else if (isPagerChanged) {
-            int i = position - lastPosition;
-            mSelectDate = mSelectDate.plusWeeks(i);
-
             if (isDefaultSelect) {
                 //日期越界
                 if (mSelectDate.isAfter(endDate)) {
@@ -76,13 +73,13 @@ public class WeekCalendar extends CalendarPager implements OnClickWeekViewListen
                     mSelectDate = startDate;
                 }
 
-                currView.setDateAndPoint(mSelectDate, pointList);
+                currView.setDateAndPoint(mSelectDate, mSelectDateList, pointList);
                 if (onWeekCalendarChangedListener != null) {
-                    onWeekCalendarChangedListener.onWeekCalendarChanged(mSelectDate);
+                    onWeekCalendarChangedListener.onWeekCalendarChanged(mSelectDate, mSelectDateList);
                 }
             } else {
                 if (Utils.isEqualsMonth(lastSelectDate, mSelectDate)) {
-                    currView.setDateAndPoint(lastSelectDate, pointList);
+                    currView.setDateAndPoint(lastSelectDate, mSelectDateList, pointList);
                 }
             }
 
@@ -122,14 +119,14 @@ public class WeekCalendar extends CalendarPager implements OnClickWeekViewListen
             currectWeekView = (WeekView) calendarViews.get(getCurrentItem());
         }
 
-        currectWeekView.setDateAndPoint(date, pointList);
+        currectWeekView.setDateAndPoint(date, mSelectDateList, pointList);
         mSelectDate = date;
         lastSelectDate = date;
 
         isPagerChanged = true;
 
         if (onWeekCalendarChangedListener != null) {
-            onWeekCalendarChangedListener.onWeekCalendarChanged(mSelectDate);
+            onWeekCalendarChangedListener.onWeekCalendarChanged(mSelectDate, mSelectDateList);
         }
     }
 
@@ -143,11 +140,11 @@ public class WeekCalendar extends CalendarPager implements OnClickWeekViewListen
         }
 
         WeekView weekView = (WeekView) calendarAdapter.getCalendarViews().get(getCurrentItem());
-        weekView.setDateAndPoint(date, pointList);
+        weekView.setDateAndPoint(date, mSelectDateList, pointList);
         mSelectDate = date;
         lastSelectDate = date;
         if (onWeekCalendarChangedListener != null) {
-            onWeekCalendarChangedListener.onWeekCalendarChanged(date);
+            onWeekCalendarChangedListener.onWeekCalendarChanged(date, mSelectDateList);
         }
 
     }
