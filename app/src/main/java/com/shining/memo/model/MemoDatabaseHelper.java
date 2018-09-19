@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.io.Serializable;
+
 public class MemoDatabaseHelper extends SQLiteOpenHelper{
     public static final String CREATE_TASK="create table task("
             +"id integer primary key autoincrement, "

@@ -17,7 +17,9 @@ import android.widget.ProgressBar;
 
 import com.shining.memo.R;
 
-public class RoundProgressBar extends ProgressBar {
+import java.io.Serializable;
+
+public class RoundProgressBar extends ProgressBar{
 
     private static final int DEFAULT_TEXT_SIZE = 10;
     private static final int DEFAULT_TEXT_COLOR = 0XFFC4C4C4;

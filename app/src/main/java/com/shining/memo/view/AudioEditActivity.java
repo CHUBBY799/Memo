@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,7 +36,7 @@ public class AudioEditActivity extends Activity implements View.OnClickListener,
     private String filePath = "";
     private int urgent = 0;
     private int alarm = 0;
-    public static boolean isplaying = false;
+    public  static boolean isplaying = false;
     private AudioPresenter audioPresenter;
     private RoundProgressBar mRoundProgressBar;
 
@@ -44,9 +45,24 @@ public class AudioEditActivity extends Activity implements View.OnClickListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_edit);
         init();
+        if(savedInstanceState != null){
+            alarm = savedInstanceState.getInt("alarm");
+            urgent = savedInstanceState.getInt("urgent");
+            isplaying = savedInstanceState.getBoolean("isplaying");
+            if(isplaying)
+                audioPresenter.doPlay();
+        }
     }
-
-
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(isplaying)
+            audioPresenter.onPausePlay();
+        outState.putInt("urgent",urgent);
+        outState.putInt("alarm",alarm);
+        outState.putString("filePath",filePath);
+        outState.putBoolean("isplaying",isplaying);
+    }
     private void init(){
         View view =  (View)findViewById(R.id.audio_edit_title);
         mBtnCancel = (Button)view.findViewById(R.id.title_edit_cancel);
@@ -69,7 +85,6 @@ public class AudioEditActivity extends Activity implements View.OnClickListener,
         mBtnReRecording.setOnClickListener(this);
         micImage.setOnClickListener(this);
     }
-
     public void deleteFile(){
         if(!filePath.equals("")){
             File file = new File(filePath);
@@ -78,23 +93,22 @@ public class AudioEditActivity extends Activity implements View.OnClickListener,
             filePath = "";
         }
     }
-
     @Override
     public Context getContext() {
         return this;
     }
-
     @Override
     public void onUpdateProgress(int progress) {
         mRoundProgressBar.setProgress(progress);
     }
-
     @Override
     public void onStopPlay() {
         isplaying = false;
-        mRoundProgressBar.setVisibility(View.GONE);
     }
-
+    @Override
+    public void onRemoverPlay() {
+        mRoundProgressBar.setProgress(0);
+    }
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -124,14 +138,12 @@ public class AudioEditActivity extends Activity implements View.OnClickListener,
                 clickMicphone();
         }
     }
-
     private void clickCancel(){
         deleteFile();
         Intent intent = new Intent();
         intent.setClass(this,MainActivity.class);
         startActivity(intent);
     }
-
     private void clickConfirm(){
         Task task = new Task();
         task.setType("audio");
@@ -149,12 +161,10 @@ public class AudioEditActivity extends Activity implements View.OnClickListener,
         }
 
     }
-
     private void clickAlarm(){
         Intent alarmIntent = new Intent(this, AlarmActivity.class);
         startActivityForResult(alarmIntent, 1);
     }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         switch (requestCode){
@@ -170,7 +180,6 @@ public class AudioEditActivity extends Activity implements View.OnClickListener,
                 break;
         }
     }
-
     private void clickEdit() throws JSONException {
         TaskModel t = new TaskImpl(this);
         List<JSONObject> list = t.getNotAlarmTasksByUrgentDesc(0);
@@ -184,7 +193,6 @@ public class AudioEditActivity extends Activity implements View.OnClickListener,
         intent.putExtra("filePath",filePath);
         startActivity(intent);
     }
-
     private void clickUrgent(){
         if (urgent == 0){
             urgent = 1;
@@ -194,20 +202,15 @@ public class AudioEditActivity extends Activity implements View.OnClickListener,
             mBtnUrgent.setActivated(false);
         }
     }
-
     private void clickRerecording(){
         deleteFile();
         Intent intent = new Intent();
         intent.setClass(this,AudioRecordingActivity.class);
         startActivity(intent);
     }
-
-
-
     private void clickMicphone(){
         if(!isplaying)
         {
-            mRoundProgressBar.setVisibility(View.VISIBLE);
             audioPresenter.doPlay();
             isplaying = true;
         }
@@ -216,6 +219,4 @@ public class AudioEditActivity extends Activity implements View.OnClickListener,
             isplaying = false;
         }
     }
-
-
 }

@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 public class AudioImpl implements AudioModel{
 
     private Context mContext;
