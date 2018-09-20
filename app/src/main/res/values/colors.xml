@@ -25,4 +25,6 @@
     <color name="audio_title">#666666</color>
     <color name="urgent_true">#FF4C4C</color>
     <color name="recording">#548B54</color>
+
+    <color name="add_new">#A9A9A9</color>
 </resources>
