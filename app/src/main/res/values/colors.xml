@@ -25,7 +25,12 @@
     <color name="urgent_true">#FF4C4C</color>
     <color name="recording">#548B54</color>
 
+<<<<<<< HEAD
     <color name="recording_title">#666666</color>
     <color name="content_background">#FAFAFA</color>
     <color name="underline_background">#EEEEEE</color>
+=======
+    <color name="add_new">#A9A9A9</color>
+    <color name="list_finish">#f9883c</color>
+>>>>>>> d34d9488f87a9539acd5bf856c10b834a73ae41f
 </resources>
