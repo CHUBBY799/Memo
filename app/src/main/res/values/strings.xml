@@ -33,9 +33,7 @@
     <string name="audio_recording">recording</string>
     <string name="audio_recording_initTime">00:00</string>
     <string name="audio_recording_btnText">press here to record</string>
-<<<<<<< HEAD
 
-=======
     <string name="task">Task</string>
     <string name="note">Note</string>
     <string name="list">List</string>
@@ -45,5 +43,5 @@
     <string name="note_new">Add a new note</string>
 
     <string name="list_finish">√</string>
->>>>>>> d34d9488f87a9539acd5bf856c10b834a73ae41f
+
 </resources>

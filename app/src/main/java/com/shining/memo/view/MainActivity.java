@@ -89,14 +89,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void audio(){
-<<<<<<< HEAD
+
 //        Intent calendarIntent = new Intent(this,AudioRecordingActivity.class);
 //        startActivity(calendarIntent);
-=======
+
         Intent calendarIntent = new Intent(this,AudioRecordingActivity.class);
         startActivity(calendarIntent);
         pop.dismiss();
->>>>>>> d34d9488f87a9539acd5bf856c10b834a73ae41f
+
     }
 
 
