@@ -41,4 +41,6 @@
     <string name="list_new">Add a new list</string>
     <string name="task_new">Add a new task</string>
     <string name="note_new">Add a new note</string>
+
+    <string name="list_finish">√</string>
 </resources>

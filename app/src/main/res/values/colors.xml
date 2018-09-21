@@ -27,4 +27,5 @@
     <color name="recording">#548B54</color>
 
     <color name="add_new">#A9A9A9</color>
+    <color name="list_finish">#f9883c</color>
 </resources>

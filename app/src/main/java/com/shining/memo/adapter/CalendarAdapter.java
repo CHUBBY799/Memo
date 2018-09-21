@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.shining.memo.R;
 
@@ -31,13 +32,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
-        TextView textView = holder.textView;
+        final TextView textView = holder.textView;
         textView.setText(title[position]);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Toast.makeText(context,textView.getText(),Toast.LENGTH_SHORT).show();
             }
         });
 

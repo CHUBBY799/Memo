@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 
 import com.shining.memo.R;
 
-public class ListFragment extends Fragment {
+public class TaskNew extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.list_title, container, false);
+        return inflater.inflate(R.layout.task_title, container, false);
     }
 }

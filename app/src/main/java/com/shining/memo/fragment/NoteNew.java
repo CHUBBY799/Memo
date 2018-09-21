@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.shining.memo.R;
 
-public class NoteFragment extends Fragment {
+public class NoteNew extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.note_title, container, false);
