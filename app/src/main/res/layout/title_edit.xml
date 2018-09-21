@@ -35,41 +35,41 @@
         android:id="@+id/title_edit_urgent"
         android:layout_width="72dp"
         android:layout_height="24dp"
+        android:layout_marginRight="18dp"
         android:background="@drawable/selector_urgent_color"
         android:text="@string/urgent"
         android:textColor="@android:color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/title_edit_alarm"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/title_edit_alarm"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginStart="18dp"
+        android:layout_marginRight="18dp"
         android:background="@drawable/alarm_clock_btn_48x48px"
         android:gravity="center"
         android:minHeight="0dp"
         android:minWidth="0dp"
         android:padding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/title_edit_urgent"
+        app:layout_constraintRight_toLeftOf="@+id/title_edit_edit"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/title_edit_edit"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginStart="18dp"
+        android:layout_marginRight="18dp"
         android:background="@drawable/text_style_btn_48x48px"
         android:gravity="center"
         android:minHeight="0dp"
         android:minWidth="0dp"
         android:padding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/title_edit_alarm"
+        app:layout_constraintRight_toLeftOf="@+id/title_edit_confirm"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button

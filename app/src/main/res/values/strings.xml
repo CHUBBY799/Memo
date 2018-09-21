@@ -2,7 +2,6 @@
     <string name="app_name">Memo</string>
     <string name="add_text">add_text</string>
     <string name="urgent">urgent</string>
-    <string name="edit_title_hint">Please input title of text</string>
     <string name="edit_content_hint">Please input content of text</string>
     <string name="text_cancel">×</string>
     <string name="text_clock">口</string>
@@ -29,9 +28,10 @@
     <string name="title_date">%1$s  %2$dth,%3$d</string>
 
     <string name="audio">audio</string>
-    <string name="edit_title_hint_audio">Please input title of audio</string>
+    <string name="edit_title_hint">Please input title of recording</string>
     <string name="audio_rerecording">rerecording</string>
     <string name="audio_recording">recording</string>
     <string name="audio_recording_initTime">00:00</string>
     <string name="audio_recording_btnText">press here to record</string>
+
 </resources>

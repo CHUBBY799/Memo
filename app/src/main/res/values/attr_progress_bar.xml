@@ -14,4 +14,8 @@
             <enum name="invisible" value="1" />
         </attr>
     </declare-styleable>
+    <declare-styleable name="LineEditText">
+        <attr name="lineColor" format="color"/>
+        <attr name="lineWidth" format="dimension"/>
+    </declare-styleable>
 </resources>

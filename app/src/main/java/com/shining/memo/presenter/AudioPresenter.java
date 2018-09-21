@@ -10,6 +10,10 @@ import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.shining.memo.model.Audio;
@@ -117,12 +121,11 @@ public class AudioPresenter{
             mMediaRecorder.reset();
             mMediaRecorder.release();
             mMediaRecorder = null;
-            if(((endTime - startTime) / 1000) < 1)
-            {
+            if(((endTime - startTime) / 1000) < 1) {
                 File file = new File(filePath);
                 if (file.exists())
                     file.delete();
-                Toast.makeText(context,"录音时长小于1S，请重新录制！",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "The recording time is less than 1S. Please rerecord it.", Toast.LENGTH_SHORT).show();
             }
             else {
                 viewAudioRecording.onStop(filePath);
@@ -173,7 +176,7 @@ public class AudioPresenter{
         }
     };
 
-    private int BASE = 10;
+    private int BASE = 100;
     private int SPACE = 500;// 间隔取样时间
     private void updateMicStatus() {
 
@@ -375,6 +378,14 @@ public class AudioPresenter{
             db.endTransaction();
         }
         return true;
+    }
+
+    public void setMediaPlayerNull(){
+        if(mMediaPlayer != null){
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
     }
 
 

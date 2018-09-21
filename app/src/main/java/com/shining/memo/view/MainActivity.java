@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void addText(){
-        Intent textIntent = new Intent(this,TextActivity.class);
+        Intent textIntent = new Intent(this,RecordingEditActivity.class);
         startActivity(textIntent);
     }
 
@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void audio(){
-        Intent calendarIntent = new Intent(this,AudioRecordingActivity.class);
-        startActivity(calendarIntent);
+//        Intent calendarIntent = new Intent(this,AudioRecordingActivity.class);
+//        startActivity(calendarIntent);
     }
 
 

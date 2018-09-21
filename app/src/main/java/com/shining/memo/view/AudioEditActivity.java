@@ -159,7 +159,7 @@ public class AudioEditActivity extends Activity implements View.OnClickListener,
         }else{
             Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
         }
-
+        audioPresenter.setMediaPlayerNull();
     }
     private void clickAlarm(){
         Intent alarmIntent = new Intent(this, AlarmActivity.class);
@@ -204,9 +204,9 @@ public class AudioEditActivity extends Activity implements View.OnClickListener,
     }
     private void clickRerecording(){
         deleteFile();
-        Intent intent = new Intent();
-        intent.setClass(this,AudioRecordingActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent();
+//        intent.setClass(this,AudioRecordingActivity.class);
+//        startActivity(intent);
     }
     private void clickMicphone(){
         if(!isplaying)

@@ -17,9 +17,11 @@ import android.text.Layout;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -63,6 +65,8 @@ public class AudioViewActivity extends Activity implements ViewAudioEdit,View.On
             isView = savedInstanceState.getBoolean("isView");
             if(isplaying)
                 audioPresenter.doPlay();
+            if(!isView)
+                nonView();
         }
     }
     @Override
@@ -77,6 +81,8 @@ public class AudioViewActivity extends Activity implements ViewAudioEdit,View.On
         outState.putString("title",title);
         outState.putBoolean("isplaying",isplaying);
         outState.putBoolean("isView",isView);
+        if(editTitle.hasFocus())
+            editTitle.clearFocus();
     }
     @Override
     public Context getContext() {
@@ -97,6 +103,19 @@ public class AudioViewActivity extends Activity implements ViewAudioEdit,View.On
         mRoundProgressBar.setProgress(0);
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (RecordingEditActivity.isShouldHideInput(v, ev)) {
+                if(RecordingEditActivity.hideInputMethod(this, v)) {
+                    editTitle.clearFocus();
+                    return true; //隐藏键盘时，其他控件不响应点击事件==》注释则不拦截点击事件
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
     public void onUpdateInfo(int taskId) {
         JSONObject object = audioPresenter.getAudioInfo(taskId);
         try {
@@ -191,6 +210,7 @@ public class AudioViewActivity extends Activity implements ViewAudioEdit,View.On
         editTitle.setOnFocusChangeListener( new FocusChangeListener());
     }
     private void clickBack(){
+        audioPresenter.setMediaPlayerNull();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
@@ -273,9 +293,9 @@ public class AudioViewActivity extends Activity implements ViewAudioEdit,View.On
                         file.delete();
                     filePath = "";
                 }
-                Intent intent = new Intent();
-                intent.setClass(AudioViewActivity.this,AudioRecordingActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent();
+//                intent.setClass(AudioViewActivity.this,AudioRecordingActivity.class);
+//                startActivity(intent);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -331,13 +351,19 @@ public class AudioViewActivity extends Activity implements ViewAudioEdit,View.On
         }else {
             Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
         }
-
+        audioPresenter.setMediaPlayerNull();
+    }
+    private void nonView(){
+        View view = findViewById(R.id.audio_view_title);
+        view.setVisibility(View.GONE);
+        view = (View)findViewById(R.id.audio_view_edit_title);
+        view.setVisibility(View.VISIBLE);
     }
     class FocusChangeListener implements View.OnFocusChangeListener{
 
         @Override
         public void onFocusChange(View view, boolean b) {
-            if(b){
+            if(b && isView){
                 View rect = findViewById(R.id.audio_view_title);
                 Animator animator = ViewAnimationUtils.createCircularReveal(rect,rect.getWidth()/2,rect.getHeight()/2,rect.getWidth()/2,0);
                 animator.setInterpolator(new AccelerateDecelerateInterpolator());
