@@ -94,7 +94,7 @@ public class AudioRecordingActivity extends Activity implements ViewAudioRecordi
 
     @Override
     public void onUpdate(double db, long time) {
-        //setmImageView(db);
+        mIvVolume.getDrawable().setLevel((int)(db / 10));
         Date date = new Date(time);
         SimpleDateFormat sd = new SimpleDateFormat("mm:ss");
         mTvTimes.setText(sd.format(date));

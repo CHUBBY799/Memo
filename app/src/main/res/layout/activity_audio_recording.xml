@@ -41,7 +41,7 @@
             android:layout_marginTop="30dp"
             android:layout_centerHorizontal="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/audio_type_icon_48x48px"/>
+            android:src="@drawable/audio_mic_level"/>
 
     </RelativeLayout>
 

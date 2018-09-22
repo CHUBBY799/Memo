@@ -15,7 +15,8 @@ public class MemoDatabaseHelper extends SQLiteOpenHelper{
             +"urgent integer, "
             +"alarm integer, "
             +"title text, "
-            +"deleted integer)";
+            +"deleted integer, "
+            +"finished integer)";
     public static final String CREATE_ALARM="create table alarm("
             +"id integer primary key autoincrement,"
             +"taskId integer,"
@@ -32,6 +33,10 @@ public class MemoDatabaseHelper extends SQLiteOpenHelper{
             +"taskId integer,"
             +"content text,"
             +"color text)";
+    public static final String CREATE_MIXRECORDING="create table recording("
+            +"id integer primary key autoincrement,"
+            +"taskId integer,"
+            +"recordingInfo text)";
     private Context mContext;
     public MemoDatabaseHelper(Context context, String name,
                               SQLiteDatabase.CursorFactory factory, int version){
@@ -49,7 +54,7 @@ public class MemoDatabaseHelper extends SQLiteOpenHelper{
         sqLiteDatabase.execSQL(CREATE_ALARM);
         sqLiteDatabase.execSQL(CREATE_AUDIO);
         sqLiteDatabase.execSQL(CREATE_TEXT);
-
+        sqLiteDatabase.execSQL(CREATE_MIXRECORDING);
     }
 
 }

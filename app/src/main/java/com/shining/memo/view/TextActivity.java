@@ -11,12 +11,15 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.shining.memo.R;
+import com.shining.memo.model.Recording;
+import com.shining.memo.model.RecordingContent;
 import com.shining.memo.presenter.TextPresenter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class TextActivity extends AppCompatActivity implements View.OnClickListener,ViewText {
 
@@ -53,6 +56,28 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
         if(title != null){
             textPresenter.requestTextInfo(title);
         }
+
+//
+//        Recording recording = new Recording();
+//        recording.setTaskId(1);
+//        HashMap<Integer,RecordingContent> map = new HashMap<>();
+//        RecordingContent content = new RecordingContent();
+//        content.setColor("#123456");
+//        content.setContent("1231231321dsadasdsawewq456!!!!sad");
+//        content.setType("text");
+//        map.put(1,content);
+//        content = new RecordingContent();
+//        content.setColor("#789789");
+//        content.setContent("78978979878978978978979878979!!!!sad");
+//        content.setType("text");
+//        map.put(2,content);
+//        recording.setRecordingMap(map);
+//        Log.d("TextActivity",recording.toString());
+//        String bytes = recording.serialize();
+//        Log.d("TextActivity",map.toString());
+//        Log.d("TextActivity",bytes);
+//        recording.deserialize(bytes);
+//        Log.d("TextActivity",recording.getRecordingMap().toString());
     }
 
     @Override

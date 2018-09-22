@@ -22,10 +22,15 @@
     <color name="alarm_true">#ff4081</color>
     <color name="alarm_false">#e0e0e0</color>
 
-    <color name="audio_title">#666666</color>
     <color name="urgent_true">#FF4C4C</color>
     <color name="recording">#548B54</color>
 
+
+    <color name="recording_title">#666666</color>
+    <color name="content_background">#FAFAFA</color>
+    <color name="underline_background">#EEEEEE</color>
+
     <color name="add_new">#A9A9A9</color>
     <color name="list_finish">#f9883c</color>
+
 </resources>
