@@ -18,6 +18,9 @@ import com.shining.memo.fragment.ListNew;
 import com.shining.memo.fragment.NoteNew;
 import com.shining.memo.fragment.TaskNew;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private TextView list;
@@ -105,6 +108,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         list.setOnClickListener(this);
         note.setOnClickListener(this);
         task.setOnClickListener(this);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        switch (requestCode){
+            case 1:
+                if (resultCode == RESULT_OK){
+                    JSONObject info = new JSONObject();
+                    String title = data.getStringExtra("title");
+                    //Boolean state = data.getBooleanExtra("state");
+                    try{
+                        info.put("title", title);
+                        info.put("state", false);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                    listContent.addInfo(info);
+                }
+                break;
+            default:
+        }
     }
 
     /**

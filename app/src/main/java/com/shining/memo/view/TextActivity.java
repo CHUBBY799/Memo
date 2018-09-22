@@ -112,7 +112,7 @@ public class TextActivity extends AppCompatActivity implements View.OnClickListe
             case 1:
                 if (resultCode == RESULT_OK){
                     String year = data.getStringExtra("year");
-                    Log.d("dsafas", year);
+                    Log.d("year", year);
                 }
                 break;
             default:

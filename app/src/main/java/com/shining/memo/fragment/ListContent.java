@@ -14,14 +14,18 @@ import com.shining.memo.R;
 import com.shining.memo.adapter.ListAdapter;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ListContent extends Fragment {
 
+    private RecyclerView recyclerView;
+    private ListAdapter listAdapter;
+    private JSONArray infoArr;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        infoArr = new JSONArray();
         return inflater.inflate(R.layout.content_layout, container, false);
     }
 
@@ -29,21 +33,18 @@ public class ListContent extends Fragment {
     public void onActivityCreated(Bundle saveInstanceState){
         super.onActivityCreated(saveInstanceState);
         Context context = getActivity();
-        RecyclerView recyclerView = getActivity().findViewById(R.id.recyclerView);
+        recyclerView = getActivity().findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        ListAdapter listAdapter = new ListAdapter(context);
-        JSONArray infoArr = new JSONArray();
-        for(int i = 0 ; i < 10 ; i++){
-            String title = "购物清单" + i;
-            JSONObject info = new JSONObject();
-            try {
-                info.put("title", title);
-                info.put("state",true);
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-            infoArr.put(info);
-        }
+        listAdapter = new ListAdapter(context);
+    }
+
+    public void addInfo(JSONObject info){
+        infoArr.put(info);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
         listAdapter.setInfo(infoArr, infoArr.length());
         recyclerView.setAdapter(listAdapter);
     }

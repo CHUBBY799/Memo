@@ -1,15 +1,11 @@
 package com.shining.memo.view;
 
-import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewAnimationUtils;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -72,7 +68,7 @@ public class AudioEditActivity extends Activity implements View.OnClickListener,
         mBtnUrgent = (Button)view.findViewById(R.id.title_edit_urgent);
         mBtnReRecording = (Button)findViewById(R.id.audio_rerecording);
         micImage = (ImageView)findViewById(R.id.image_mic_audio);
-        editTitle = (EditText)findViewById(R.id.edit_title_audio);
+        editTitle = (EditText)findViewById(R.id.list_title);
         filePath = getIntent().getStringExtra("filePath");
         audioPresenter = new AudioPresenter(this,filePath);
         mRoundProgressBar = (RoundProgressBar)findViewById(R.id.roundProgress);

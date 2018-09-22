@@ -7,23 +7,12 @@
     tools:context=".view.MainActivity">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/title_border"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="@color/alarm_background"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </android.support.constraint.ConstraintLayout>
-
-    <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:background="@color/alarm_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_border">
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/task"
