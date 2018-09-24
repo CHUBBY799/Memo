@@ -6,7 +6,6 @@ public class RecordingContent implements Serializable{
     private String type;
     private String content;
     private String color;
-    private String time;
 
     public String getType() {
         return type;
@@ -31,10 +30,6 @@ public class RecordingContent implements Serializable{
     public void setColor(String color) {
         this.color = color;
     }
-
-    public String getTime() { return time; }
-
-    public void setTime(String time) { this.time = time; }
 
     @Override
     public String toString() {

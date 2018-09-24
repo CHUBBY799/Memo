@@ -1,16 +1,29 @@
 package com.shining.memo.presenter;
 
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.shining.memo.adapter.RecordingAdapter;
+
 public class AudioPlayPresenter {
 
-    private static String playFilePath = "";     //录音文件路径
+    private String playFilePath = "";     //录音文件路径
     private static MediaPlayer mMediaPlayer;
+    private Context context;
+    private onStopPlay onStopPlay;
 
+    public AudioPlayPresenter(Context context, onStopPlay onStop) {
+        this.context = context;
+        onStopPlay = onStop;
+    }
 
-    public AudioPlayPresenter(String playFilePath) {
+    public String getPlayFilePath() {
+        return playFilePath;
+    }
+
+    public void setPlayFilePath(String playFilePath) {
         this.playFilePath = playFilePath;
     }
 
@@ -33,6 +46,8 @@ public class AudioPlayPresenter {
                             mMediaPlayer.reset();
                             mMediaPlayer.release();
                             mMediaPlayer = null;
+                            playFilePath = "";
+                            onStopPlay.onStopPlay();
                   //          viewAudioSetting.onStopPlay();
                         }
                     });
@@ -48,6 +63,7 @@ public class AudioPlayPresenter {
                  //           mHandlerProgress.removeMessages(MSG_PROGRESS_UPDATE);
                 //            viewAudioSetting.onStopPlay();
                             //释放播放器
+                            onStopPlay.onStopPlay();
                             return true;
                         }
                     });
@@ -60,6 +76,7 @@ public class AudioPlayPresenter {
              //       viewAudioSetting.onUpdateProgress(roundProgress);
              //       st = System.currentTimeMillis();
             //        mHandlerProgress.sendEmptyMessageDelayed(MSG_PROGRESS_UPDATE, 100);
+                    playFilePath = "";
                     mMediaPlayer.start();
 
                 }catch (Exception e){
@@ -69,6 +86,8 @@ public class AudioPlayPresenter {
                     mMediaPlayer.reset();
                     mMediaPlayer.release();
                     mMediaPlayer = null;
+                    playFilePath = "";
+                    onStopPlay.onStopPlay();
                 //    mHandlerProgress.removeMessages(MSG_PROGRESS_UPDATE);
                //     viewAudioSetting.onStopPlay();
                 }
@@ -80,6 +99,18 @@ public class AudioPlayPresenter {
         }
     }
 
+    public synchronized void onStop(){
+        if(mMediaPlayer != null){
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+            playFilePath = "";
+            onStopPlay.onStopPlay();
+        }
+    }
 
 
+    public interface onStopPlay{
+        void onStopPlay();
+    }
 }

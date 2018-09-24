@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.shining.memo.model.AudioModel;
 import com.shining.memo.model.MemoDatabaseHelper;
+import com.shining.memo.model.RecordingContent;
 import com.shining.memo.model.TaskModel;
 import com.shining.memo.view.ViewAudioRecording;
 import com.shining.memo.view.ViewRecord;
@@ -18,12 +19,13 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 public class AudioRecordPresenter {
 
     private static String filePath = "";     //录音文件路径
     private String FolderPath = "";     //文件夹路径
-    private String playFilePath = "";     //播放文件路径
     private MediaRecorder mMediaRecorder;   //音频录制API
     private static final int MAX_LENGTH = 1000 * 60 * 30;// 最大录音时长1000*60*30;
     private ViewRecord viewAudioRecording;
@@ -95,17 +97,20 @@ public class AudioRecordPresenter {
                 viewAudioRecording.onStop(filePath);
             }
             filePath = "";
-
         }catch (RuntimeException e){
             Log.e("Exception",e.getMessage());
-            mMediaRecorder.reset();
-            mMediaRecorder.release();
-            mMediaRecorder = null;
+            if(mMediaRecorder != null){
+                mMediaRecorder.reset();
+                mMediaRecorder.release();
+                mMediaRecorder = null;
 
+            }
             File file = new File(filePath);
             if (file.exists())
                 file.delete();
             filePath = "";
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return endTime - startTime;
     }
@@ -156,6 +161,108 @@ public class AudioRecordPresenter {
                 }
             }
             mHandler.postDelayed(mUpdateMicStatusTimer, SPACE);
+        }
+    }
+
+    public static int insertIndex = -1;
+    public HashMap<Integer, RecordingContent> insertAudioRecording(HashMap<Integer, RecordingContent> oldMap, List<String> text, int index,String filePath) {
+        HashMap<Integer, RecordingContent> map = new HashMap<>();
+        int number = 0;
+        if(text != null && oldMap != null){
+            if(!text.get(0).equals(""))
+                number = text.size();
+            else
+                number = 1;
+            String color = oldMap.get(index).getColor();
+            for(int i = oldMap.size() - 1; i > index; i--){
+                map.put(i + number,oldMap.get(i));
+            }
+            for(int i = 0; i < index; i++){
+                map.put(i,oldMap.get(i));
+            }
+            if(number > 1){
+                RecordingContent content = new RecordingContent();
+                content.setType("text");
+                content.setContent(text.get(number - 1));
+                content.setColor(color);
+                map.put(index + number,content);
+                content = new RecordingContent();
+                content.setType("audio");
+                content.setContent(filePath);
+                content.setColor(color);
+                map.put(index + 1,content);
+                insertIndex = index + 1;
+                Log.d("TAG", "onStop: "+ index);
+                Log.d("TAG", "onStop: "+ insertIndex);
+                content = new RecordingContent();
+                content.setType("text");
+                content.setContent(text.get(number - 2));
+                content.setColor(color);
+                map.put(index,content);
+            }else {
+                if(text.size() > 1 || (text.size() ==1 && text.get(0).equals(""))){
+                    Log.d("EDG", "insertAudioRecording: if");
+                    RecordingContent content = new RecordingContent();
+                    content.setType("text");
+                    if(text.size() > 1)
+                        content.setContent(text.get(1));
+                    else
+                        content.setContent(text.get(0));
+                    content.setColor(color);
+                    map.put(index + 1,content);
+                    content = new RecordingContent();
+                    content.setType("audio");
+                    content.setContent(filePath);
+                    content.setColor(color);
+                    map.put(index,content);
+                    insertIndex = index;
+                }
+                else {
+                    RecordingContent content = new RecordingContent();
+                    content.setType("text");
+                    content.setContent(text.get(0));
+                    content.setColor(color);
+                    map.put(index,content);
+                    content = new RecordingContent();
+                    content.setType("audio");
+                    content.setContent(filePath);
+                    content.setColor(color);
+                    map.put(index + 1,content);
+                    insertIndex = index + 1;
+                }
+            }
+            String newStr = "";
+            for(int i = 0;i < viewAudioRecording.getDefaultNumber() - 1;i++)
+                newStr += "\n";
+            map.get(map.size() - 1).setContent(newStr);
+            viewAudioRecording.DefaultEditText(number - 1, map.size() - 1);
+        }
+        return map;
+    }
+
+    public void insertAudioRecording(HashMap<Integer, RecordingContent> map,String filePath,int number) {
+        int index = map.size();
+        String color,strContent = map.get(index - 1).getContent();
+        if(index > 1)
+            color = map.get(index - 1).getColor();
+        else
+            color = "#000000";
+        strContent = strContent.replace("\n","");
+        if(strContent.equals(""))
+        {
+            RecordingContent content = map.get(index -1);
+            StringBuffer strBuf = new StringBuffer();
+            for (int i = 0; i < number - 1; i++)
+                strBuf.append("\n");
+            content.setContent(strBuf.toString());
+            map.put(index,content);
+            content = new RecordingContent();
+            content.setType("audio");
+            content.setContent(filePath);
+            content.setColor(color);
+            map.put(index - 1,content);
+            insertIndex = index - 1;
+            viewAudioRecording.DefaultEditText(number - 1,index);
         }
     }
 }

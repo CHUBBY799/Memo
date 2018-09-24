@@ -5,8 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,14 +22,15 @@ import android.widget.EditText;
 import com.shining.memo.R;
 import com.shining.memo.adapter.RecordingAdapter;
 import com.shining.memo.model.RecordingContent;
+import com.shining.memo.presenter.AudioPlayPresenter;
 import com.shining.memo.presenter.AudioRecordPresenter;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
 
-public class RecordingEditActivity extends Activity implements View.OnClickListener,ViewRecord,View.OnTouchListener {
+public class RecordingEditActivity extends Activity implements View.OnClickListener,ViewRecord,View.OnTouchListener, RecordingAdapter.TextChanged {
 
     private Button mBtnCancel,mBtnConfirm,mBtnAlarm,mBtnEdit,mBtnUrgent,mBtnRecord;
     private EditText editTitle;
@@ -58,14 +59,24 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         mMap.put(1,data);
         data = new RecordingContent();
         data.setType("audio");
-        data.setContent("/storage/emulated/0/record/20180102074802.amr");
-        data.setTime("00:10");
+        data.setContent("/storage/emulated/0/record/20180107064032.amr");
         mMap.put(2,data);
-        adapter = new RecordingAdapter(mMap,this);
+        adapter = new RecordingAdapter(mMap,this,this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
                 LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                initRecycleView();
+            }
+        });
     }
 
     private void init(){
@@ -78,9 +89,6 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         mBtnRecord = (Button)findViewById(R.id.audio_recording);
         mRecyclerView = (RecyclerView)findViewById(R.id.recording_recyclerView);
         editTitle = (EditText)findViewById(R.id.recording_title);
-
-//      audioPresenter = new AudioPresenter(this,filePath);
-
         mBtnCancel.setOnClickListener(this);
         mBtnConfirm.setOnClickListener(this);
         mBtnAlarm.setOnClickListener(this);
@@ -90,6 +98,28 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         mRecyclerView.setOnClickListener(this);
     }
 
+    private static int number = -1,tagIndex = -1;
+    private void initRecycleView(){
+        int totalHeight = mRecyclerView.getHeight();
+        View view = (View)findViewById(R.id.lineHeight);
+        EditText editText = (EditText)view.findViewById(R.id.item_editText);
+        int lineHeight = editText.getLineHeight();
+        int usedHeight = 0;
+        for(int i = 0; i < mMap.size(); i++){
+            usedHeight += mRecyclerView.getChildAt(i).getHeight();
+        }
+        number = (int)Math.ceil((totalHeight - usedHeight)/ lineHeight);
+        String string = "";
+        for(int i = 0; i < number; i++)
+            string += "\n";
+        tagIndex = mMap.size();
+        RecordingContent content = new RecordingContent();
+        content.setType("text");
+        content.setColor("#000000");
+        content.setContent(string);
+        mMap.put(mMap.size(),content);
+        adapter.notifyDataSetChanged();
+    }
 
     public static Boolean hideInputMethod(Context context, View v) {
         InputMethodManager imm = (InputMethodManager) context
@@ -191,6 +221,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         if (urgent == 0){
             urgent = 1;
             mBtnUrgent.setActivated(true);
+            int usedHeight = 0;
         }else {
             urgent = 0;
             mBtnUrgent.setActivated(false);
@@ -208,6 +239,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         } else {
             presenter = new AudioRecordPresenter(this);
             presenter.startRecord();
+            mBtnRecord.setText("Release button to save");
         }
     }
     @Override
@@ -236,13 +268,45 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     }
 
     @Override
-    public void onStop(String filePath) {
+    public void onStop(String filePath){
+        Log.d("EDG", "onStop: "+ filePath);
         int index = adapter.getCurrentIndex();
         if( index != -1){
             List<String> text =  adapter.distachText(mRecyclerView);
-            
-        }
+            HashMap<Integer,RecordingContent> map= presenter.insertAudioRecording(mMap,text,index,filePath);
+            mMap.clear();
+            mMap.putAll(map);
+            Log.d("RecordingAdapter", mMap.toString());
+            adapter.notifyItemRangeChanged(index,mMap.size() - index);
 
+            if(AudioRecordPresenter.insertIndex + 1 < mMap.size() && mMap.get(AudioRecordPresenter.insertIndex + 1).getType().equals("text")){
+                 mRecyclerView.post(new Runnable() {
+                     @Override
+                     public void run() {
+                         requestFocusable(AudioRecordPresenter.insertIndex + 1,0,"first");
+                     }
+                 });
+            }
+        }else{
+            presenter.insertAudioRecording(mMap,filePath,number);
+            adapter.notifyItemRangeChanged(mMap.size() - 1,mMap.size());
+        }
+    }
+
+    private void test(){
+        for(int i=0; i<mRecyclerView.getChildCount();i++){
+            View v = mRecyclerView.getChildAt(i);
+            try{
+                RecordingAdapter.TextViewHolder holder = (RecordingAdapter.TextViewHolder)
+                        mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
+                Log.d("TAG", "test: " + holder.editText.getText().toString());
+            }catch(Exception e){
+                RecordingAdapter.AudioViewHolder holder = (RecordingAdapter.AudioViewHolder)
+                        mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
+                Log.d("TAG", "test: " + holder.button.getText().toString());
+            }
+
+        }
     }
 
     @Override
@@ -257,7 +321,6 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                     presenter.cancelRecord();    //取消录音（不保存录音文件）
            //         mTvTimes.setText("00:00");
            //         mBtnRecord.setText("Press here to record");
-
                     break;
                 case MotionEvent.ACTION_UP:
                     if(motionEvent.getX() < 0 || motionEvent.getX() > view.getWidth()
@@ -275,6 +338,64 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         return true;
     }
 
+    @Override
+    public int getCurrentFirstIndex() {
+        RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
+        LinearLayoutManager linearManager = (LinearLayoutManager) layoutManager;
+        return linearManager.findFirstVisibleItemPosition();
+    }
 
+    @Override
+    public void requestFocusable(int index,int  position, String type) {
+        if(index >= 0){
+            test();
+            mRecyclerView.requestFocus();
+            mRecyclerView.getChildAt(index - getCurrentFirstIndex()).requestFocus();
+            if( mMap.get(index).getType() == "text"){
+                Log.d("TAG", "requestFocusable: " + (index - getCurrentFirstIndex()) +"--" + index + "--" + getCurrentFirstIndex());
+                RecordingAdapter.TextViewHolder holder = (RecordingAdapter.TextViewHolder)
+                        mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(index - getCurrentFirstIndex()));
+                if(type.equals("end"))
+                    holder.editText.setSelection(holder.editText.getText().toString().length());
+                else if(type.equals("specific"))
+                    holder.editText.setSelection(position);
+                else
+                    holder.editText.setSelection(0);
+            }
+        }
+    }
+
+    @Override
+    public HashMap<Integer, RecordingContent> getMap() {
+        return mMap;
+    }
+
+    @Override
+    public void deleteEditText(HashMap<Integer, RecordingContent> map,final int index, final int position, final String type) {
+        adapter.notifyItemRemoved(index);
+        adapter.notifyItemRangeChanged(index - 1,mMap.size());
+        mRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                requestFocusable(index - 1,position,type);
+            }
+        });
+    }
+
+    @Override
+    public void TextChanged(String text,int index) {
+        mMap.get(index).setContent(text);
+        Log.d("TextChanged", "TextChanged: "+ mMap.toString());
+    }
+    @Override
+    public void DefaultEditText(int number, int index) {
+        this.number = number;
+        tagIndex = index;
+    }
+
+    @Override
+    public int getDefaultNumber() {
+        return number;
+    }
 
 }
