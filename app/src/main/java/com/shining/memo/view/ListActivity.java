@@ -11,6 +11,7 @@ import android.widget.EditText;
 
 import com.shining.memo.R;
 import com.shining.memo.adapter.ListItemAdapter;
+import com.shining.memo.widget.CustomFAB;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +26,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private EditText listTitle;
     private RecyclerView listContent;
     private ListItemAdapter listItemAdapter;
+    private CustomFAB addNewItem;
 
     private JSONArray itemArr;
 
@@ -48,9 +50,28 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.list_confirm:
                 listConfirm();
                 break;
+            case R.id.add_new_item:
+                addNewItem();
+                break;
             default:
                 break;
         }
+    }
+
+    /**
+     * 添加新的子菜单
+     */
+    private void addNewItem(){
+        try{
+            JSONObject item = new JSONObject();
+            item.put("title", "跑步");
+            item.put("state", false);
+            itemArr.put(item);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        listItemAdapter.setInfo(itemArr, itemArr.length());
+        listContent.setAdapter(listItemAdapter);
     }
 
     /**
@@ -76,21 +97,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         listContent.setLayoutManager(new LinearLayoutManager(this));
         listItemAdapter = new ListItemAdapter(this);
 
+        addNewItem = findViewById(R.id.add_new_item);
 
-        //list的子菜单
         itemArr = new JSONArray();
-        try{
-            for (int i = 0 ; i < 5 ; i++){
-                JSONObject item = new JSONObject();
-                item.put("title", "跑步" + i);
-                item.put("state", false);
-                itemArr.put(item);
-            }
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        listItemAdapter.setInfo(itemArr, itemArr.length());
-        listContent.setAdapter(listItemAdapter);
     }
 
     private void initComponent(){
@@ -98,5 +107,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         listThumbtack.setOnClickListener(this);
         listDelete.setOnClickListener(this);
         listConfirm.setOnClickListener(this);
+        addNewItem.setOnClickListener(this);
     }
 }
