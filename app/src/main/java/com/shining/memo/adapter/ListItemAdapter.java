@@ -16,14 +16,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
+public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyViewHolder> {
 
     private Context context;
     private String[] title;
     private Boolean[] state;
     private int length;
 
-    public ListAdapter(Context context) {
+    public ListItemAdapter(Context context) {
         this.context = context;
     }
 
@@ -33,7 +33,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ListAdapter.MyViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         final TextView contentTitle = holder.contentTitle;
         final TextView contentState = holder.contentState;
         contentTitle.setText(title[position]);
@@ -90,8 +90,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
         TextView contentState;
         public MyViewHolder(View itemView) {
             super(itemView);
-            contentTitle = itemView.findViewById(R.id.list_title);
-            contentState = itemView.findViewById(R.id.list_state);
+            contentTitle = itemView.findViewById(R.id.item_title);
+            contentState = itemView.findViewById(R.id.item_state);
         }
     }
 

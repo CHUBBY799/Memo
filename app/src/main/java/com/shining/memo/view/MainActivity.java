@@ -13,7 +13,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.shining.memo.R;
-import com.shining.memo.fragment.ListContent;
+import com.shining.memo.fragment.ListTitle;
 import com.shining.memo.fragment.ListNew;
 import com.shining.memo.fragment.NoteNew;
 import com.shining.memo.fragment.TaskNew;
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ListNew listNew;
     private NoteNew noteNew;
     private TaskNew taskNew;
-    private ListContent listContent;
+    private ListTitle listTitle;
 
     private FragmentManager fragmentManager;
     private PopupWindow pop;
@@ -122,14 +122,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (resultCode == RESULT_OK){
                     JSONObject info = new JSONObject();
                     String title = data.getStringExtra("title");
+                    String itemArr = data.getStringExtra("itemArr");
                     //Boolean state = data.getBooleanExtra("state");
                     try{
                         info.put("title", title);
                         info.put("state", false);
+                        info.put("itemArr", itemArr);
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
-                    listContent.addInfo(info);
+                    listTitle.addInfo(info);
                 }
                 break;
             default:
@@ -173,14 +175,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     transaction.show(listNew);
                 }
 
-                if (listContent == null) {
+                if (listTitle == null) {
                     // 如果ListFragment为空，则创建一个并添加到界面上
-                    listContent = new ListContent();
-                    transaction.add(R.id.content_list, listContent);
+                    listTitle = new ListTitle();
+                    transaction.add(R.id.content_list, listTitle);
 
                 } else {
                     // 如果ListFragment不为空，则直接将它显示出来
-                    transaction.show(listContent);
+                    transaction.show(listTitle);
                 }
 
                 break;
@@ -216,8 +218,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (taskNew != null) {
             transaction.hide(taskNew);
         }
-        if (listContent != null){
-            transaction.hide(listContent);
+        if (listTitle != null){
+            transaction.hide(listTitle);
         }
     }
 

@@ -11,15 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.shining.memo.R;
-import com.shining.memo.adapter.ListAdapter;
+import com.shining.memo.adapter.ListTitleAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ListContent extends Fragment {
+public class ListTitle extends Fragment {
 
     private RecyclerView recyclerView;
-    private ListAdapter listAdapter;
+    private ListTitleAdapter listAdapter;
     private JSONArray infoArr;
 
     @Override
@@ -35,7 +35,7 @@ public class ListContent extends Fragment {
         Context context = getActivity();
         recyclerView = getActivity().findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        listAdapter = new ListAdapter(context);
+        listAdapter = new ListTitleAdapter(context);
     }
 
     public void addInfo(JSONObject info){

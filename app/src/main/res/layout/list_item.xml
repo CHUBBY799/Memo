@@ -3,36 +3,35 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="55dp"
+    android:layout_height="40dp"
     android:layout_marginStart="10dp"
     android:layout_marginEnd="10dp"
     android:layout_marginTop="10dp"
     android:background="@drawable/white_rectangle_background">
 
-
     <TextView
-        android:id="@+id/list_title"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:id="@+id/item_state"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
         android:layout_marginStart="16dp"
+        android:background="@drawable/non_oval_background"
         android:gravity="center"
-        android:textColor="@color/add_new"
-        android:textSize="18sp"
+        android:textColor="@color/list_finish"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/list_state"
+        android:id="@+id/item_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
         android:gravity="center"
-        android:textColor="@color/list_finish"
-        android:textSize="18sp"
-        android:background="@drawable/non_oval_background"
+        android:textColor="@color/add_new"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/item_state"
         app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

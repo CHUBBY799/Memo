@@ -44,4 +44,5 @@
 
     <string name="list_finish">√</string>
     <string name="hint_list_title">please input title of list</string>
+    <string name="list_launches_icon">List launches Icon</string>
 </resources>
