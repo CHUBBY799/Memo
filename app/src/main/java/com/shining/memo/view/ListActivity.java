@@ -12,6 +12,7 @@ import android.widget.EditText;
 import com.shining.memo.R;
 import com.shining.memo.adapter.ListItemAdapter;
 import com.shining.memo.widget.CustomFAB;
+import com.shining.memo.widget.ListDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,16 +63,33 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      * 添加新的子菜单
      */
     private void addNewItem(){
-        try{
-            JSONObject item = new JSONObject();
-            item.put("title", "跑步");
-            item.put("state", false);
-            itemArr.put(item);
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        listItemAdapter.setInfo(itemArr, itemArr.length());
-        listContent.setAdapter(listItemAdapter);
+        final ListDialog listDialog = new ListDialog(ListActivity.this);
+        listDialog.setYesOnclickListener(new ListDialog.onYesOnclickListener() {
+            @Override
+            public void onYesClick() {
+                listDialog.setTitle();
+                String title = listDialog.getTitle();
+                Boolean state = listDialog.getState();
+                listDialog.dismiss();
+                try{
+                    JSONObject item = new JSONObject();
+                    item.put("title", title);
+                    item.put("state", state);
+                    itemArr.put(item);
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                listItemAdapter.setInfo(itemArr, itemArr.length());
+                listContent.setAdapter(listItemAdapter);
+            }
+        });
+        listDialog.setNoOnclickListener(new ListDialog.onNoOnclickListener() {
+            @Override
+            public void onNoClick() {
+                listDialog.dismiss();
+            }
+        });
+        listDialog.show();
     }
 
     /**
