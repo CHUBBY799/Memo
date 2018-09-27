@@ -1,16 +1,15 @@
 package com.shining.memo.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.shining.memo.R;
-import com.shining.memo.view.TextActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,9 +18,8 @@ import org.json.JSONObject;
 public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyViewHolder> {
 
     private Context context;
-    private String[] title;
-    private Boolean[] state;
     private int length;
+    private JSONArray itemArr;
 
     public ListItemAdapter(Context context) {
         this.context = context;
@@ -29,40 +27,90 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
 
     @Override
     public @NonNull MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item, parent,false));
+        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.item_edit, parent,false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-        final TextView contentTitle = holder.contentTitle;
-        final TextView contentState = holder.contentState;
-        contentTitle.setText(title[position]);
-        if (state[position]){
-            contentState.setText(R.string.list_finish);
+        final EditText itemContent = holder.itemContent;
+        final TextView itemState = holder.itemState;
+
+        final JSONObject itemInfo;
+        String content = null;
+        boolean state = false;
+        try {
+            itemInfo = itemArr.getJSONObject(position);
+            content = itemInfo.getString("content");
+            state = itemInfo.getBoolean("state");
+        }catch (JSONException e){
+            e.printStackTrace();
         }
 
-        contentTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent textIntent = new Intent(context,TextActivity.class);
-                context.startActivity(textIntent);
-            }
-        });
+        itemContent.setText(content);
+        if (state){
+            itemState.setText(R.string.list_finish);
+        }
 
-        contentState.setOnClickListener(new View.OnClickListener() {
-            int index = holder.getAdapterPosition();
+        itemState.setOnClickListener(new View.OnClickListener() {
+            int stateIndex = holder.getAdapterPosition();
+            boolean tempState;
             @Override
             public void onClick(View v) {
-                if (state[index]){
-                    state[index] = false;
-                    contentState.setText("");
+                if (itemState.getText().toString().equals("")){
+                    itemState.setText(R.string.list_finish);
+                    tempState = true;
                 }else {
-                    state[index] = true;
-                    contentState.setText(R.string.list_finish);
+                    itemState.setText("");
+                    tempState = false;
+                }
+                try {
+                    JSONObject itemInfo = new JSONObject();
+                    itemInfo.put("state", tempState);
+                    itemInfo.put("content", itemContent.getText().toString());
+                    itemArr.put(stateIndex, itemInfo);
+                }catch (JSONException e){
+                    e.printStackTrace();
                 }
             }
         });
 
+        itemContent.setOnFocusChangeListener(new android.view.View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    if (holder.getAdapterPosition() == length - 1){
+                        try {
+                            JSONObject itemInfo = new JSONObject();
+                            itemInfo.put("state", false);
+                            itemInfo.put("content", "");
+                            itemArr.put(itemInfo);
+                            setInfo(itemArr, itemArr.length());
+                            notifyItemChanged(length);
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    int contentIndex = holder.getAdapterPosition();
+                    if(itemContent.getText().toString().equals("")){
+                        itemArr.remove(contentIndex);
+                        setInfo(itemArr, itemArr.length());
+                        notifyItemRemoved(contentIndex);
+                        notifyItemRangeChanged(contentIndex,length - contentIndex);
+                    }else {
+                        try {
+                            boolean tempState = (!itemState.getText().toString().equals(""));
+                            JSONObject itemInfo = new JSONObject();
+                            itemInfo.put("state", tempState);
+                            itemInfo.put("content", itemContent.getText().toString());
+                            itemArr.put(contentIndex, itemInfo);
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -70,28 +118,18 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
         return length;
     }
 
-    public void setInfo(JSONArray infoArr, int length){
+    public void setInfo(JSONArray itemArr, int length){
         this.length = length;
-        title = new String[length];
-        state = new Boolean[length];
-        for (int i = 0 ; i < length ; i++){
-            try {
-                JSONObject info = infoArr.getJSONObject(i);
-                title[i] = info.getString("title");
-                state[i] = info.getBoolean("state");
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
+        this.itemArr = itemArr;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView contentTitle;
-        TextView contentState;
+        EditText itemContent;
+        TextView itemState;
         public MyViewHolder(View itemView) {
             super(itemView);
-            contentTitle = itemView.findViewById(R.id.item_title);
-            contentState = itemView.findViewById(R.id.item_state);
+            itemContent = itemView.findViewById(R.id.item_content);
+            itemState = itemView.findViewById(R.id.item_state);
         }
     }
 
