@@ -123,6 +123,10 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
         this.itemArr = itemArr;
     }
 
+    public JSONArray getItemArr(){
+        return itemArr;
+    }
+
     class MyViewHolder extends RecyclerView.ViewHolder {
         EditText itemContent;
         TextView itemState;

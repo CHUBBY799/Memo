@@ -44,11 +44,10 @@
     <string name="item_new">Add a new item</string>
 
     <string name="list_finish">√</string>
-    <string name="hint_list_title">please input title of list</string>
     <string name="list_launches_icon">List launches Icon</string>
     <string name="cancer">Cancer</string>
     <string name="confirm">Confirm</string>
-    <string name="state">State</string>
-    <string name="title">Title</string>
-    <string name="item_content">Please input content of item</string>
+    <string name="state">state</string>
+    <string name="title">title</string>
+    <string name="item">item</string>
 </resources>
