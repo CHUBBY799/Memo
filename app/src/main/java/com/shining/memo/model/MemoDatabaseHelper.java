@@ -4,8 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.io.Serializable;
-
 public class MemoDatabaseHelper extends SQLiteOpenHelper{
     public static final String CREATE_TASK="create table task("
             +"id integer primary key autoincrement, "
@@ -37,11 +35,14 @@ public class MemoDatabaseHelper extends SQLiteOpenHelper{
             +"id integer primary key autoincrement,"
             +"taskId integer,"
             +"recordingInfo text)";
-    private Context mContext;
+    public static final String CREATE_TB_LIST="create table tb_list("
+            +"id integer primary key autoincrement,"
+            +"state integer,"
+            +"title text,"
+            +"itemArr text)";
     public MemoDatabaseHelper(Context context, String name,
                               SQLiteDatabase.CursorFactory factory, int version){
         super(context,name,factory,version);
-        mContext=context;
     }
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
@@ -55,6 +56,6 @@ public class MemoDatabaseHelper extends SQLiteOpenHelper{
         sqLiteDatabase.execSQL(CREATE_AUDIO);
         sqLiteDatabase.execSQL(CREATE_TEXT);
         sqLiteDatabase.execSQL(CREATE_MIXRECORDING);
+        sqLiteDatabase.execSQL(CREATE_TB_LIST);
     }
-
 }

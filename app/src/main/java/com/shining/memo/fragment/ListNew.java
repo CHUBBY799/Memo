@@ -17,7 +17,7 @@ public class ListNew extends Fragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.list_title, container, false);
+        return inflater.inflate(R.layout.list_new, container, false);
     }
 
     @Override
