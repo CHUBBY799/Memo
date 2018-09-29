@@ -1,11 +1,13 @@
 package com.shining.memo.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.shining.calendar.calendar.NCalendar;
@@ -21,14 +23,16 @@ import java.util.List;
 
 import com.shining.memo.R;
 import com.shining.memo.adapter.CalendarAdapter;
+import com.shining.memo.presenter.CalendarPresenter;
+import com.shining.memo.utils.Utils;
 
 public class CalendarActivity extends AppCompatActivity implements OnCalendarChangedListener{
 
     private NCalendar ncalendar;
     private RecyclerView recyclerView;
     private CalendarAdapter calendarAdapter;
-    private TextView tv_month;
-    private TextView tv_date;
+    private TextView calendar_month;
+    private Button calendar_close;
 
 
     @Override
@@ -40,6 +44,13 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
 
         initView();
+
+        calendar_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         calendarAdapter = new CalendarAdapter(this);
@@ -66,27 +77,16 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
 
     @Override
     public void onCalendarChanged(LocalDate date, List<LocalDate> dateList) {
-        tv_month.setText(formatMonthUS(date.getMonthOfYear()));
-        tv_date.setText(String.format(getResources().getString(R.string.title_date),formatMonthUS(date.getMonthOfYear()),date.getDayOfMonth(),date.getYear()));
-        queryData(dateList);
+        calendar_month.setText(Utils.formatMonthUS(date.getMonthOfYear()));
+        CalendarPresenter calendarPresenter = new CalendarPresenter(this);
+        JSONArray taskDataArr = calendarPresenter.queryData(dateList);
+        calendarAdapter.setInfo(taskDataArr, taskDataArr.length());
+        recyclerView.setAdapter(calendarAdapter);
     }
 
-    private void queryData(List<LocalDate> dateList){
-        //查询数据库
 
-        JSONArray infoArr = new JSONArray();
-        for(int i = 0 ; i < dateList.size() ; i++){
-            String title = "周六约同学吃饭" + " " + dateList.get(i);
-            JSONObject info = new JSONObject();
-            try {
-                info.put("title", title);
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-            infoArr.put(info);
-        }
-        calendarAdapter.setInfo(infoArr, infoArr.length());
-        recyclerView.setAdapter(calendarAdapter);
+    public Context getContext(){
+        return this;
     }
 
     public void setPoint(View view) {
@@ -102,55 +102,10 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         ncalendar.setPoint(list);
     }
 
-    private String formatMonthUS(int month){
-        String resultMonth = null;
-        switch (month){
-            case 1:
-                resultMonth = "Jan";
-                break;
-            case 2:
-                resultMonth = "Feb";
-                break;
-            case 3:
-                resultMonth = "Mar";
-                break;
-            case 4:
-                resultMonth = "Apr";
-                break;
-            case 5:
-                resultMonth = "May";
-                break;
-            case 6:
-                resultMonth = "Jun";
-                break;
-            case 7:
-                resultMonth = "Jul";
-                break;
-            case 8:
-                resultMonth = "Aug";
-                break;
-            case 9:
-                resultMonth = "Sep";
-                break;
-            case 10:
-                resultMonth = "Oct";
-                break;
-            case 11:
-                resultMonth = "Nov";
-                break;
-            case 12:
-                resultMonth = "Dec";
-                break;
-            default:
-                break;
-        }
-        return resultMonth;
-    }
-
     private void initView(){
         ncalendar = findViewById(R.id.calendar_content);
         recyclerView = findViewById(R.id.recyclerView);
-        tv_month = findViewById(R.id.tv_month);
-        tv_date = findViewById(R.id.tv_date);
+        calendar_month = findViewById(R.id.calendar_month);
+        calendar_close = findViewById(R.id.calendar_close);
     }
 }

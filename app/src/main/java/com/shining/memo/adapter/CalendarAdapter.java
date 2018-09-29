@@ -18,7 +18,11 @@ import org.json.JSONObject;
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyViewHolder> {
 
     private Context context;
-    private String[] title;
+    private int[] task_id;
+    private int[] task_finished;
+    private String[] task_title;
+    private String[] task_day;
+    private String[] task_month;
     private int length;
 
     public CalendarAdapter(Context context) {
@@ -27,21 +31,28 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
 
     @Override
     public @NonNull MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.item_, parent,false));
+        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.calendar_item, parent,false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
-        final TextView textView = holder.textView;
-        textView.setText(title[position]);
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
+        final TextView taskFinished = holder.taskFinished;
+        final TextView taskTitle = holder.taskTitle;
+        final TextView taskDate = holder.taskDate;
+        final TextView taskMonth = holder.taskMonth;
+        if (task_finished[position] == 0){
+            taskFinished.setBackground(null);
+        }
+        taskTitle.setText(task_title[position]);
+        taskDate.setText(task_day[position]);
+        taskMonth.setText(task_month[position]);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.taskTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context,textView.getText(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,task_id[holder.getAdapterPosition()] + " " + taskTitle.getText(),Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     @Override
@@ -49,13 +60,21 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         return length;
     }
 
-    public void setInfo(JSONArray infoArr, int length){
+    public void setInfo(JSONArray taskDataArr, int length){
         this.length = length;
-        title = new String[length];
+        task_id = new int[length];
+        task_finished = new int[length];
+        task_title = new String[length];
+        task_day = new String[length];
+        task_month = new String[length];
         for (int i = 0 ; i < length ; i++){
             try {
-                JSONObject info = infoArr.getJSONObject(i);
-                title[i] = info.getString("title");
+                JSONObject taskData = taskDataArr.getJSONObject(i);
+                task_id[i] = taskData.getInt("id");
+                task_finished[i] = taskData.getInt("finished");
+                task_title[i] = taskData.getString("title");
+                task_day[i] = taskData.getString("day");
+                task_month[i] = taskData.getString("month");
             }catch (JSONException e){
                 e.printStackTrace();
             }
@@ -63,10 +82,17 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView textView;
+        TextView taskFinished;
+        TextView taskTitle;
+        TextView taskDate;
+        TextView taskMonth;
+
         public MyViewHolder(View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.tv_);
+            taskFinished = itemView.findViewById(R.id.task_finished);
+            taskTitle = itemView.findViewById(R.id.task_title);
+            taskDate = itemView.findViewById(R.id.task_date);
+            taskMonth = itemView.findViewById(R.id.task_month);
         }
     }
 
