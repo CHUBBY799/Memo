@@ -81,7 +81,7 @@ public class AudioPlayPresenter {
 
                 }catch (Exception e){
                     e.printStackTrace();
-
+                    ToastUtils.showShort(context,"failed to play audio");
                     //提示用户
                     mMediaPlayer.reset();
                     mMediaPlayer.release();

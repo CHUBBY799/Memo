@@ -7,7 +7,7 @@ public class RecordingImpl implements RecordingModel{
 
     @Override
     public void addRecording(Recording recording, SQLiteDatabase db) {
-        db.execSQL("insert into recording(taskId,recording) " +
+        db.execSQL("insert into recording(taskId,recordingInfo) " +
                 "values(?,?)",new Object[]{recording.getTaskId(),recording.serialize()});
     }
 
