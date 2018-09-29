@@ -2,8 +2,8 @@
     <string name="app_name">Memo</string>
     <string name="add_text">add_text</string>
     <string name="urgent">urgent</string>
-    <string name="edit_title_hint">Please input title of text</string>
-    <string name="edit_content_hint">Please input content of text</string>
+    <string name="edit_title_hint">Please input title of recording</string>
+    <string name="edit_content_hint">Please input content of recording</string>
     <string name="text_cancel">×</string>
     <string name="text_clock">口</string>
     <string name="text_color">T</string>
@@ -33,6 +33,7 @@
     <string name="audio_recording">recording</string>
     <string name="audio_recording_initTime">00:00</string>
     <string name="audio_recording_btnText">press here to record</string>
+    <string name="photo_recording_btnText">photo</string>
     <string name="task">Task</string>
     <string name="note">Note</string>
     <string name="list">List</string>
@@ -43,10 +44,18 @@
     <string name="item_new">Add a new item</string>
 
     <string name="list_finish">√</string>
+
+    <string name="hint_list_title">please input title of list</string>
+    <string name="audio_finish">FINISH</string>
+    <string name="audio_time_length">00:00:00</string>
+    <string name="photo_gallery">GALLERY</string>
+    <string name="photo_camera">CAMERA</string>
+
     <string name="list_launches_icon">List launches Icon</string>
     <string name="cancer">Cancer</string>
     <string name="confirm">Confirm</string>
     <string name="state">state</string>
     <string name="title">title</string>
     <string name="item">item</string>
+
 </resources>

@@ -9,20 +9,16 @@
     android:focusableInTouchMode="true"
     android:background="@color/content_background">
 
-    <include
-        android:id="@+id/recording_edit_title"
-        layout="@layout/title_edit"
-        tools:ignore="MissingConstraints" />
-
     <EditText
         android:id="@+id/recording_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="21.5dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="25dp"
         android:background="@null"
         android:ems="10"
+        android:textColorHint="@color/item_btn_textcolor"
         android:hint="@string/edit_title_hint"
         android:inputType="textMultiLine"
         android:minHeight="40dp"
@@ -32,15 +28,16 @@
         android:textColor="@color/recording_title"
         android:textSize="20dp"
         android:textStyle="bold"
+        android:imeOptions="actionNext"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recording_edit_title" />
+        app:layout_constraintTop_toTopOf="parent"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="5dp"
         android:background="@color/underline_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,36 +47,47 @@
         android:id="@+id/recording_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="27.5dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="15dp"
         android:background="@color/content_background"
         android:descendantFocusability="afterDescendants"
-        app:layout_constraintBottom_toTopOf="@+id/audio_recording"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recording_title" />
+        app:layout_constraintTop_toBottomOf="@id/recording_title"/>
 
-    <Button
-        android:id="@+id/audio_recording"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="10dp"
-        android:background="@color/alarm_background"
-        android:text="@string/audio_recording_btnText"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="20sp"
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/underline_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/linearLayout" />
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:gravity="center_vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+        <include android:id="@+id/bottom_recording_edit"
+            layout="@layout/bottom_recording_edit"
+            android:visibility="visible"/>
+        <include android:id="@+id/bottom_recording_audio"
+            layout="@layout/bottom_recording_audio"
+            android:visibility="gone"/>
+        <include android:id="@+id/bottom_recording_photo"
+            layout="@layout/bottom_recording_photo"
+            android:visibility="gone"/>
+    </LinearLayout>
 
-    <include
-        android:id="@+id/lineHeight"
-        layout="@layout/item_recording_text"
-        android:visibility="gone"
-        tools:ignore="MissingConstraints"></include>
 </android.support.constraint.ConstraintLayout>

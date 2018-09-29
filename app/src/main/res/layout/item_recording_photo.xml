@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints">
+        <EditText
+            android:id="@+id/item_image_start"
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|right"
+            android:imeOptions="actionNext"
+            android:background="@null"
+            android:singleLine="true"
+            android:textCursorDrawable="@drawable/cursor"
+            android:textSize="20dp"/>
+        <com.shining.memo.widget.ResizableImageView
+            android:id="@+id/item_imageView"
+            android:layout_width="0dp"
+            android:layout_weight="20"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:background="@drawable/audio_rerecording_shape"
+            android:layout_gravity="center_vertical"/>
+        <EditText
+            android:id="@+id/item_image_end"
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|left"
+            android:imeOptions="actionNext"
+            android:background="@null"
+            android:singleLine="true"
+            android:textCursorDrawable="@drawable/cursor"
+            android:textSize="20dp"/>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

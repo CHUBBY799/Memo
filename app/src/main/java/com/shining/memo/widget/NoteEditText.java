@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Spannable;
@@ -64,7 +65,7 @@ public class NoteEditText extends android.support.v7.widget.AppCompatEditText{
         super.onDraw(canvas);
     }
 
-    public void setImage() {
+    public void setImage(String photoPath) {
         String content = "%audio%";
         CustomImageSpan imageSpan = new CustomImageSpan(getContext(), R.drawable.share_btn_48x48px, 2);
         SpannableString spannableString = new SpannableString(content);
@@ -82,24 +83,14 @@ public class NoteEditText extends android.support.v7.widget.AppCompatEditText{
         }
     }
 
-    /**
-     * 设置记事本的编辑框背景线条颜色
-     * @param color int type【代表颜色的整数】
-     */
-    public void setBGColor(int color) {
-        this.color = color;
-        invalidate();
+    @Override
+    protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
+        if (lengthBefore != lengthAfter) {
+//            int startSelection = getSelectionStart();
+//            setText(text);
+//            setSelection(startSelection);
+        }
     }
-
-    /**
-     * 设置记事本的编辑框背景线条颜色
-     * @param colorId int type【代表颜色的资源id】
-     */
-    public void setBGColorId(int colorId) {
-        this.color = getResources().getColor(colorId);
-        invalidate();
-    }
-
 
 
 }

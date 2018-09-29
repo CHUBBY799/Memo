@@ -33,8 +33,4 @@
     <color name="add_new">#A9A9A9</color>
     <color name="list_finish">#f9883c</color>
 
-    <color name="calendar_select">#FF8833</color>
-    <color name="calendar_line">#DDDDDD</color>
-    <color name="calendar_week">#AAAAAA</color>
-
 </resources>

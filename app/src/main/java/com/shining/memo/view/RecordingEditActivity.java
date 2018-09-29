@@ -1,71 +1,109 @@
 package com.shining.memo.view;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
+import android.os.StrictMode;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.shining.memo.R;
 import com.shining.memo.adapter.RecordingAdapter;
 import com.shining.memo.model.RecordingContent;
-import com.shining.memo.presenter.AudioPlayPresenter;
+import com.shining.memo.model.Task;
 import com.shining.memo.presenter.AudioRecordPresenter;
+import com.shining.memo.presenter.PhotoPresenter;
+import com.shining.memo.presenter.RecordingPresenter;
+import com.shining.memo.presenter.ToastUtils;
 
-import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 
-public class RecordingEditActivity extends Activity implements View.OnClickListener,ViewRecord,View.OnTouchListener, RecordingAdapter.TextChanged {
+public class RecordingEditActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged,Switch.OnCheckedChangeListener {
 
-    private Button mBtnCancel,mBtnConfirm,mBtnAlarm,mBtnEdit,mBtnUrgent,mBtnRecord;
+    private static final int CAMERA_PERMISSIONS_REQUEST_CODE = 0x03;
+    private static final int REQUEST_CAMERA=0xa1;
+    private static final int REQUEST_GALLERY=0xa3;
+    private Button mBtnCancel,mBtnConfirm,mBtnAlarm,mBtnEdit,mBtnRecord,mBtnPhoto,mBtnFinish,mBtnGallery,mBtnCamera;
+    private Switch mSwitchUrgent;
+    private TextView mTvTime;
     private EditText editTitle;
     private RecyclerView mRecyclerView;
-    private String filePath = "";
+    private static boolean isRecording = false;
+    private String photoPath="";
     private int urgent = 0;
     private int alarm = 0;
-    private static boolean isplaying = false;
     private AudioRecordPresenter presenter;
     private RecordingAdapter adapter;
     private HashMap<Integer,RecordingContent> mMap;
+    private RecordingPresenter recordingPresenter;
+    private PhotoPresenter photoPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recording_edit);
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+        builder.detectFileUriExposure();
         init();
+        presenter = new AudioRecordPresenter(this);
+        photoPresenter = new PhotoPresenter(this);
+        recordingPresenter = new RecordingPresenter(this);
         mMap = new HashMap<>();
-        RecordingContent data = new RecordingContent();
-        data.setType("text");
-        data.setContent("123456123456123456123456123456123465612345611234561234561234561234561234561234656123456123456123456123456123456123456123456123456123465612345612345612345623456123456");
-        mMap.put(0,data);
-        data = new RecordingContent();
-        data.setType("text");
-        data.setContent("00:10  00:10 00:10");
-        mMap.put(1,data);
-        data = new RecordingContent();
-        data.setType("audio");
-        data.setContent("/storage/emulated/0/record/20180107064032.amr");
-        mMap.put(2,data);
+//        RecordingContent data = new RecordingContent();
+//        data.setType("text");
+//        data.setContent("123456123456123456123456123456123465612345611234561234561234561234561234561234656123456123456123456123456123456123456123456123456123465612345612345612345623456123456");
+//        mMap.put(0,data);
+//        data = new RecordingContent();
+//        data.setType("text");
+//        data.setContent("00:10  00:10 00:10");
+//        mMap.put(1,data);
+//        data = new RecordingContent();
+//        data.setType("audio");
+//        data.setContent("/storage/emulated/0/record/20180107064032.amr");
+//        mMap.put(2,data);
+//        data = new RecordingContent();
+//        data.setType("photo");
+//        data.setContent("/storage/emulated/0/photo/20180109234824.jpg");
+//        mMap.put(3,data);
+//        data = new RecordingContent();
+//        data.setType("text");
+//        data.setContent("");
+//        mMap.put(4,data);
         adapter = new RecordingAdapter(mMap,this,this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(),
-                LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setItemAnimator(null);
     }
 
     @Override
@@ -77,48 +115,59 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 initRecycleView();
             }
         });
+        if(isRecording)
+            animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(presenter.stopRecord() > 0)
+            isRecording = true;
+        else
+            isRecording = false;
     }
 
     private void init(){
-        View view =  (View)findViewById(R.id.recording_edit_title);
-        mBtnCancel = (Button)view.findViewById(R.id.title_edit_cancel);
-        mBtnConfirm = (Button)view.findViewById(R.id.title_edit_confirm);
-        mBtnAlarm = (Button)view.findViewById(R.id.title_edit_alarm);
-        mBtnEdit = (Button)view.findViewById(R.id.title_edit_edit);
-        mBtnUrgent = (Button)view.findViewById(R.id.title_edit_urgent);
-        mBtnRecord = (Button)findViewById(R.id.audio_recording);
+        View view =  (View)findViewById(R.id.bottom_recording_edit);
+        mBtnCancel = (Button)view.findViewById(R.id.bottom_cancel);
+        mBtnConfirm = (Button)view.findViewById(R.id.bottom_confirm);
+        mBtnAlarm = (Button)view.findViewById(R.id.bottom_alarm);
+        mBtnEdit = (Button)view.findViewById(R.id.bottom_textedit);
+        view =  (View)findViewById(R.id.bottom_recording_audio);
+        mBtnFinish = (Button)view.findViewById(R.id.audio_finish);
+        mTvTime = (TextView)view.findViewById(R.id.audio_time_duration);
+        view =  (View)findViewById(R.id.bottom_recording_photo);
+        mBtnGallery = (Button)view.findViewById(R.id.photo_gallery);
+        mBtnCamera = (Button)view.findViewById(R.id.photo_camera);
+
+        mSwitchUrgent = (Switch)findViewById(R.id.bottom_urgent);
+        mBtnRecord = (Button)findViewById(R.id.bottom_audio);
+        mBtnPhoto = (Button)findViewById(R.id.bottom_photo);
         mRecyclerView = (RecyclerView)findViewById(R.id.recording_recyclerView);
         editTitle = (EditText)findViewById(R.id.recording_title);
         mBtnCancel.setOnClickListener(this);
         mBtnConfirm.setOnClickListener(this);
         mBtnAlarm.setOnClickListener(this);
         mBtnEdit.setOnClickListener(this);
-        mBtnUrgent.setOnClickListener(this);
-        mBtnRecord.setOnTouchListener(this);
-        mRecyclerView.setOnClickListener(this);
+        mBtnRecord.setOnClickListener(this);
+        mBtnPhoto.setOnClickListener(this);
+        mBtnFinish.setOnClickListener(this);
+        mBtnCamera.setOnClickListener(this);
+        mBtnGallery.setOnClickListener(this);
+        mSwitchUrgent.setOnCheckedChangeListener(this);
     }
 
-    private static int number = -1,tagIndex = -1;
     private void initRecycleView(){
-        int totalHeight = mRecyclerView.getHeight();
-        View view = (View)findViewById(R.id.lineHeight);
-        EditText editText = (EditText)view.findViewById(R.id.item_editText);
-        int lineHeight = editText.getLineHeight();
-        int usedHeight = 0;
-        for(int i = 0; i < mMap.size(); i++){
-            usedHeight += mRecyclerView.getChildAt(i).getHeight();
-        }
-        number = (int)Math.ceil((totalHeight - usedHeight)/ lineHeight);
         String string = "";
-        for(int i = 0; i < number; i++)
-            string += "\n";
-        tagIndex = mMap.size();
-        RecordingContent content = new RecordingContent();
-        content.setType("text");
-        content.setColor("#000000");
-        content.setContent(string);
-        mMap.put(mMap.size(),content);
-        adapter.notifyDataSetChanged();
+        if(mMap.isEmpty()) {
+            RecordingContent content = new RecordingContent();
+            content.setType("text");
+            content.setColor("#000000");
+            content.setContent(string);
+            mMap.put(mMap.size(),content);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     public static Boolean hideInputMethod(Context context, View v) {
@@ -164,30 +213,33 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.title_edit_cancel:
+            case R.id.bottom_cancel:
                 clickCancel();
                 break;
-            case R.id.title_edit_confirm:
+            case R.id.bottom_confirm:
                 clickConfirm();
                 break;
-            case R.id.title_edit_alarm:
+            case R.id.bottom_alarm:
                 clickAlarm();
                 break;
-            case R.id.title_edit_edit:
+            case R.id.bottom_textedit:
 //                clickEdit();
                 break;
-            case R.id.title_edit_urgent:
-                clickUrgent();
-                break;
-            case R.id.audio_rerecording:
+            case R.id.bottom_audio:
                 clickRerecording();
                 break;
-            case R.id.recording_recyclerView:
-                Log.d("RecordingEditActivity","click");
-                View v = View.inflate(mRecyclerView.getContext(),R.layout.item_recording_text,null);
-                mRecyclerView.addView(v);
+            case R.id.audio_finish:
+                clickFinish();
                 break;
-
+            case R.id.bottom_photo:
+                cliclPhotoRecording();
+                break;
+            case R.id.photo_gallery:
+                photoPresenter.openAlbum(this,REQUEST_GALLERY);
+                break;
+            case R.id.photo_camera:
+                photoPath = photoPresenter.takePicture(this,REQUEST_CAMERA);
+                break;
         }
     }
     private void clickCancel(){
@@ -196,12 +248,26 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         startActivity(intent);
     }
     private void clickConfirm(){
-
+        Task task = new Task();
+        task.setType(taskType());
+        task.setUrgent(urgent);
+        task.setAlarm(alarm);
+        String title = editTitle.getText().toString();
+        task.setTitle(title);
+        if(recordingPresenter.saveRecording(task,mMap)){
+            Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent();
+            intent.setClass(this, MainActivity.class);
+            startActivity(intent);
+        }else{
+            Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+        }
     }
     private void clickAlarm(){
         Intent alarmIntent = new Intent(this, AlarmActivity.class);
         startActivityForResult(alarmIntent, 1);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         switch (requestCode){
@@ -212,130 +278,180 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                     alarm = 1;
                 }
                 break;
+            case REQUEST_CAMERA:
+                animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit),500);
+                if(resultCode == RESULT_OK && !photoPath.equals("")){
+                    Log.d("uri", photoPath.toString());
+                    onStop(photoPath,"photo");
+                }else {
+                    photoPath = "";
+                }
+                break;
+            case REQUEST_GALLERY:
+                animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit),500);
+                if(resultCode == RESULT_OK){
+                    Uri uri = data.getData();
+                    if(uri != null){
+                        try{
+                            String[] filePathColumns = {MediaStore.Images.Media.DATA};
+                            Cursor c = getContentResolver().query(uri, filePathColumns, null, null, null);
+                            c.moveToFirst();
+                            int columnIndex = c.getColumnIndex(filePathColumns[0]);
+                            String imagePath = c.getString(columnIndex);
+                            c.close();
+                            Intent intent = new Intent();
+                            intent.setClass(this,PhotoConfirmActivity.class);
+                            intent.putExtra("photoPath",imagePath);
+                            startActivityForResult(intent,0xa5);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                break;
+            case 0xa5:
+                if(resultCode == RESULT_OK){
+                    String imagePath = data.getStringExtra("photoPath");
+                    onStop(imagePath,"photo");
+                }else {
+                    photoPresenter.openAlbum(this,REQUEST_GALLERY);
+                }
+                break;
             default:
-                alarm = 0;
                 break;
         }
     }
-    private void clickUrgent(){
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         if (urgent == 0){
             urgent = 1;
-            mBtnUrgent.setActivated(true);
+            ToastUtils.showShort(this,urgent+"");
             int usedHeight = 0;
         }else {
             urgent = 0;
-            mBtnUrgent.setActivated(false);
+            ToastUtils.showShort(this,urgent+"");
         }
     }
+
     private void clickRerecording(){
-
-    }
-
-    private void permissionForM() {
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    1);
-        } else {
-            presenter = new AudioRecordPresenter(this);
-            presenter.startRecord();
-            mBtnRecord.setText("Release button to save");
+        try {
+            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)
+                        && shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                    ToastUtils.showShort(this, "您已经拒绝过一次");
+                }
+                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            } else {
+                presenter.startRecord();
+                animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio),500);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
+    private void clickFinish(){
+        presenter.stopRecord();
+        animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
+    }
+
+
+    public void animationTranslate(final View oldView, final View newView, final int duration){
+        Animator animator = ViewAnimationUtils.createCircularReveal(oldView,0,oldView.getHeight()/2,oldView.getWidth(),0);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setDuration(duration);
+        animator.start();
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                oldView.setVisibility(View.GONE);
+                newView.setVisibility(View.VISIBLE);
+                Animator animator = ViewAnimationUtils.createCircularReveal(newView,0,newView.getHeight()/2,0,newView.getWidth());
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                animator.setDuration(duration);
+                animator.start();
+            }
+        });
+    }
+
+
+    private void cliclPhotoRecording(){
+        if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                ||checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+            if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                ToastUtils.showShort(this, "您已经拒绝过一次");
+            }
+            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE},1);
+        }else {
+            animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_photo),500);
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case CAMERA_PERMISSIONS_REQUEST_CODE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+                }
+        }
+    }
+
     @Override
     public Context getContext() {
         return this;
     }
 
     @Override
-    public void onUpdateProgress(int progress) {
-
-    }
-
-    @Override
-    public void onStopPlay() {
-        isplaying = false;
-    }
-
-    @Override
-    public void onRemoverPlay() {
-
-    }
-
-    @Override
     public void onUpdate(double db, long time) {
-
+//        mIvVolume.getDrawable().setLevel((int)(db / 10));
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        mTvTime.setText(sdf.format(new Date(time)));
     }
 
     @Override
-    public void onStop(String filePath){
-        Log.d("EDG", "onStop: "+ filePath);
+    public void onStop(String filePath, String type){
         int index = adapter.getCurrentIndex();
+        String currentType = adapter.getCurrentType();
         if( index != -1){
-            List<String> text =  adapter.distachText(mRecyclerView);
-            HashMap<Integer,RecordingContent> map= presenter.insertAudioRecording(mMap,text,index,filePath);
+            HashMap<Integer,RecordingContent> map = null;
+            if(currentType.equals("text")){
+                List<String> text =  adapter.distachText(mRecyclerView);
+                map = recordingPresenter.insertRecording(mMap,text,index,filePath,type);
+            }else{
+                map = recordingPresenter.insertRecording(mMap,filePath,index,currentType,type);
+            }
             mMap.clear();
             mMap.putAll(map);
-            Log.d("RecordingAdapter", mMap.toString());
+            checkDefaultEditTex();
+            adapter.setRequestFocusableArgs(RecordingPresenter.insertIndex,0,"end");
             adapter.notifyItemRangeChanged(index,mMap.size() - index);
-
-            if(AudioRecordPresenter.insertIndex + 1 < mMap.size() && mMap.get(AudioRecordPresenter.insertIndex + 1).getType().equals("text")){
-                 mRecyclerView.post(new Runnable() {
-                     @Override
-                     public void run() {
-                         requestFocusable(AudioRecordPresenter.insertIndex + 1,0,"first");
-                     }
-                 });
-            }
+            if(type.equals("photo"))
+                mRecyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.requestFocusable(mRecyclerView);
+                    }
+                });
         }else{
-            presenter.insertAudioRecording(mMap,filePath,number);
+            recordingPresenter.insertRecording(mMap,filePath,type);
             adapter.notifyItemRangeChanged(mMap.size() - 1,mMap.size());
         }
     }
 
-    private void test(){
-        for(int i=0; i<mRecyclerView.getChildCount();i++){
-            View v = mRecyclerView.getChildAt(i);
-            try{
-                RecordingAdapter.TextViewHolder holder = (RecordingAdapter.TextViewHolder)
-                        mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
-                Log.d("TAG", "test: " + holder.editText.getText().toString());
-            }catch(Exception e){
-                RecordingAdapter.AudioViewHolder holder = (RecordingAdapter.AudioViewHolder)
-                        mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
-                Log.d("TAG", "test: " + holder.button.getText().toString());
+    private void checkDefaultEditTex(){
+        if(mMap.size() -1 >= 0){
+            if(mMap.get(mMap.size() - 1).getType() != "text"){
+                RecordingContent content = new RecordingContent();
+                content.setType("text");
+                content.setColor(mMap.get(mMap.size() - 1).getColor());
+                content.setContent("");
+                mMap.put(mMap.size(),content);
             }
-
         }
-    }
-
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        try {
-            switch (motionEvent.getAction()){
-
-                case MotionEvent.ACTION_DOWN:
-                    permissionForM();
-                    break;
-                case MotionEvent.ACTION_CANCEL:
-                    presenter.cancelRecord();    //取消录音（不保存录音文件）
-           //         mTvTimes.setText("00:00");
-           //         mBtnRecord.setText("Press here to record");
-                    break;
-                case MotionEvent.ACTION_UP:
-                    if(motionEvent.getX() < 0 || motionEvent.getX() > view.getWidth()
-                            || motionEvent.getY() < 0 || motionEvent.getY() > view.getHeight()){
-                        motionEvent.setAction(MotionEvent.ACTION_CANCEL);
-                        return onTouch(view,motionEvent);
-                    }
-                    presenter.stopRecord();
-                    mBtnRecord.setText("Press here to record");
-                    break;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return true;
     }
 
     @Override
@@ -345,25 +461,6 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         return linearManager.findFirstVisibleItemPosition();
     }
 
-    @Override
-    public void requestFocusable(int index,int  position, String type) {
-        if(index >= 0){
-            test();
-            mRecyclerView.requestFocus();
-            mRecyclerView.getChildAt(index - getCurrentFirstIndex()).requestFocus();
-            if( mMap.get(index).getType() == "text"){
-                Log.d("TAG", "requestFocusable: " + (index - getCurrentFirstIndex()) +"--" + index + "--" + getCurrentFirstIndex());
-                RecordingAdapter.TextViewHolder holder = (RecordingAdapter.TextViewHolder)
-                        mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(index - getCurrentFirstIndex()));
-                if(type.equals("end"))
-                    holder.editText.setSelection(holder.editText.getText().toString().length());
-                else if(type.equals("specific"))
-                    holder.editText.setSelection(position);
-                else
-                    holder.editText.setSelection(0);
-            }
-        }
-    }
 
     @Override
     public HashMap<Integer, RecordingContent> getMap() {
@@ -371,31 +468,42 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     }
 
     @Override
-    public void deleteEditText(HashMap<Integer, RecordingContent> map,final int index, final int position, final String type) {
+    public void deleteEditText(HashMap<Integer, RecordingContent> map,int index,int position,String type) {
         adapter.notifyItemRemoved(index);
-        adapter.notifyItemRangeChanged(index - 1,mMap.size());
-        mRecyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                requestFocusable(index - 1,position,type);
-            }
-        });
+        checkDefaultEditTex();
+        if (index - 1 >= 0) {
+            adapter.setRequestFocusableArgs(index - 1,position,type);
+            adapter.notifyItemRangeChanged(index - 1, mMap.size());
+
+        } else {
+            adapter.setRequestFocusableArgs(index,position,type);
+            adapter.notifyItemRangeChanged(0, mMap.size());
+        }
+    }
+
+    @Override
+    public void updateAdapter(int index) {
+        adapter.notifyItemRangeChanged(index,mMap.size() - index);
+    }
+
+    @Override
+    public void recyclerViewFocusable() {
+        mRecyclerView.requestFocus();
     }
 
     @Override
     public void TextChanged(String text,int index) {
         mMap.get(index).setContent(text);
-        Log.d("TextChanged", "TextChanged: "+ mMap.toString());
-    }
-    @Override
-    public void DefaultEditText(int number, int index) {
-        this.number = number;
-        tagIndex = index;
+//        Log.d("TextChanged", "TextChanged: "+ mMap.toString());
     }
 
-    @Override
-    public int getDefaultNumber() {
-        return number;
+    private String taskType(){
+        for(int i = 0; i < mMap.size(); i++){
+            if(mMap.get(i).getType() == "audio")
+                return "audio";
+        }
+        return "text";
     }
+
 
 }
