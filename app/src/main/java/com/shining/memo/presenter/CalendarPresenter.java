@@ -1,6 +1,5 @@
 package com.shining.memo.presenter;
 
-import com.shining.memo.bean.ListBean;
 import com.shining.memo.model.CalendarImpl;
 import com.shining.memo.model.CalendarModel;
 import com.shining.memo.view.CalendarActivity;
