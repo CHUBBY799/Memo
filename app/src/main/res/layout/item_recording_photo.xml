@@ -11,36 +11,37 @@
         android:orientation="horizontal"
         android:paddingTop="8dp"
         android:paddingBottom="5dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints">
-        <EditText
-            android:id="@+id/item_image_start"
-            android:layout_width="15dp"
+        <RelativeLayout
+            android:id="@+id/photo_shelter"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical|right"
-            android:imeOptions="actionNext"
-            android:background="@null"
-            android:singleLine="true"
-            android:textCursorDrawable="@drawable/cursor"
-            android:textSize="20dp"/>
+            android:background="@color/photo_shelter"
+            android:visibility="gone">
+            <Button
+                android:id="@+id/photo_delete"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/close_btn_48x48px"/>
+            <Button
+                android:id="@+id/photo_cancel"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@id/photo_delete"
+                android:background="@drawable/cancel_icon"/>
+        </RelativeLayout>
         <com.shining.memo.widget.ResizableImageView
             android:id="@+id/item_imageView"
-            android:layout_width="0dp"
-            android:layout_weight="20"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitCenter"
             android:background="@drawable/audio_rerecording_shape"
             android:layout_gravity="center_vertical"/>
-        <EditText
-            android:id="@+id/item_image_end"
-            android:layout_width="15dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|left"
-            android:imeOptions="actionNext"
-            android:background="@null"
-            android:singleLine="true"
-            android:textCursorDrawable="@drawable/cursor"
-            android:textSize="20dp"/>
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

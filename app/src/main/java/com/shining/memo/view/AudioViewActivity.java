@@ -107,7 +107,7 @@ public class AudioViewActivity extends Activity implements ViewAudioEdit,View.On
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
-            if (RecordingEditActivity.isShouldHideInput(v, ev)) {
+            if (RecordingEditActivity.isShouldHideInput(v, ev,null)) {
                 if(RecordingEditActivity.hideInputMethod(this, v)) {
                     editTitle.clearFocus();
                     return true; //隐藏键盘时，其他控件不响应点击事件==》注释则不拦截点击事件

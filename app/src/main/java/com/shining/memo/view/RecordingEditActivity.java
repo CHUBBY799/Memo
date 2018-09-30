@@ -8,11 +8,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -21,6 +23,8 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -53,12 +57,12 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private static final int CAMERA_PERMISSIONS_REQUEST_CODE = 0x03;
     private static final int REQUEST_CAMERA=0xa1;
     private static final int REQUEST_GALLERY=0xa3;
-    private Button mBtnCancel,mBtnConfirm,mBtnAlarm,mBtnEdit,mBtnRecord,mBtnPhoto,mBtnFinish,mBtnGallery,mBtnCamera;
+    private Button mBtnCancel,mBtnConfirm,mBtnAlarm,mBtnEdit,mBtnRecord,mBtnPhoto,mBtnAudioCancel,mBtnFinish,mBtnGallery,mBtnCamera;
     private Switch mSwitchUrgent;
     private TextView mTvTime;
     private EditText editTitle;
     private RecyclerView mRecyclerView;
-    private static boolean isRecording = false;
+    private static boolean isRecording = false, isPhotoChoosing = false;
     private String photoPath="";
     private int urgent = 0;
     private int alarm = 0;
@@ -67,6 +71,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private HashMap<Integer,RecordingContent> mMap;
     private RecordingPresenter recordingPresenter;
     private PhotoPresenter photoPresenter;
+    private ConstraintLayout rootLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,8 +120,10 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 initRecycleView();
             }
         });
-        if(isRecording)
+        if(isRecording) {
             animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
+            isRecording = false;
+        }
     }
 
     @Override
@@ -128,6 +135,21 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             isRecording = false;
     }
 
+    @Override
+    public void onBackPressed() {
+        if(isPhotoChoosing){
+            isPhotoChoosing = false;
+            animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit),500);
+        }else if(isRecording){
+            presenter.cancelRecord();
+            isRecording = false;
+            Log.d("onBackPressed","cancelRecord");
+            animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
+        }else {
+            super.onBackPressed();
+        }
+    }
+
     private void init(){
         View view =  (View)findViewById(R.id.bottom_recording_edit);
         mBtnCancel = (Button)view.findViewById(R.id.bottom_cancel);
@@ -135,12 +157,14 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         mBtnAlarm = (Button)view.findViewById(R.id.bottom_alarm);
         mBtnEdit = (Button)view.findViewById(R.id.bottom_textedit);
         view =  (View)findViewById(R.id.bottom_recording_audio);
+        mBtnAudioCancel = (Button)view.findViewById(R.id.audio_cancel);
         mBtnFinish = (Button)view.findViewById(R.id.audio_finish);
         mTvTime = (TextView)view.findViewById(R.id.audio_time_duration);
         view =  (View)findViewById(R.id.bottom_recording_photo);
         mBtnGallery = (Button)view.findViewById(R.id.photo_gallery);
         mBtnCamera = (Button)view.findViewById(R.id.photo_camera);
 
+        rootLayout = (ConstraintLayout)findViewById(R.id.recroding_edit_root);
         mSwitchUrgent = (Switch)findViewById(R.id.bottom_urgent);
         mBtnRecord = (Button)findViewById(R.id.bottom_audio);
         mBtnPhoto = (Button)findViewById(R.id.bottom_photo);
@@ -152,6 +176,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         mBtnEdit.setOnClickListener(this);
         mBtnRecord.setOnClickListener(this);
         mBtnPhoto.setOnClickListener(this);
+        mBtnAudioCancel.setOnClickListener(this);
         mBtnFinish.setOnClickListener(this);
         mBtnCamera.setOnClickListener(this);
         mBtnGallery.setOnClickListener(this);
@@ -179,18 +204,33 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         return false;
     }
 
-    public static boolean isShouldHideInput(View v, MotionEvent event) {
-        if (v != null && (v instanceof EditText)) {
+    public static boolean isShouldHideInput(View v, MotionEvent event, View current) {
+        if (v != null) {
+            boolean isView = false;
             int[] leftTop = { 0, 0 };
             v.getLocationInWindow(leftTop);
             int left = leftTop[0], top = leftTop[1], bottom = top + v.getHeight(), right = left
                     + v.getWidth();
             if (event.getX() > left && event.getX() < right
                     && event.getY() > top && event.getY() < bottom) {
-                // 保留点击EditText的事件
-                return false;
+                if(current == null){
+                    return true;
+                }else {
+                    int[] leftTop1 = { 0, 0 };
+                    current.getLocationInWindow(leftTop1);
+                    v.getLocationInWindow(leftTop);
+                    int left1 = leftTop1[0], top1 = leftTop1[1], bottom1 = top1 + current.getHeight(), right1 = left1
+                            + current.getWidth();
+                    Log.d("dispatchTouchEvent",left1+"-"+right1+"-"+top1+"-"+bottom1);
+                    Log.d("dispatchTouchEvent",left+"-"+right+"-"+top+"-"+bottom);
+                    if( (left1 > left || left1 == left) && (left1 < right || left1 == right)
+                            && (top1 > top || top1 == top) && (bottom1 < bottom || bottom1 == bottom))
+                        return true;
+                    else
+                        return false;
+                }
             } else {
-                return true;
+                return false;
             }
         }
         return false;
@@ -199,13 +239,27 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            View v = getCurrentFocus();
-            if (isShouldHideInput(v, ev)) {
-                if(hideInputMethod(this, v)) {
-                    editTitle.clearFocus();
-                    return true; //隐藏键盘时，其他控件不响应点击事件
-                }
+            View v= findViewById(R.id.linearLayout);
+            if (!isShouldHideInput(v,ev,null) && isPhotoChoosing) {
+                isPhotoChoosing = false;
+                animationTranslate(findViewById(R.id.bottom_recording_photo), findViewById(R.id.bottom_recording_edit), 500);
+                return true;
             }
+//            }else if(isShouldHideInput(mRecyclerView,ev,null)){
+//                super.dispatchTouchEvent(ev);
+//                v = getCurrentFocus();
+//                if(!isShouldHideInput(mRecyclerView,ev,v)){
+//                    mRecyclerView.requestFocus();
+//                    RecordingAdapter.TextViewHolder holder= adapter.getTextViewHolder(mRecyclerView);
+//                    holder.editText.requestFocus();
+//                    holder.editText.setSelection(holder.editText.length());
+//                    InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+//                    imm.showSoftInput(holder.editText,0);
+//                    return true;
+//                }else {
+//                    return true;
+//                }
+//            }
         }
         return super.dispatchTouchEvent(ev);
     }
@@ -227,6 +281,9 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 break;
             case R.id.bottom_audio:
                 clickRerecording();
+                break;
+            case R.id.audio_cancel:
+                clickAudioCancel();
                 break;
             case R.id.audio_finish:
                 clickFinish();
@@ -279,6 +336,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 }
                 break;
             case REQUEST_CAMERA:
+                isPhotoChoosing = false;
                 animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit),500);
                 if(resultCode == RESULT_OK && !photoPath.equals("")){
                     Log.d("uri", photoPath.toString());
@@ -288,6 +346,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 }
                 break;
             case REQUEST_GALLERY:
+                isPhotoChoosing = false;
                 animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit),500);
                 if(resultCode == RESULT_OK){
                     Uri uri = data.getData();
@@ -314,6 +373,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                     String imagePath = data.getStringExtra("photoPath");
                     onStop(imagePath,"photo");
                 }else {
+                    isPhotoChoosing = true;
                     photoPresenter.openAlbum(this,REQUEST_GALLERY);
                 }
                 break;
@@ -345,14 +405,22 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             } else {
                 presenter.startRecord();
+                isRecording = true;
                 animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio),500);
             }
         }catch (Exception e){
             e.printStackTrace();
         }
     }
+    private void clickAudioCancel(){
+        presenter.cancelRecord();
+        isRecording = false;
+        animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
+    }
+
     private void clickFinish(){
         presenter.stopRecord();
+        isRecording = false;
         animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
     }
 
@@ -376,7 +444,6 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         });
     }
 
-
     private void cliclPhotoRecording(){
         if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                 ||checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
@@ -386,6 +453,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE},1);
         }else {
             animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_photo),500);
+            isPhotoChoosing = true;
         }
     }
     @Override
@@ -427,15 +495,17 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             mMap.clear();
             mMap.putAll(map);
             checkDefaultEditTex();
-            adapter.setRequestFocusableArgs(RecordingPresenter.insertIndex,0,"end");
+            if(type.equals("photo")){
+                adapter.photoSetFocusable(RecordingPresenter.insertIndex);
+            }else {
+                adapter.setRequestFocusableArgs(RecordingPresenter.insertIndex,0,"end");
+            }
+            Log.d("requestFocusableIndex",RecordingPresenter.insertIndex+"");
+            Log.d("requestFocusableIndex",adapter.getRequestFocusableIndex()+"");
             adapter.notifyItemRangeChanged(index,mMap.size() - index);
-            if(type.equals("photo"))
-                mRecyclerView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.requestFocusable(mRecyclerView);
-                    }
-                });
+            if(adapter.requestFocusableIndex < getCurrentFirstIndex() || adapter.requestFocusableIndex >getCurrentLastIndex()) {
+                updateRecyclerView(adapter.requestFocusableIndex);
+            }
         }else{
             recordingPresenter.insertRecording(mMap,filePath,type);
             adapter.notifyItemRangeChanged(mMap.size() - 1,mMap.size());
@@ -461,6 +531,12 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         return linearManager.findFirstVisibleItemPosition();
     }
 
+    @Override
+    public int getCurrentLastIndex() {
+        RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
+        LinearLayoutManager linearManager = (LinearLayoutManager) layoutManager;
+        return linearManager.findLastVisibleItemPosition();
+    }
 
     @Override
     public HashMap<Integer, RecordingContent> getMap() {
@@ -484,11 +560,28 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     @Override
     public void updateAdapter(int index) {
         adapter.notifyItemRangeChanged(index,mMap.size() - index);
+        if(adapter.requestFocusableIndex < getCurrentFirstIndex() || adapter.requestFocusableIndex >getCurrentLastIndex())
+            updateRecyclerView(adapter.requestFocusableIndex);
     }
 
     @Override
     public void recyclerViewFocusable() {
         mRecyclerView.requestFocus();
+    }
+
+    @Override
+    public void recyclerViewClearFocusable() {
+        mRecyclerView.clearFocus();
+    }
+
+    @Override
+    public RecyclerView getRecyclerView() {
+        return mRecyclerView;
+    }
+
+    @Override
+    public void updateRecyclerView(int position) {
+        mRecyclerView.smoothScrollToPosition(position);
     }
 
     @Override

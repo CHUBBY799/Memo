@@ -47,7 +47,8 @@
     <string name="list_finish">√</string>
 
     <string name="hint_list_title">please input title of list</string>
-    <string name="audio_finish">FINISH</string>
+    <string name="audio_cancel">CALCEL</string>
+    <string name="audio_finish">OK</string>
     <string name="audio_time_length">00:00:00</string>
     <string name="photo_gallery">GALLERY</string>
     <string name="photo_camera">CAMERA</string>
