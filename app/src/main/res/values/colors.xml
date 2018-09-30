@@ -37,5 +37,13 @@
     <color name="item_btn_textcolor">#FF8833 </color>
     <color name="half_transparent_orange">#8EFF8833 </color>
     <color name="photo_divider">#EEEEEE</color>
+
     <color name="photo_shelter">#8E000000</color>
+    <!--calendar color-->
+    <color name="calendar_select">#FF8833</color>
+    <color name="calendar_line">#DDDDDD</color>
+    <color name="calendar_week">#AAAAAA</color>
+
+
+
 </resources>

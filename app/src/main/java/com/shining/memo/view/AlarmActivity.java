@@ -11,6 +11,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.shining.memo.R;
+import com.shining.memo.utils.Utils;
 import com.shining.memo.widget.DatePickerView;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     private TextView ringtoneReminder;
     private TextView popReminder;
 
+    //需要保存和传递的参数
     private String year;
     private String month;
     private String day;
@@ -213,7 +215,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     private void initParameter(){
         Calendar calendar = Calendar.getInstance();
         year = formatTimeUnit(calendar.get(Calendar.YEAR));
-        month = formatMonthUS(calendar.get(Calendar.MONTH)+1);
+        month = Utils.formatMonthSimUS(calendar.get(Calendar.MONTH)+1);
         day = formatTimeUnit(calendar.get(Calendar.DAY_OF_MONTH));
         hour = formatTimeUnit(calendar.get(Calendar.HOUR_OF_DAY));
         minute = formatTimeUnit(calendar.get(Calendar.MINUTE));
@@ -221,51 +223,6 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
 
     private String formatTimeUnit(int unit) {
         return unit < 10 ? "0" + String.valueOf(unit) : String.valueOf(unit);
-    }
-
-    private String formatMonthUS(int month){
-        String resultMonth = null;
-        switch (month){
-            case 1:
-                resultMonth = "Jan";
-                break;
-            case 2:
-                resultMonth = "Feb";
-                break;
-            case 3:
-                resultMonth = "Mar";
-                break;
-            case 4:
-                resultMonth = "Apr";
-                break;
-            case 5:
-                resultMonth = "May";
-                break;
-            case 6:
-                resultMonth = "Jun";
-                break;
-            case 7:
-                resultMonth = "Jul";
-                break;
-            case 8:
-                resultMonth = "Aug";
-                break;
-            case 9:
-                resultMonth = "Sep";
-                break;
-            case 10:
-                resultMonth = "Oct";
-                break;
-            case 11:
-                resultMonth = "Nov";
-                break;
-            case 12:
-                resultMonth = "Dec";
-                break;
-            default:
-                break;
-        }
-        return resultMonth;
     }
 
     private void addListener() {
