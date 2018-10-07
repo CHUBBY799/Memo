@@ -8,7 +8,8 @@
 
     <include
         android:id="@+id/include"
-        layout="@layout/title_alarm" />
+        layout="@layout/title_alarm"
+        tools:ignore="MissingConstraints" />
 
     <LinearLayout
         android:id="@+id/set_alarm"

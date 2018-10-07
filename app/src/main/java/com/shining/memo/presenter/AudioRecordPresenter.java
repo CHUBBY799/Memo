@@ -1,28 +1,19 @@
 package com.shining.memo.presenter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.shining.memo.model.AudioModel;
-import com.shining.memo.model.MemoDatabaseHelper;
-import com.shining.memo.model.RecordingContent;
-import com.shining.memo.model.TaskModel;
-import com.shining.memo.view.ViewAudioRecording;
+import com.shining.memo.utils.ToastUtils;
 import com.shining.memo.view.ViewRecord;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Queue;
 
 public class AudioRecordPresenter {
 
@@ -119,23 +110,28 @@ public class AudioRecordPresenter {
      * 取消录音
      */
     public void cancelRecord(){
+        if(mMediaRecorder != null){
+            try {
+                mMediaRecorder.stop();
+                mMediaRecorder.reset();
+                mMediaRecorder.release();
+                mMediaRecorder = null;
 
-        try {
-            mMediaRecorder.stop();
-            mMediaRecorder.reset();
-            mMediaRecorder.release();
-            mMediaRecorder = null;
-
-        }catch (RuntimeException e){
-            mMediaRecorder.reset();
-            mMediaRecorder.release();
-            mMediaRecorder = null;
+            }catch (RuntimeException e){
+                mMediaRecorder.reset();
+                mMediaRecorder.release();
+                mMediaRecorder = null;
+            }
+            File file = new File(filePath);
+            if (file.exists())
+                file.delete();
+            filePath = "";
         }
-        File file = new File(filePath);
-        if (file.exists())
-            file.delete();
-        filePath = "";
-
+        else {
+            ToastUtils.showShort(context,"Recording has not started yet!");
+            viewAudioRecording.onStopActivateRecording();
+            long startTime = 0;
+        }
     }
 
     private final Handler mHandler = new Handler();
@@ -146,14 +142,14 @@ public class AudioRecordPresenter {
     };
 
     private int BASE = 100;
-    private int SPACE = 500;// 间隔取样时间
+    private int SPACE = 1000;// 间隔取样时间
     private void updateMicStatus() {
 
         if (mMediaRecorder != null) {
             double ratio = (double)mMediaRecorder.getMaxAmplitude() / BASE;
             Log.d("ratio",String.valueOf(ratio));
             double db = 0;// 分贝
-            if (ratio > 1) {
+            if (ratio > 0) {
                 db = 20 * Math.log10(ratio);
                 Log.d("db",String.valueOf(db));
                 if(null != viewAudioRecording) {

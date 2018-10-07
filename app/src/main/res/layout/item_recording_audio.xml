@@ -37,6 +37,7 @@
             android:textStyle="bold"
             android:paddingLeft="22dp"
             android:drawablePadding="15dp"
+            style="?android:attr/borderlessButtonStyle"
             />
         <EditText
             android:id="@+id/btn_edit"

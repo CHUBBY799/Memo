@@ -2,18 +2,30 @@ package com.shining.memo.adapter;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StrikethroughSpan;
+import android.text.style.StyleSpan;
+import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,6 +38,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,6 +50,7 @@ import android.widget.TextView;
 import com.shining.memo.R;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.presenter.AudioPlayPresenter;
+import com.shining.memo.utils.ToastUtils;
 
 
 import java.io.BufferedInputStream;
@@ -51,6 +66,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static android.graphics.Typeface.BOLD;
+import static android.text.Html.FROM_HTML_MODE_COMPACT;
 
 
 public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayPresenter.onStopPlay {
@@ -61,36 +81,31 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     private TextChanged textChanged;
     public int requestFocusableIndex = -1,position = 0;
     private String type = "";
-    private float dpTransform;
     private HashMap<Integer,shelterSize> shelter = new HashMap<>();
+    protected boolean isScrolling = false;
+    private int CurrentIndex = -1,btnIndex = -1;
+    private String CurrentType = "";
+
 
     public RecordingAdapter(HashMap<Integer,RecordingContent> map,Context context,TextChanged textChanged) {
         this.map = map;
         this.context = context;
         presenter = new AudioPlayPresenter(context,this);
         this.textChanged =textChanged;
-        calculateTransform();
     }
 
     public int getRequestFocusableIndex() {
         return requestFocusableIndex;
     }
 
-
-    public void calculateTransform(){
-
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(outMetrics);
-
-        int mScreenWidth = outMetrics.widthPixels;
-        int mScreenHeight = outMetrics.heightPixels;
-        Log.d("calculateTransform",mScreenWidth+"--"+mScreenHeight);
+    public void setScrolling(boolean scrolling){
+        isScrolling = scrolling;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        Log.d("onCreateViewHolder","onCreateViewHolder" + requestFocusableIndex);
         switch (i){
             case 0:
                 View view = LayoutInflater.from(context).inflate(R.layout.item_recording_text,null);
@@ -105,9 +120,11 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         return null;
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        Log.d("focusable1","focusable1" + requestFocusableIndex);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
+        Log.d("onBindViewHolder","onBindViewHolder" + requestFocusableIndex);
         TextViewHolder textViewHolder = null;
         AudioViewHolder audioViewHolder = null;
         PhotoViewHolder photoViewHolder = null;
@@ -115,7 +132,11 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             case "text":
                 textViewHolder = ((TextViewHolder)viewHolder);
                 textViewHolder.itemView.setTag(i);
-                textViewHolder.editText.setText(map.get(i).getContent());
+                Spanned spanned = Html.fromHtml(map.get(i).getContent(),FROM_HTML_MODE_COMPACT);
+                if(spanned.length() > 0)
+                    textViewHolder.editText.setText(spanned.subSequence(0,spanned.length() -1));
+                else
+                    textViewHolder.editText.setText(spanned);
                 textViewHolder.editText.setWidth(2000);
                 break;
             case "audio":
@@ -127,6 +148,9 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                     mediaPlayer.setDataSource(map.get(i).getContent());
                     mediaPlayer.prepare();
                     long time = mediaPlayer.getDuration();
+                    mediaPlayer.reset();
+                    mediaPlayer.release();
+                    mediaPlayer = null;
                     audioViewHolder.button.setText(sdf.format(new Date(time)));
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -135,40 +159,40 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 Drawable drawable = context.getDrawable(R.drawable.play_audio_icon);
                 drawable.setBounds(0,0,35,35);
                 audioViewHolder.button.setCompoundDrawables(drawable,null,null,null);
-                mediaPlayer.release();
                 audioViewHolder.editTextEnd.setWidth(2000);
                 audioViewHolder.filePath = map.get(i).getContent();
                 audioViewHolder.itemView.setTag(i);
                 break;
             case "photo":
-                photoViewHolder = ((PhotoViewHolder)viewHolder);
-                photoViewHolder.itemView.setTag(i);
-                try {
-                    FileInputStream in = new FileInputStream(map.get(i).getContent());
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inSampleSize = 8;//图片的长宽都是原来的1/8
-                    BufferedInputStream bis = new BufferedInputStream(in);
-                    Bitmap bm = BitmapFactory.decodeStream(bis, null, options);
-                    photoViewHolder.imageView.setImageBitmap(bm);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    photoViewHolder.imageView.setImageResource(R.drawable.alarm_clock_btn_48x48px);
-                }
-                if(shelter.containsKey(i)){
-                    photoViewHolder.imageView.setVisibility(View.GONE);
-                    photoViewHolder.relativeLayout.getLayoutParams().width = shelter.get(i).width;
-                    photoViewHolder.relativeLayout.getLayoutParams().height = shelter.get(i).height;
-                    photoViewHolder.relativeLayout.setVisibility(View.VISIBLE);
-                }else {
-                    photoViewHolder.imageView.setVisibility(View.VISIBLE);
-                    photoViewHolder.relativeLayout.setVisibility(View.GONE);
-                }
+                    photoViewHolder = ((PhotoViewHolder)viewHolder);
+                    photoViewHolder.itemView.setTag(i);
+                    try {
+                        FileInputStream in = new FileInputStream(map.get(i).getContent());
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inSampleSize = 8;       //图片的长宽都是原来的1/8
+                        BufferedInputStream bis = new BufferedInputStream(in);
+                        Bitmap bm = BitmapFactory.decodeStream(bis, null, options);
+                        photoViewHolder.imageView.setImageBitmap(bm);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        photoViewHolder.imageView.setImageResource(R.drawable.alarm_clock_btn_48x48px);
+                    }
+                    if(shelter.containsKey(i)){
+                        photoViewHolder.imageView.setVisibility(View.GONE);
+                        photoViewHolder.relativeLayout.getLayoutParams().width = shelter.get(i).width;
+                        photoViewHolder.relativeLayout.getLayoutParams().height = shelter.get(i).height;
+                        photoViewHolder.relativeLayout.setVisibility(View.VISIBLE);
+                    }else {
+                        photoViewHolder.imageView.setVisibility(View.VISIBLE);
+                        photoViewHolder.relativeLayout.setVisibility(View.GONE);
+                    }
                 break;
         }
         if(i ==  requestFocusableIndex){
             textChanged.recyclerViewFocusable();
             switch (map.get(i).getType()){
                 case "text":
+                    Log.d(TAG, "onBindViewHolder: requestFocusableIndex  text"+ position+"---"+requestFocusableIndex +type);
                     textViewHolder.itemView.requestFocus();
                     if(type.equals("end"))
                         textViewHolder.editText.setSelection(textViewHolder.editText.getText().toString().length());
@@ -209,9 +233,6 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         return 0;
     }
 
-    private int CurrentIndex = -1,btnIndex = -1;
-    private String CurrentType = "";
-
     @Override
     public void onStopPlay() {
         btnIndex = -1;
@@ -226,13 +247,13 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         public TextViewHolder(View itemView) {
             super(itemView);
             editText = itemView.findViewById(R.id.item_editText);
-//            editText.setHorizontallyScrolling(false);
-//            editText.setMaxLines(Integer.MAX_VALUE);
+            editText.setHorizontallyScrolling(false);
+            editText.setMaxLines(Integer.MAX_VALUE);
             this.itemView = itemView;
             editText.setOnFocusChangeListener(this);
             editText.addTextChangedListener(this);
             editText.setOnKeyListener(this);
-            editText.setOnEditorActionListener(this);
+    //        editText.setOnEditorActionListener(this);
         }
 
         @Override
@@ -251,12 +272,20 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         }
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            textChanged.TextChanged(editText.getText().toString(),(int)itemView.getTag());
+            textChanged.TextChanged(updateAllTypeSpan(new SpannableString(editText.getText())),(int)itemView.getTag());
         }
         @Override
         public void afterTextChanged(Editable s) {
+            if(!Html.toHtml(new SpannableString(editText.getText())).equals(Html.toHtml(updateAllTypeSpan(new SpannableString(editText.getText()))))){
+                editText.removeTextChangedListener(this);
+                int index = editText.getSelectionStart();
+                editText.setText(updateAllTypeSpan(new SpannableString(editText.getText())));
+                editText.setSelection(index);
+                editText.addTextChangedListener(this);
+            }
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
             if(v.equals(editText) && keyCode == KeyEvent.KEYCODE_DEL&& event.getAction() == KeyEvent.ACTION_DOWN){
@@ -271,29 +300,21 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                     }else {  //光标返回上一层
                         if(CurrentIndex - 1 >= 0){
                             if(map.get(CurrentIndex - 1).getType().equals("text")){
-                                int position = map.get(CurrentIndex - 1).getContent().length();
-                                map.get(CurrentIndex - 1).setContent(map.get(CurrentIndex - 1).getContent() + map.get(CurrentIndex).getContent());
+                                int position = Html.fromHtml(map.get(CurrentIndex - 1).getContent(),FROM_HTML_MODE_COMPACT).length() - 1;
+                                map.get(CurrentIndex - 1).setContent(map.get(CurrentIndex - 1).getContent().substring(0,map.get(CurrentIndex - 1).getContent().length()-4) +
+                                        map.get(CurrentIndex).getContent().substring(13));
                                 for(int i = CurrentIndex; i < map.size() - 1;i++)
                                     map.put(i,map.get(i + 1));
                                 map.remove(map.size() - 1);
                                 textChanged.deleteEditText(map,CurrentIndex,position,"specific");
-                            } if(map.get(CurrentIndex - 1).getType().equals("photo")){
+                            } else if(map.get(CurrentIndex - 1).getType().equals("photo")){
                                 try{
-                                    PhotoViewHolder photoViewHolder = (PhotoViewHolder)textChanged.getRecyclerView().findViewHolderForAdapterPosition(CurrentIndex-1);
-                                    photoViewHolder.relativeLayout.getLayoutParams().height = photoViewHolder.imageView.getHeight();
-                                    photoViewHolder.relativeLayout.getLayoutParams().width = photoViewHolder.imageView.getWidth();
-                                    photoViewHolder.imageView.setVisibility(View.GONE);
-                                    photoViewHolder.relativeLayout.setVisibility(View.VISIBLE);
-                                    textChanged.recyclerViewClearFocusable();
-                                    shelterSize size = new shelterSize();
-                                    size.width = photoViewHolder.imageView.getWidth();
-                                    size.height = photoViewHolder.imageView.getHeight();
-                                    shelter.put(CurrentIndex - 1,size);
+                                    final PhotoViewHolder photoViewHolder = (PhotoViewHolder)textChanged.getRecyclerView().findViewHolderForAdapterPosition(CurrentIndex-1);
+                                    photoImageShelter(photoViewHolder.relativeLayout,photoViewHolder.imageView,photoViewHolder.itemView);
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
-                            }
-                            else {
+                            } else if(map.get(CurrentIndex - 1).getType().equals("audio")){
                                 setRequestFocusableArgs(CurrentIndex -1,0,"end");
                                 textChanged.updateAdapter(CurrentIndex - 1);
                             }
@@ -306,32 +327,32 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
 
         @Override
         public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-//            if(actionId == EditorInfo.IME_ACTION_NEXT){
-//                List<String> text = editTextDistach(editText);
-//                HashMap<Integer, RecordingContent> map = textChanged.getMap();
-//                int index = getCurrentIndex();
-//                if(index != -1){
-//                    for(int i = map.size() - 1; i > index; i--)
-//                        map.put(i + 1,map.get(i));
-//                    Log.d("map",map.toString());
-//                    Log.d("map",index+"");
-//                    RecordingContent content = new RecordingContent();
-//                    content.setType("text");
-//                    content.setColor(map.get(index).getColor());
-//                    content.setContent(text.get(0));
-//                    map.put(index,content);
-//                    content = new RecordingContent();
-//                    content.setType("text");
-//                    content.setColor(map.get(index).getColor());
-//                    if(text.size() > 1)
-//                        content.setContent(text.get(1));
-//                    else
-//                        content.setContent("");
-//                    map.put(index + 1,content);
-//                    setRequestFocusableArgs(index + 1,0,"first");
-//                    textChanged.updateAdapter(index);
-//                }
-//            }
+            if(actionId == EditorInfo.IME_ACTION_NEXT){
+                List<Spanned> text = editTextDistach(editText);
+                HashMap<Integer, RecordingContent> map = textChanged.getMap();
+                int index = getCurrentIndex();
+                if(index != -1){
+                    for(int i = map.size() - 1; i > index; i--)
+                        map.put(i + 1,map.get(i));
+                    Log.d("map",map.toString());
+                    Log.d("map",index+"");
+                    RecordingContent content = new RecordingContent();
+                    content.setType("text");
+                    content.setColor(map.get(index).getColor());
+                    content.setContent(Html.toHtml(text.get(0)));
+                    map.put(index,content);
+                    content = new RecordingContent();
+                    content.setType("text");
+                    content.setColor(map.get(index).getColor());
+                    if(text.size() > 1)
+                        content.setContent(Html.toHtml(text.get(1)));
+                    else
+                        content.setContent("");
+                    map.put(index + 1,content);
+                    setRequestFocusableArgs(index + 1,0,"first");
+                    textChanged.updateAdapter(index);
+                }
+            }
             return false;
         }
     }
@@ -365,6 +386,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         @Override
         public void onClick(View view) {
             itemView.requestFocus();
+            editTextEnd.requestFocus();
             if(btnIndex == -1){
                 presenter.setPlayFilePath(filePath);
                 presenter.doPlay();
@@ -499,15 +521,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         public void onClick(View view) {
             switch (view.getId()){
                 case R.id.item_imageView:
-                    relativeLayout.getLayoutParams().height = imageView.getHeight();
-                    relativeLayout.getLayoutParams().width = imageView.getWidth();
-                    textChanged.recyclerViewFocusable();
-                    imageView.setVisibility(View.GONE);
-                    relativeLayout.setVisibility(View.VISIBLE);
-                    shelterSize size = new shelterSize();
-                    size.width = imageView.getWidth();
-                    size.height = imageView.getHeight();
-                    shelter.put((int)itemView.getTag(),size);
+                    photoImageShelter(relativeLayout,imageView,itemView);
                     break;
                 case R.id.photo_delete:
                     int index = (int)itemView.getTag();
@@ -531,112 +545,37 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                     break;
             }
         }
-//        @Override
-//        public void onFocusChange(View view, boolean b) {
-//            if(b){
-//                CurrentIndex = (int)itemView.getTag();
-//                if(((EditText)view).getId() == R.id.item_image_start){
-//                    CurrentType = "photo_start";
-//                    textChangedId = R.id.item_image_start;
-//                }
-//                else{
-//                    CurrentType = "photo_end";
-//                    textChangedId = R.id.item_image_end;
-//                }
-//                //TBD
-//                if(itemView.getHeight() != 0)
-//                    ((EditText)view).setTextSize(TypedValue.COMPLEX_UNIT_PX,(int)(itemView.getHeight()/1.36));
-//                else
-//                    ((EditText)view).setTextSize(20);
-//                Log.d(TAG, "onFocusChange: " + CurrentIndex);
-//            }else {
-//                CurrentIndex = -1;
-//            }
-//        }
-//        @Override
-//        public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-//            if( keyCode == KeyEvent.KEYCODE_DEL && keyEvent.getAction() == KeyEvent.ACTION_DOWN){
-//                if(view.equals(editTextEnd)) {
-//                    int text_index = editTextEnd.getSelectionStart();
-//                    if (text_index == 0) {
-//                        int index = (int) itemView.getTag();
-//                        HashMap<Integer, RecordingContent> map = textChanged.getMap();
-//                        String filePath = map.get(index).getContent();
-//                        File file = new File(filePath);
-//                        if (file.exists() && filePath.contains(Environment.getExternalStorageState()+"/photo/"))
-//                            file.delete();
-//                        for (int i = index; i < map.size() - 1; i++)
-//                            map.put(i, map.get(i + 1));
-//                        map.remove(map.size() - 1);
-//                        textChanged.deleteEditText(map, index, 0, "end");
-//                    }
-//                }else if(view.equals(editTextStart)){
-//                    if(CurrentIndex - 1 >= 0){
-//                        HashMap<Integer, RecordingContent> map = textChanged.getMap();
-//                        if(map.get(CurrentIndex - 1).getType().equals("text") && map.get(CurrentIndex - 1).getContent().equals("")){
-//                            for(int i = CurrentIndex -1; i < map.size() - 1; i++)
-//                                map.put(i,map.get(i + 1));
-//                            map.remove(map.size());
-//                            textChanged.deleteEditText(map,CurrentIndex - 1,0,"first");
-//                        }else {
-//                            setRequestFocusableArgs(CurrentIndex - 1,0,"end");
-//                            textChanged.updateAdapter(CurrentIndex -1);
-//                        }
-//                    }
-//                }
-//            }
-//            return false;
-//        }
-//        @Override
-//        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
-//        @Override
-//        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//            if(isChanged){
-//                int index = getCurrentIndex();
-//                isChanged = false;
-//                if(textChangedId == R.id.item_image_end) {
-//                    changedItem(editTextEnd.getText().toString(),"end",index);
-//                    editTextEnd.setText("");
-//                }
-//                else{
-//                    changedItem(editTextStart.getText().toString(),"start",index);
-//                    editTextStart.setText("");
-//                }
-//                textChanged.updateAdapter(index);
-//            }else {
-//                isChanged = true;
-//            }
-//        }
-//        @Override
-//        public void afterTextChanged(Editable editable) { }
-//        @Override
-//        public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-//            Log.d("onEditorAction","onEditorAction");
-//            if(actionId == EditorInfo.IME_ACTION_NEXT){
-//                Log.d("onEditorAction1","onEditorAction1");
-//                HashMap<Integer, RecordingContent> map = textChanged.getMap();
-//                int index = getCurrentIndex();
-//                for(int i = map.size() - 1; i > index; i--)
-//                    map.put(i + 1,map.get(i));
-//                RecordingContent content = new RecordingContent();
-//                content.setType("text");
-//                content.setColor(map.get(index).getColor());
-//                content.setContent("");
-//                if(textChangedId == R.id.item_image_end){
-//                    map.put(index + 1,content);
-//                }else{
-//                    map.put(index + 1,map.get(index));
-//                    map.put(index,content);
-//                }
-//                setRequestFocusableArgs(index + 1,0,"first");
-//                textChanged.updateAdapter(index);
-//            }
-//            return false;
-//        }
     }
 
-
-
+    public void photoImageShelter(RelativeLayout relativeLayout,final ImageView imageView,View itemView){
+        textChanged.recyclerViewClearFocusable();
+        relativeLayout.getLayoutParams().height = imageView.getHeight();
+        relativeLayout.getLayoutParams().width = imageView.getWidth();
+        (textChanged.getRecyclerView()).scrollToPosition((int)itemView.getTag());
+        AlphaAnimation appearAnimation = new AlphaAnimation(0, 1);
+        appearAnimation.setDuration(500);
+        AlphaAnimation disappearAnimation = new AlphaAnimation(1, 0);
+        disappearAnimation.setDuration(500);
+        imageView.startAnimation(disappearAnimation);
+        disappearAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                imageView.setVisibility(View.GONE);
+            }
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        relativeLayout.startAnimation(appearAnimation);
+        relativeLayout.setVisibility(View.VISIBLE);
+        shelterSize size = new shelterSize();
+        size.width = imageView.getWidth();
+        size.height = imageView.getHeight();
+        shelter.put((int)itemView.getTag(),size);
+    }
 
     public void changedItem(String text,String position,int index){
         HashMap<Integer, RecordingContent> map = textChanged.getMap();
@@ -663,13 +602,15 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     }
 
     public void requestFocusable(RecyclerView mRecycleView){
-//        try {
+        try {
             HashMap<Integer,RecordingContent> map = textChanged.getMap();
             mRecycleView.requestFocus();
             mRecycleView.getChildAt(requestFocusableIndex -textChanged.getCurrentFirstIndex());
+            Log.d("req", "requestFocusable: "+map.toString());
             if(map.get(requestFocusableIndex).getType().equals("text")){
                 Log.d("req",requestFocusableIndex+"--"+textChanged.getCurrentFirstIndex());
-                TextViewHolder textViewHolder = (TextViewHolder)mRecycleView.getChildViewHolder(mRecycleView.getChildAt(requestFocusableIndex-textChanged.getCurrentFirstIndex()));
+                TextViewHolder textViewHolder = (TextViewHolder)mRecycleView.findViewHolderForAdapterPosition(requestFocusableIndex);
+                textViewHolder.editText.requestFocus();
                 if(type.equals("end"))
                     textViewHolder.editText.setSelection(textViewHolder.editText.getText().toString().length());
                 else if(type.equals("specific"))
@@ -683,15 +624,16 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 else
                     audioViewHolder.editTextStart.requestFocus();
             }
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
+        }catch (Exception e){
+           e.printStackTrace();
+        }
     }
 
     public void setRequestFocusableArgs(int requestIndex,int position,String positionType){
         requestFocusableIndex = requestIndex;
         this.position = position;
         type = positionType;
+        Log.d(TAG, "setRequestFocusableArgs: "+requestIndex+"--"+position +"---"+type);
     }
 
 
@@ -731,26 +673,215 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         return CurrentType;
     }
 
-    public List<String> distachText(RecyclerView recyclerView){
+    public List<Spanned> distachText(RecyclerView recyclerView){
         TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(CurrentIndex - textChanged.getCurrentFirstIndex()));
         return editTextDistach(textViewHolder.editText);
     }
 
-    public List<String> editTextDistach(EditText editText){
-        List<String> text = new ArrayList<>();
+    public List<Spanned> editTextDistach(EditText editText){
+        List<Spanned> text = new ArrayList<>();
         Editable editable = editText.getEditableText();
         int index = editText.getSelectionStart();
-        String strText = editText.getText().toString();
-        if(index < strText.length()){
-            text.add(strText.substring(0,index));
-            text.add(strText.substring(index));
+        SpannableString foreSpannaleString =  new SpannableString(editable.subSequence(0,index)),
+                backSpannalbleString =  new SpannableString(editable.subSequence(index,editable.length()));
+        if(index < editable.length()){
+            Object[] spans = editable.getSpans(0,editable.length(),Object.class);
+            for(int i = 0; i < spans.length; i++){
+                int start = editable.getSpanStart(spans[i]),end = editable.getSpanEnd(spans[i]);
+                Log.d(TAG, "editTextDistach: "+spans[i].toString()+"---index"+index+"---start"+start+"---end"+end);
+                if(end < index){
+                    Log.d(TAG, "editTextDistach: end < index");
+                    foreSpannaleString.setSpan(spans[i],start,end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                }else if(index <= start){
+                    Log.d(TAG, "editTextDistach: index <= start");
+                    backSpannalbleString.setSpan(spans[i],start - foreSpannaleString.length(),end - foreSpannaleString.length(),
+                            Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                }else{
+                    Log.d(TAG, "editTextDistach: other");
+                    foreSpannaleString.setSpan(spans[i],start,index, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                    backSpannalbleString.setSpan(spans[i],index -foreSpannaleString.length(),end - foreSpannaleString.length()
+                            , Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                }
+            }
+            text.add(foreSpannaleString);
+            text.add(backSpannalbleString);
         }else
-            text.add(strText.substring(0,index));
+            text.add((Spanned)editable);
         return text;
     }
 
+    public void setTextColor(int index,RecyclerView recyclerView,int color){
+        if(index != -1 && (index - textChanged.getCurrentFirstIndex() >= 0)){
+            TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(index - textChanged.getCurrentFirstIndex()));
+            int startIndex = textViewHolder.editText.getSelectionStart(),endIndex = textViewHolder.editText.getSelectionEnd();
+            SpannableString spannableString = new SpannableString(textViewHolder.editText.getText());
+            ToastUtils.showShort(context,textViewHolder.editText.getTextSize()+"");
+            spannableString = updateTextColor(spannableString,startIndex,endIndex,color);
+            textViewHolder.editText.setText(spannableString);
+            textChanged.TextChanged(spannableString,index);
+        }
+    }
+    private SpannableString updateTextColor(SpannableString spannableString,int start,int end,int insertColor){
+        ForegroundColorSpan[] spans = spannableString.getSpans(0,spannableString.length(), ForegroundColorSpan.class);
+        boolean changed = false;
+        for(int i=0; i < spans.length; i++){
+            if(!(spannableString.getSpanStart(spans[i]) > end || spannableString.getSpanEnd(spans[i]) < start)){
+                int spanStart = spannableString.getSpanStart(spans[i]),spanEnd = spannableString.getSpanEnd(spans[i]),size = spans[i].getForegroundColor();
+                spannableString.removeSpan(spans[i]);
+                if(spanStart < start)
+                    spannableString.setSpan(new ForegroundColorSpan(size),spanStart,start,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if(spanEnd > end)
+                    spannableString.setSpan(new ForegroundColorSpan(size),end,spanEnd,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(new ForegroundColorSpan(insertColor),start,end,Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                changed = true;
+            }
+        }
+        if(!changed){
+            spannableString.setSpan(new ForegroundColorSpan(insertColor),start,end,Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        }
+        return spannableString;
+    }
+
+    public void setTextFontSize(int index,RecyclerView recyclerView,int type){
+        if(index != -1 && (index - textChanged.getCurrentFirstIndex() >= 0)){
+            TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(index - textChanged.getCurrentFirstIndex()));
+            int startIndex = textViewHolder.editText.getSelectionStart(),endIndex = textViewHolder.editText.getSelectionEnd();
+            SpannableString spannableString = new SpannableString(textViewHolder.editText.getText());
+            ToastUtils.showShort(context,textViewHolder.editText.getTextSize()+"");
+            if(type == 1)
+                spannableString = updateTextFontSize(spannableString,startIndex,endIndex,(int)textViewHolder.editText.getTextSize() + 2);
+            else
+                spannableString = updateTextFontSize(spannableString,startIndex,endIndex,(int)textViewHolder.editText.getTextSize() - 2);
+            textViewHolder.editText.setText(spannableString);
+            textChanged.TextChanged(spannableString,index);
+        }
+    }
+    private SpannableString updateTextFontSize(SpannableString spannableString,int start,int end,int insertSize){
+        AbsoluteSizeSpan[] spans = spannableString.getSpans(0,spannableString.length(), AbsoluteSizeSpan.class);
+        boolean changed = false;
+        for(int i=0; i < spans.length; i++){
+            if(!(spannableString.getSpanStart(spans[i]) > end || spannableString.getSpanEnd(spans[i]) < start)){
+                int spanStart = spannableString.getSpanStart(spans[i]),spanEnd = spannableString.getSpanEnd(spans[i]),size = spans[i].getSize();
+                spannableString.removeSpan(spans[i]);
+                if(spanStart < start)
+                    spannableString.setSpan(new AbsoluteSizeSpan(size),spanStart,start,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if(spanEnd > end)
+                    spannableString.setSpan(new AbsoluteSizeSpan(size),end,spanEnd,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(new AbsoluteSizeSpan(insertSize),start,end,Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                changed = true;
+            }
+        }
+        if(!changed){
+            spannableString.setSpan(new AbsoluteSizeSpan(insertSize),start,end,Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        }
+        return spannableString;
+    }
+
+    public void setTextLine(int index,RecyclerView recyclerView,int type){
+        if(index != -1 && (index - textChanged.getCurrentFirstIndex() >= 0)){
+            TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(index - textChanged.getCurrentFirstIndex()));
+            int startIndex = textViewHolder.editText.getSelectionStart(),endIndex = textViewHolder.editText.getSelectionEnd();
+            SpannableString spannableString = new SpannableString(textViewHolder.editText.getText());
+            if(type == 1)
+                spannableString = updateTextLine(spannableString,startIndex,endIndex,new UnderlineSpan());
+            else
+                spannableString = updateTextLine(spannableString,startIndex,endIndex,new StrikethroughSpan());
+            textViewHolder.editText.setText(spannableString);
+            textChanged.TextChanged(spannableString,index);
+        }
+    }
+
+    private SpannableString updateTextLine(SpannableString spannableString,int start,int end,Object insertType){
+        Object[] spans = spannableString.getSpans(0,spannableString.length(), UnderlineSpan.class);
+        boolean changed = false;
+        for(int i=0; i < spans.length; i++){
+            if(!(spannableString.getSpanStart(spans[i]) > end || spannableString.getSpanEnd(spans[i]) < start)){
+                int spanStart = spannableString.getSpanStart(spans[i]),spanEnd = spannableString.getSpanEnd(spans[i]);
+                spannableString.removeSpan(spans[i]);
+                if(spanStart < start)
+                    spannableString.setSpan(new UnderlineSpan(),spanStart,start,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if(spanEnd > end)
+                    spannableString.setSpan(new UnderlineSpan(),end,spanEnd,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(insertType,start,end,Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                changed = true;
+            }
+        }
+        spans = spannableString.getSpans(0,spannableString.length(), StrikethroughSpan.class);
+        for(int i=0; i < spans.length; i++){
+            if(!(spannableString.getSpanStart(spans[i]) > end || spannableString.getSpanEnd(spans[i]) < start)){
+                int spanStart = spannableString.getSpanStart(spans[i]),spanEnd = spannableString.getSpanEnd(spans[i]);
+                spannableString.removeSpan(spans[i]);
+                if(spanStart < start)
+                    spannableString.setSpan(new StrikethroughSpan(),spanStart,start,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if(spanEnd > end)
+                    spannableString.setSpan(new StrikethroughSpan(),end,spanEnd,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(insertType,start,end,Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                changed = true;
+            }
+        }
+        if(!changed){
+            spannableString.setSpan(insertType,start,end,Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        }
+        return spannableString;
+    }
+
+    public void setTextFont(int index,RecyclerView recyclerView,int type){
+        if(index != -1 && (index - textChanged.getCurrentFirstIndex() >= 0)){
+            TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(index - textChanged.getCurrentFirstIndex()));
+            int startIndex = textViewHolder.editText.getSelectionStart(),endIndex = textViewHolder.editText.getSelectionEnd();
+            SpannableString spannableString = new SpannableString(textViewHolder.editText.getText());
+            spannableString = updateTextFont(spannableString,startIndex,endIndex,type);
+            textViewHolder.editText.setText(spannableString);
+            textChanged.TextChanged(spannableString,index);
+        }
+    }
+
+    private SpannableString updateTextFont(SpannableString spannableString,int start,int end,int insertType){
+        StyleSpan[] spans = spannableString.getSpans(0,spannableString.length(),StyleSpan.class);
+        boolean changed = false;
+        for(int i=0; i < spans.length; i++){
+            if(!(spannableString.getSpanStart(spans[i]) > end || spannableString.getSpanEnd(spans[i]) < start)){
+                int spanStart = spannableString.getSpanStart(spans[i]),spanEnd = spannableString.getSpanEnd(spans[i]),type = spans[i].getStyle();
+                spannableString.removeSpan(spans[i]);
+                if(spanStart < start)
+                    spannableString.setSpan(new StyleSpan(type),spanStart,start,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if(spanEnd > end)
+                    spannableString.setSpan(new StyleSpan(type),end,spanEnd,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(new StyleSpan(insertType),start,end,Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                changed = true;
+            }
+        }
+        if(!changed){
+            spannableString.setSpan(new StyleSpan(insertType),start,end,Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        }
+        return spannableString;
+    }
+
+    public String parseUnicodeToStr(String unicodeStr) {
+        String regExp = "&#\\d*;";
+        Matcher m = Pattern.compile(regExp).matcher(unicodeStr);
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            String s = m.group(0);
+            s = s.replaceAll("(&#)|;", "");
+            char c = (char) Integer.parseInt(s);
+            m.appendReplacement(sb, Character.toString(c));
+        }
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
+    private SpannableString updateAllTypeSpan(SpannableString spannableString){
+        Object[] spans = spannableString.getSpans(0,spannableString.length(),Object.class);
+        for(int i = 0; i < spans.length; i++){
+            if(spannableString.getSpanStart(spans[i]) == spannableString.getSpanEnd(spans[i]))
+                spannableString.removeSpan(spans[i]);
+        }
+        return spannableString;
+    }
+
     public interface TextChanged{
-        void TextChanged(String text,int index);
+        void TextChanged(Spanned text, int index);
         Context getContext();
         int getCurrentFirstIndex();
         int getCurrentLastIndex();

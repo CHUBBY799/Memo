@@ -8,4 +8,5 @@ public interface ViewRecord {
     Context getContext();
     void onUpdate(double db, long time);
     void onStop(String filePath,String type);
+    void onStopActivateRecording();
 }

@@ -19,22 +19,22 @@
         android:layout_marginEnd="25dp"
         android:background="@null"
         android:ems="10"
-        android:textColorHint="@color/item_btn_textcolor"
+        android:gravity="center_vertical|left"
         android:hint="@string/edit_title_hint"
+        android:imeOptions="actionNext"
         android:inputType="textMultiLine"
         android:minHeight="40dp"
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
         android:textAlignment="gravity"
-        android:gravity="center_vertical|left"
         android:textColor="@color/recording_title"
+        android:textColorHint="@color/item_btn_textcolor"
+        android:textCursorDrawable="@drawable/cursor"
         android:textSize="20dp"
         android:textStyle="bold"
-        android:imeOptions="actionNext"
-        android:textCursorDrawable="@drawable/cursor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -59,7 +59,7 @@
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recording_title"/>
+        app:layout_constraintTop_toBottomOf="@id/recording_title" />
 
     <TextView
         android:layout_width="match_parent"
@@ -79,6 +79,7 @@
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
         android:gravity="center_vertical"
+        android:animateLayoutChanges="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -90,6 +91,9 @@
             android:visibility="gone"/>
         <include android:id="@+id/bottom_recording_photo"
             layout="@layout/bottom_recording_photo"
+            android:visibility="gone"/>
+        <include android:id="@+id/bottom_recording_textedit"
+            layout="@layout/bottom_recording_textedit"
             android:visibility="gone"/>
     </LinearLayout>
 

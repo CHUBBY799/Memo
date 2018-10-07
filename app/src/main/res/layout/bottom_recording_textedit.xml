@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        tools:ignore="MissingConstraints">
+        <Button
+            android:id="@+id/textedit_font"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:text="B"
+            android:textColor="@color/item_btn_textcolor"
+            android:textSize="22dp"/>
+        <Button
+        android:id="@+id/textedit_line"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@null"
+        android:text="U"
+        android:textColor="@color/item_btn_textcolor"
+        android:textSize="22dp"/>
+        <Button
+            android:id="@+id/textedit_fontsize"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:text="A"
+            android:textColor="@color/item_btn_textcolor"
+            android:textSize="22dp"/>
+        <Button
+            android:id="@+id/textedit_color"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:text="C"
+            android:textColor="@color/item_btn_textcolor"
+        android:textSize="22dp"/>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

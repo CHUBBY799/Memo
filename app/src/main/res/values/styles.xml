@@ -24,4 +24,9 @@
         <!--是否模糊-->
         <item name="android:backgroundDimEnabled">false</item>
     </style>
+    <style name="anim" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/push_popupwindow_in</item>
+        <item name="android:windowExitAnimation">@anim/push_popupwindow_out</item>
+    </style>
+
 </resources>

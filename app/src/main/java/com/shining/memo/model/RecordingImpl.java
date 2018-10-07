@@ -12,7 +12,7 @@ public class RecordingImpl implements RecordingModel{
     }
 
     @Override
-    public void updateRecording(Recording recording, SQLiteDatabase db) {
+    public void modifyRecording(Recording recording, SQLiteDatabase db) {
         db.execSQL("update recording "
                 +"set recordingInfo = ? "
                 + "where taskId = ?",new Object[]{recording.serialize(),recording.getTaskId()});

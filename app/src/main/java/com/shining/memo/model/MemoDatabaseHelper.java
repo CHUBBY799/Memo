@@ -3,6 +3,7 @@ package com.shining.memo.model;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class MemoDatabaseHelper extends SQLiteOpenHelper{
     public static final String CREATE_TASK="create table task("
@@ -22,16 +23,7 @@ public class MemoDatabaseHelper extends SQLiteOpenHelper{
             +"time text,"
             +"path text,"
             +"pop integer)";
-    public static final String CREATE_AUDIO="create table audio("
-            +"id integer primary key autoincrement,"
-            +"taskId integer,"
-            +"path text)";
-    public static final String CREATE_TEXT="create table text("
-            +"id integer primary key autoincrement,"
-            +"taskId integer,"
-            +"content text,"
-            +"color text)";
-    public static final String CREATE_MIXRECORDING="create table recording("
+    public static final String CREATE_RECORDING="create table recording("
             +"id integer primary key autoincrement,"
             +"taskId integer,"
             +"recordingInfo text)";
@@ -51,11 +43,10 @@ public class MemoDatabaseHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        Log.d("SQLiteDatabase", "onCreate:() ");
         sqLiteDatabase.execSQL(CREATE_TASK);
         sqLiteDatabase.execSQL(CREATE_ALARM);
-        sqLiteDatabase.execSQL(CREATE_AUDIO);
-        sqLiteDatabase.execSQL(CREATE_TEXT);
-        sqLiteDatabase.execSQL(CREATE_MIXRECORDING);
+        sqLiteDatabase.execSQL(CREATE_RECORDING);
         sqLiteDatabase.execSQL(CREATE_TB_LIST);
     }
 }

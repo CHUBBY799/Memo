@@ -1,21 +1,40 @@
 package com.shining.memo.view;
 
 import android.app.ActionBar;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.support.constraint.ConstraintLayout;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.shining.memo.R;
 import com.shining.memo.fragment.ListNew;
 import com.shining.memo.fragment.NoteNew;
 import com.shining.memo.fragment.TaskNew;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -87,9 +106,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void audio(){
-        Intent calendarIntent = new Intent(this,AudioRecordingActivity.class);
+        Intent calendarIntent = new Intent(this,TestView.class);
         startActivity(calendarIntent);
         pop.dismiss();
+//        Intent intent = new Intent();
+//        intent.setAction("com.shining.memo.alarmandnotice");
+//        intent.setComponent(new ComponentName("com.shining.memo","com.shining.memo.receiver.AlarmReceiver"));
+//        sendBroadcast(intent);
+//        pop.dismiss();
     }
 
     private void initView(){
