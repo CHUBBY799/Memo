@@ -50,7 +50,12 @@
         <activity
             android:name=".view.PhotoConfirmActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".view.TestView" />
+
+        <!--<activity android:name=".view.TestView" />-->
+
+
+        <activity android:name=".view.RecordingViewActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <receiver
             android:name=".receiver.AlarmReceiver"

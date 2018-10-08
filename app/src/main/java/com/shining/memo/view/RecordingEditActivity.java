@@ -43,6 +43,8 @@ import com.shining.memo.adapter.RecordingAdapter;
 import com.shining.memo.model.Alarm;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.model.Task;
+import com.shining.memo.model.Task_Recording;
+import com.shining.memo.presenter.AlarmPresenter;
 import com.shining.memo.presenter.AudioRecordPresenter;
 import com.shining.memo.presenter.PhotoPresenter;
 import com.shining.memo.presenter.RecordingPresenter;
@@ -59,7 +61,6 @@ import java.util.TimeZone;
 public class RecordingEditActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged,Switch.OnCheckedChangeListener{
     private final static  String TAG = "RecordingEditActivity";
     private static final int MSG_RECORDING = 0x110;
-    private static final int CAMERA_PERMISSIONS_REQUEST_CODE = 0x03;
     private static final int REQUEST_ALARM=0xb3;
     private static final int REQUEST_CAMERA=0xa1;
     private static final int REQUEST_GALLERY=0xa3;
@@ -71,13 +72,13 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private RecyclerView mRecyclerView;
     private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false;
     private String photoPath="";
-    private int urgent = 1;
-    private int alarm = 0;
+    private int urgent = 1,alarm = 0,taskId = -1;
     private Alarm alarmObject;
-    private AudioRecordPresenter presenter;
     private RecordingAdapter adapter;
     private HashMap<Integer,RecordingContent> mMap;
+    private AudioRecordPresenter presenter;
     private RecordingPresenter recordingPresenter;
+    private AlarmPresenter alarmPresenter;
     private PhotoPresenter photoPresenter;
     private PopupWindow mFontPopupWindow;
     private OnTextClick onTextClick;
@@ -91,27 +92,13 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         StrictMode.setVmPolicy(builder.build());
         builder.detectFileUriExposure();
         init();
-        presenter = new AudioRecordPresenter(this);
-        photoPresenter = new PhotoPresenter(this);
-        recordingPresenter = new RecordingPresenter(this);
-        onTextClick = new OnTextClick();
-        mMap = new HashMap<>();
-        adapter = new RecordingAdapter(mMap,this,this);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(adapter);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        initData();
     }
 
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume: ");
         super.onResume();
-        mRecyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                initRecycleView();
-            }
-        });
         if(isRecording) {
             animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
             isRecording = false;
@@ -161,13 +148,11 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         view =  (View)findViewById(R.id.bottom_recording_photo);
         mBtnGallery = (Button)view.findViewById(R.id.photo_gallery);
         mBtnCamera = (Button)view.findViewById(R.id.photo_camera);
-
         view =  (View)findViewById(R.id.bottom_recording_textedit);
         mBtnFont = (Button)view.findViewById(R.id.textedit_font);
         mBtnLine = (Button)view.findViewById(R.id.textedit_line);
         mBtnFontSize = (Button)view.findViewById(R.id.textedit_fontsize);
         mBtnColor = (Button)view.findViewById(R.id.textedit_color);
-
         mSwitchUrgent = (Switch)findViewById(R.id.bottom_urgent);
         mBtnRecord = (Button)findViewById(R.id.bottom_audio);
         mBtnPhoto = (Button)findViewById(R.id.bottom_photo);
@@ -184,24 +169,45 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         mBtnCamera.setOnClickListener(this);
         mBtnGallery.setOnClickListener(this);
         mSwitchUrgent.setOnCheckedChangeListener(this);
-
         mBtnFont.setOnClickListener(this);
         mBtnLine.setOnClickListener(this);
         mBtnFontSize.setOnClickListener(this);
         mBtnColor.setOnClickListener(this);
+
+        presenter = new AudioRecordPresenter(this);
+        photoPresenter = new PhotoPresenter(this);
+        recordingPresenter = new RecordingPresenter(this);
+        alarmPresenter = new AlarmPresenter(this);
+        onTextClick = new OnTextClick();
+        taskId = getIntent().getIntExtra("taskId",-1);
     }
 
-    private void initRecycleView(){
-        Log.d(TAG, "initRecycleView: ");
-        String string = "";
-        if(mMap.isEmpty()) {
-            RecordingContent content = new RecordingContent();
-            content.setType("text");
-            content.setColor("#000000");
-            content.setContent(string);
-            mMap.put(mMap.size(),content);
-            adapter.notifyDataSetChanged();
+    private void initData(){
+        if(taskId == -1){
+            if(mMap == null || mMap.isEmpty()){
+                mMap = new HashMap<>();
+                RecordingContent content = new RecordingContent();
+                content.setType("text");
+                content.setColor("#000000");
+                content.setContent("");
+                mMap.put(mMap.size(),content);
+            }
+        }else{
+            Task_Recording task_recording = recordingPresenter.getTaskRecording(taskId);
+            editTitle.setText(task_recording.getTask().getTitle());
+            alarm = task_recording.getTask().getAlarm();
+            if(alarm == 1){
+                alarmObject = alarmPresenter.getAlarm(taskId);
+            }
+            urgent = task_recording.getTask().getUrgent();
+            if(urgent == 0)
+                mSwitchUrgent.setChecked(false);
+            mMap = task_recording.getRecording().getRecordingMap();
         }
+        adapter = new RecordingAdapter(mMap,this,this);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     public static Boolean hideInputMethod(Context context, View v) {
@@ -214,7 +220,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         return false;
     }
 
-    public static boolean isShouldHideInput(View v, MotionEvent event) {
+    public boolean isShouldHideInput(View v, MotionEvent event) {
         Log.d(TAG, "isShouldHideInput: ");
         if (v != null) {
             int[] leftTop = { 0, 0 };
@@ -358,9 +364,16 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
 
     private void clickCancel(){
         Log.d(TAG, "clickCancel: ");
-        Intent intent = new Intent();
-        intent.setClass(this,MainActivity.class);
-        startActivity(intent);
+        if(taskId == -1){
+            Intent intent = new Intent();
+            intent.setClass(this,MainActivity.class);
+            startActivity(intent);
+        }else {
+            Intent intent = new Intent();
+            intent.putExtra("taskId",taskId);
+            intent.setClass(this,RecordingViewActivity.class);
+            startActivity(intent);
+        }
     }
     private void clickConfirm(){
         Log.d(TAG, "clickConfirm: ");
@@ -370,13 +383,26 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         task.setAlarm(alarm);
         String title = editTitle.getText().toString();
         task.setTitle(title);
-        if(recordingPresenter.saveRecording(task,mMap,alarmObject)){
-            Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent();
-            intent.setClass(this, MainActivity.class);
-            startActivity(intent);
-        }else{
-            Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+        if(taskId == -1){
+            if(recordingPresenter.saveRecording(task,mMap,alarmObject)){
+                Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setClass(this, MainActivity.class);
+                startActivity(intent);
+            }else{
+                Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+            }
+        }else {
+            task.setId(taskId);
+            if(recordingPresenter.modifyRecording(task,mMap,alarmObject)){
+                Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.putExtra("taskId",taskId);
+                intent.setClass(this,RecordingViewActivity.class);
+                startActivity(intent);
+            }else{
+                Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+            }
         }
     }
     private void clickEdit(){
@@ -390,7 +416,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             alarmIntent.putExtra("date",alarmObject.getDate());
             alarmIntent.putExtra("time",alarmObject.getTime());
             alarmIntent.putExtra("pop",alarmObject.getPop());
-            alarmIntent.putExtra("ringtone",0);
+            alarmIntent.putExtra("ringtone",alarmObject.getRingtone());
             alarmIntent.putExtra("alarm",1);
         }
         startActivityForResult(alarmIntent, REQUEST_ALARM);
@@ -407,7 +433,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                         alarmObject.setDate(data.getStringExtra("date"));
                         alarmObject.setTime(data.getStringExtra("time"));
                         alarmObject.setPop(data.getIntExtra("pop",0));
-                        alarmObject.setPath(String.valueOf(data.getIntExtra("ringtone",0)));
+                        alarmObject.setRingtone(data.getIntExtra("ringtone",0));
                     }
                     alarm =  data.getIntExtra("alarm",1);
                 }
@@ -558,17 +584,6 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         }else {
             animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_photo),500);
             isPhotoChoosing = true;
-        }
-    }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionsResult: ");
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
-            case CAMERA_PERMISSIONS_REQUEST_CODE:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
-                }
         }
     }
 

@@ -11,6 +11,7 @@ public class Task {
     private int alarm;    // 0：false 1：true
     private String title;
     private int deleted;  // 0：false 1：true
+    private int finished; // 0 :false 1:true
 
     public long getId() {
         return id;
@@ -74,6 +75,14 @@ public class Task {
 
     public void setDeleted(int deleted) {
         this.deleted = deleted;
+    }
+
+    public int getFinished() {
+        return finished;
+    }
+
+    public void setFinished(int finished) {
+        this.finished = finished;
     }
 
     @Override

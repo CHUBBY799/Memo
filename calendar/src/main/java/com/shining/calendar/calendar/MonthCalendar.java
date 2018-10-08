@@ -65,6 +65,8 @@ public class MonthCalendar extends CalendarPager implements OnClickMonthViewList
                 onMonthCalendarChangedListener.onMonthCalendarChanged(mSelectDate, mSelectDateList);
             }
         } else if (isPagerChanged) {
+            int i = position - lastPosition;
+            mSelectDate = mSelectDate.plusMonths(i);
             if (isDefaultSelect) {
                 //日期越界
                 if (mSelectDate.isAfter(endDate)) {

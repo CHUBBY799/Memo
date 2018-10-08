@@ -1,20 +1,16 @@
 package com.shining.memo.adapter;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
@@ -26,18 +22,12 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.inputmethod.EditorInfo;
@@ -51,6 +41,7 @@ import com.shining.memo.R;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.presenter.AudioPlayPresenter;
 import com.shining.memo.utils.ToastUtils;
+import com.shining.memo.view.RecordingEditActivity;
 
 
 import java.io.BufferedInputStream;
@@ -69,7 +60,6 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static android.graphics.Typeface.BOLD;
 import static android.text.Html.FROM_HTML_MODE_COMPACT;
 
 
@@ -82,15 +72,80 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     public int requestFocusableIndex = -1,position = 0;
     private String type = "";
     private HashMap<Integer,shelterSize> shelter = new HashMap<>();
-    protected boolean isScrolling = false;
     private int CurrentIndex = -1,btnIndex = -1;
     private String CurrentType = "";
+    private boolean isView = false;
+    private ViewChange viewChange;
 
+    public RecordingAdapter(HashMap<Integer,RecordingContent> map,Context context,ViewChange viewChange) {
+        this.map = map;
+        this.context = context;
+        presenter = new AudioPlayPresenter(context,this);
+        isView = true;
+        this.viewChange = viewChange;
+        textChanged = new TextChanged() {
+            @Override
+            public void TextChanged(Spanned text, int index) {
+
+            }
+
+            @Override
+            public Context getContext() {
+                return null;
+            }
+
+            @Override
+            public int getCurrentFirstIndex() {
+                return 0;
+            }
+
+            @Override
+            public int getCurrentLastIndex() {
+                return 0;
+            }
+
+            @Override
+            public HashMap<Integer, RecordingContent> getMap() {
+                return null;
+            }
+
+            @Override
+            public void deleteEditText(HashMap<Integer, RecordingContent> map, int index, int position, String type) {
+
+            }
+
+            @Override
+            public void updateAdapter(int index) {
+
+            }
+
+            @Override
+            public void recyclerViewFocusable() {
+
+            }
+
+            @Override
+            public void recyclerViewClearFocusable() {
+
+            }
+
+            @Override
+            public RecyclerView getRecyclerView() {
+                return null;
+            }
+
+            @Override
+            public void updateRecyclerView(int position) {
+
+            }
+        };
+    }
 
     public RecordingAdapter(HashMap<Integer,RecordingContent> map,Context context,TextChanged textChanged) {
         this.map = map;
         this.context = context;
         presenter = new AudioPlayPresenter(context,this);
+        isView = false;
         this.textChanged =textChanged;
     }
 
@@ -98,9 +153,6 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         return requestFocusableIndex;
     }
 
-    public void setScrolling(boolean scrolling){
-        isScrolling = scrolling;
-    }
 
     @NonNull
     @Override
@@ -259,6 +311,15 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if(hasFocus){
+                if(isView){
+                    int taskId = viewChange.getTaskId();
+                    Intent intent = new Intent();
+                    intent.setClass(context, RecordingEditActivity.class);
+                    intent.putExtra("taskId",taskId);
+                    context.startActivity(intent);
+                    isView = false;
+                    return;
+                }
                 CurrentIndex = (int)itemView.getTag();
                 CurrentType = "text";
                 Log.d(TAG, "onFocusChange: " + CurrentIndex);
@@ -300,9 +361,17 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                     }else {  //光标返回上一层
                         if(CurrentIndex - 1 >= 0){
                             if(map.get(CurrentIndex - 1).getType().equals("text")){
-                                int position = Html.fromHtml(map.get(CurrentIndex - 1).getContent(),FROM_HTML_MODE_COMPACT).length() - 1;
-                                map.get(CurrentIndex - 1).setContent(map.get(CurrentIndex - 1).getContent().substring(0,map.get(CurrentIndex - 1).getContent().length()-4) +
-                                        map.get(CurrentIndex).getContent().substring(13));
+                                int position = 0;
+                                if(!map.get(CurrentIndex - 1).getContent().equals("") && !map.get(CurrentIndex).getContent().equals("")){
+                                    position = Html.fromHtml(map.get(CurrentIndex - 1).getContent(),FROM_HTML_MODE_COMPACT).length() - 1;
+                                    map.get(CurrentIndex - 1).setContent(map.get(CurrentIndex - 1).getContent().substring(0,map.get(CurrentIndex - 1).getContent().length()-4) +
+                                            map.get(CurrentIndex).getContent().substring(13));
+                                }else if(!map.get(CurrentIndex - 1).getContent().equals("")){
+                                    position = Html.fromHtml(map.get(CurrentIndex - 1).getContent(),FROM_HTML_MODE_COMPACT).length() - 1;
+                                }else {
+                                    position = Html.fromHtml(map.get(CurrentIndex).getContent(),FROM_HTML_MODE_COMPACT).length() - 1;
+                                    map.get(CurrentIndex - 1).setContent(map.get(CurrentIndex).getContent());
+                                }
                                 for(int i = CurrentIndex; i < map.size() - 1;i++)
                                     map.put(i,map.get(i + 1));
                                 map.remove(map.size() - 1);
@@ -385,6 +454,15 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         }
         @Override
         public void onClick(View view) {
+            if(isView){
+                int taskId = viewChange.getTaskId();
+                Intent intent = new Intent();
+                intent.setClass(context, RecordingEditActivity.class);
+                intent.putExtra("taskId",taskId);
+                context.startActivity(intent);
+                isView = false;
+                return;
+            }
             itemView.requestFocus();
             editTextEnd.requestFocus();
             if(btnIndex == -1){
@@ -402,6 +480,15 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if(hasFocus){
+                if(isView){
+                    int taskId = viewChange.getTaskId();
+                    Intent intent = new Intent();
+                    intent.setClass(context, RecordingEditActivity.class);
+                    intent.putExtra("taskId",taskId);
+                    context.startActivity(intent);
+                    isView = false;
+                    return;
+                }
                 CurrentIndex = (int)itemView.getTag();
                 if(v.getId() == R.id.btn_edit_strat)
                 {
@@ -521,6 +608,15 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         public void onClick(View view) {
             switch (view.getId()){
                 case R.id.item_imageView:
+                    if(isView){
+                        int taskId = viewChange.getTaskId();
+                        Intent intent = new Intent();
+                        intent.setClass(context, RecordingEditActivity.class);
+                        intent.putExtra("taskId",taskId);
+                        context.startActivity(intent);
+                        isView = false;
+                        return;
+                    }
                     photoImageShelter(relativeLayout,imageView,itemView);
                     break;
                 case R.id.photo_delete:
@@ -551,7 +647,8 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         textChanged.recyclerViewClearFocusable();
         relativeLayout.getLayoutParams().height = imageView.getHeight();
         relativeLayout.getLayoutParams().width = imageView.getWidth();
-        (textChanged.getRecyclerView()).scrollToPosition((int)itemView.getTag());
+        if(textChanged.getRecyclerView() != null)
+            (textChanged.getRecyclerView()).scrollToPosition((int)itemView.getTag());
         AlphaAnimation appearAnimation = new AlphaAnimation(0, 1);
         appearAnimation.setDuration(500);
         AlphaAnimation disappearAnimation = new AlphaAnimation(1, 0);
@@ -892,6 +989,10 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         void recyclerViewClearFocusable();
         RecyclerView getRecyclerView();
         void updateRecyclerView(int position);
+    }
+
+    public interface ViewChange{
+         int getTaskId();
     }
 
     class shelterSize{

@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import com.shining.memo.R;
@@ -55,31 +56,36 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         calendarAdapter = new CalendarAdapter(this);
         ncalendar.setOnCalendarChangedListener(this);
-
-        ncalendar.post(new Runnable() {
-            @Override
-            public void run() {
-
-                List<String> list = new ArrayList<>();
-                list.add("2018-09-21");
-                list.add("2018-10-21");
-                list.add("2018-10-1");
-                list.add("2018-10-15");
-                list.add("2018-10-18");
-                list.add("2018-10-26");
-                list.add("2018-11-21");
-
-                ncalendar.setPoint(list);
-            }
-        });
     }
 
 
     @Override
     public void onCalendarChanged(LocalDate date, List<LocalDate> dateList) {
+        JSONArray taskDataArr;
         calendar_month.setText(Utils.formatMonthUS(date.getMonthOfYear()));
         CalendarPresenter calendarPresenter = new CalendarPresenter(this);
-        JSONArray taskDataArr = calendarPresenter.queryData(dateList);
+
+        //设置原点
+        taskDataArr = calendarPresenter.queryData(Utils.formatTimeUnit(date.getMonthOfYear()));
+        List<String> pointList = new ArrayList<>();
+        int length = taskDataArr.length();
+        for (int i = 0 ; i < length ; i++){
+            try {
+                JSONObject taskData = taskDataArr.getJSONObject(i);
+                int finished = taskData.getInt("finished");
+                if(finished == 0){
+                    pointList.add(taskData.getString("date"));
+                }
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+        HashSet<String> hs = new HashSet<>(pointList);
+        pointList = new ArrayList<>(hs);
+        ncalendar.setPoint(pointList);
+
+        //根据选择的日期集合查询数据库
+        taskDataArr = calendarPresenter.queryData(dateList);
         calendarAdapter.setInfo(taskDataArr, taskDataArr.length());
         recyclerView.setAdapter(calendarAdapter);
     }
@@ -87,19 +93,6 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
 
     public Context getContext(){
         return this;
-    }
-
-    public void setPoint(View view) {
-        List<String> list = new ArrayList<>();
-        list.add("2017-09-21");
-        list.add("2017-10-21");
-        list.add("2017-10-1");
-        list.add("2017-10-15");
-        list.add("2017-10-18");
-        list.add("2017-10-26");
-        list.add("2017-11-21");
-
-        ncalendar.setPoint(list);
     }
 
     private void initView(){

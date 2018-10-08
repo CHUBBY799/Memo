@@ -9,23 +9,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
-import android.provider.Settings;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.shining.memo.R;
-import com.shining.memo.utils.ToastUtils;
-import com.shining.memo.view.MainActivity;
-import com.shining.memo.view.RecordingEditActivity;
-import com.shining.memo.view.TestView;
-
-import java.io.File;
+import com.shining.memo.view.RecordingViewActivity;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -37,7 +27,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             String name="my_channel_name4";
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
             Notification notification = null;
-            Intent intent1 = new Intent(context, TestView.class);
+            Intent intent1 = new Intent(context, RecordingViewActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, 0);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH);

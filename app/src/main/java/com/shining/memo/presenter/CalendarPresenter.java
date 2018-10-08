@@ -16,6 +16,10 @@ public class CalendarPresenter {
         this.calendarModel = new CalendarImpl(calendarView.getContext());
     }
 
+    public JSONArray queryData(String month){
+        return calendarModel.queryData(month);
+    }
+
     public JSONArray queryData(List<LocalDate> dateList){
         return calendarModel.queryData(dateList);
     }

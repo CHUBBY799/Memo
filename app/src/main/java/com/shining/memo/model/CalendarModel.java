@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface CalendarModel {
     JSONArray queryData(List<LocalDate> dateList);
+    JSONArray queryData(String month);
 }

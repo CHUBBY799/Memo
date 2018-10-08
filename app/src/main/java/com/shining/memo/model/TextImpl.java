@@ -64,7 +64,7 @@ public class TextImpl implements TextModel{
     public long addAlarm(Alarm alarm) {
         SQLiteDatabase db=dbHelper.getWritableDatabase();
         db.execSQL("insert into alarm(taskId,date,time,path,pop) values(?,?,?,?,?)",
-                new Object[]{alarm.getTaskId(),alarm.getDate(),alarm.getTime(),alarm.getPath(),
+                new Object[]{alarm.getTaskId(),alarm.getDate(),alarm.getTime(),alarm.getRingtone(),
                 alarm.getPop()});
         return returnIdOfNew(db,"alarm");
     }

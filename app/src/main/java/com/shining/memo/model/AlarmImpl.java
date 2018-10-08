@@ -7,7 +7,7 @@ public class AlarmImpl implements AlarmModel{
     @Override
     public void addAlarm(Alarm alarm, SQLiteDatabase db) {
         db.execSQL("insert into alarm(taskId,date,time,path,pop) " +
-                "values(?,?,?,?,?)",new Object[]{alarm.getTaskId(),alarm.getDate(),alarm.getTime(),alarm.getPath(),alarm.getPop()});
+                "values(?,?,?,?,?)",new Object[]{alarm.getTaskId(),alarm.getDate(),alarm.getTime(),alarm.getRingtone(),alarm.getPop()});
     }
 
     @Override
@@ -17,7 +17,7 @@ public class AlarmImpl implements AlarmModel{
                 +"time = ?, "
                 +"path = ?, "
                 +"pop = ? "
-                +"where taskId = ?",new Object[]{alarm.getDate(),alarm.getTime(),alarm.getPath(),alarm.getPop(),alarm.getTaskId()});
+                +"where taskId = ?",new Object[]{alarm.getDate(),alarm.getTime(),alarm.getRingtone(),alarm.getPop(),alarm.getTaskId()});
     }
 
     @Override
@@ -36,7 +36,7 @@ public class AlarmImpl implements AlarmModel{
             alarm.setTaskId(taskId);
             alarm.setDate(cursor.getString(cursor.getColumnIndex("date")));
             alarm.setTime(cursor.getString(cursor.getColumnIndex("time")));
-            alarm.setPath(cursor.getString(cursor.getColumnIndex("path")));
+            alarm.setRingtone(cursor.getInt(cursor.getColumnIndex("path")));
             alarm.setPop(cursor.getInt(cursor.getColumnIndex("pop")));
             return alarm;
         }
