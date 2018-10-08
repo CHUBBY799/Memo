@@ -54,6 +54,68 @@ public class TaskImpl implements TaskModel {
         return strid;
     }
 
+    @Override
+    public Task getTask(int taskId, SQLiteDatabase db) {
+        Task task = null;
+        Cursor cursor = db.rawQuery("select * from task " +
+                                "where id = ? ",new String[]{String.valueOf(taskId)});
+        if(cursor.moveToFirst()){
+            task = new Task();
+            task.setId(taskId);
+            task.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            task.setType(cursor.getString(cursor.getColumnIndex("type")));
+            task.setDate(cursor.getString(cursor.getColumnIndex("date")));
+            task.setTime(cursor.getString(cursor.getColumnIndex("time")));
+            task.setUrgent(cursor.getInt(cursor.getColumnIndex("urgent")));
+            task.setAlarm(cursor.getInt(cursor.getColumnIndex("alarm")));
+            task.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+            task.setDeleted(cursor.getInt(cursor.getColumnIndex("deleted")));
+            task.setFinished(cursor.getInt(cursor.getColumnIndex("finished")));
+        }
+        return task;
+    }
+
+    @Override
+    public void deleteTask(int taskId, SQLiteDatabase db) {
+        db.execSQL("delete from task " +
+                "where id = ?",new Object[]{taskId});
+    }
+
+    @Override
+    public void modifyTask(Task task, SQLiteDatabase db) {
+        db.execSQL("update task " +
+                "set type = ?,urgent = ?,alarm = ?,title = ? " +
+                "where id =?",new Object[]{task.getType(),task.getUrgent(),task.getAlarm(),task.getTitle(),task.getId()});
+    }
+
+    @Override
+    public void modifyTaskUrgent(int taskId, int urgent, SQLiteDatabase db) {
+        db.execSQL("update task " +
+                "set urgent = ? " +
+                "where id = ?",new Object[]{urgent,taskId});
+    }
+
+    @Override
+    public void modifyTaskAlarm(int taskId, int alarm, SQLiteDatabase db) {
+        db.execSQL("update task " +
+                "set alarm = ? " +
+                "where id = ?",new Object[]{alarm,taskId});
+    }
+
+    @Override
+    public void modifyTaskDeleted(int taskId, int deleted, SQLiteDatabase db) {
+        db.execSQL("update task " +
+                "set deleted = ? " +
+                "where id = ?",new Object[]{deleted,taskId});
+    }
+
+    @Override
+    public void modifyTaskFinished(int taskId, int finished, SQLiteDatabase db) {
+        db.execSQL("update task " +
+                "set finished = ? " +
+                "where id = ?",new Object[]{finished,taskId});
+    }
+
     private final String selectColNames=" t.id taskId" +
             ",t.type"+
             ",t.title" +

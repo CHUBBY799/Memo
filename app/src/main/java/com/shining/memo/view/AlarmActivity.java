@@ -47,7 +47,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     private String day;
     private String hour;
     private String minute;
-    private boolean ringtone = true;
+    private int ringtone;
     private int pop;
     private int alarm;
     private int taskId;
@@ -95,21 +95,14 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
                 dates = date.split("-");
                 String time = getIntent().getStringExtra("time");
                 times = time.split(":");
-                int ring = getIntent().getIntExtra("ringtone",1);
-                if(ring == 1)
-                    ringtone = true;
-                else
-                    ringtone = false;
+                ringtone = getIntent().getIntExtra("ringtone",1);
                 pop = getIntent().getIntExtra("pop",0);
             }else {
                 Alarm alarmObject = alarmPresenter.getAlarm(taskId);
                 dates = alarmObject.getDate().split("-");
                 times = alarmObject.getTime().split(":");
                 pop = alarmObject.getPop();
-                if(alarmObject.getPath().equals("0"))
-                    ringtone = false;
-                else
-                    ringtone = true;
+                ringtone = alarmObject.getRingtone();
             }
             year = dates[0];
             month = Utils.formatMonthSimUS(Integer.parseInt(dates[1]));
@@ -149,26 +142,30 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         Intent textIntent = new Intent();
         textIntent.putExtra("alarm",1);
         Log.d("TAG", "alarmSave" + date+"--"+ time +"--"+ ringtone+"--"+ pop+"--");
-        if(alarm == 1 && taskId != -1){
-            Alarm alarm = new Alarm();
-            alarm.setDate(date);
-            alarm.setTime(time);
-            alarm.setPath("");
-            alarm.setPop(pop);
-            alarm.setTaskId(taskId);
-            alarmPresenter.modifyAlarm(alarm);
+        if(taskId != -1){
+            Alarm alarmObject = new Alarm();
+            alarmObject.setDate(date);
+            alarmObject.setTime(time);
+            alarmObject.setRingtone(ringtone);
+            alarmObject.setPop(pop);
+            alarmObject.setTaskId(taskId);
+            if(alarm == 1){
+                alarmPresenter.modifyAlarm(alarmObject);
+            }else {
+                alarmPresenter.addAlarm(alarmObject);
+            }
         }else {
             textIntent.putExtra("date",date);
             textIntent.putExtra("time",time);
-            if(ringtone)
-                textIntent.putExtra("ringtone", 1);
-            else
-                textIntent.putExtra("ringtone", 0);
+            textIntent.putExtra("ringtone", ringtone);
             textIntent.putExtra("pop", pop);
         }
+
         Intent intent = new Intent();
         intent.setAction("com.shining.memo.alarmandnotice");
         intent.setComponent(new ComponentName("com.shining.memo","com.shining.memo.receiver.AlarmReceiver"));
+        intent.putExtra("ringtone",ringtone);
+        intent.putExtra("pop",pop);
         pendingIntent = PendingIntent.getBroadcast(this,0x101,intent,0);
         Calendar calendar=Calendar.getInstance();
         calendar.set(Calendar.YEAR,Integer.parseInt(year));
@@ -188,7 +185,10 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         day_pv.setSelected(day + "th");
         hour_pv.setSelected(hour);
         minute_pv.setSelected(minute);
-        ringtoneSwitch.setChecked(ringtone);
+        if (ringtone == 1)
+            ringtoneSwitch.setChecked(true);
+        else
+            ringtoneSwitch.setChecked(false);
         if (pop == 1)
             popSwitch.setChecked(true);
         else
@@ -281,10 +281,10 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    ringtone = true;
+                    ringtone = 1;
                     ringtoneReminder.setTextColor(ContextCompat.getColor(AlarmActivity.this, R.color.ringtone_reminder));
                 }else{
-                    ringtone = false;
+                    ringtone = 0;
                     ringtoneReminder.setTextColor(ContextCompat.getColor(AlarmActivity.this, R.color.pop_reminder));
                 }
                 changeColor();

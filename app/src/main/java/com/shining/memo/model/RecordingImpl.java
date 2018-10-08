@@ -32,7 +32,7 @@ public class RecordingImpl implements RecordingModel{
         if(cursor.moveToFirst()){
             Recording recording = new Recording();
             recording.setTaskId(taskId);
-            recording.deserialize(cursor.getString(cursor.getColumnIndex("recording")));
+            recording.deserialize(cursor.getString(cursor.getColumnIndex("recordingInfo")));
             return recording;
         }
         return null;

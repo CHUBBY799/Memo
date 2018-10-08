@@ -25,7 +25,7 @@ public class AudioRecordPresenter {
     private Context context;
     private long startTime,endTime;
     public AudioRecordPresenter(ViewRecord vAudioRec){
-        this(Environment.getExternalStorageDirectory()+"/record/");
+        this(Environment.getExternalStorageDirectory()+"/OhMemo/recording");
         this.viewAudioRecording = vAudioRec;
         context = viewAudioRecording.getContext();
     }

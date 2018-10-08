@@ -5,7 +5,7 @@ public class Alarm {
     private long taskId;
     private String date;
     private String time;
-    private String path;
+    private int ringtone;
     private int pop;
 
     public long getId() {
@@ -40,12 +40,12 @@ public class Alarm {
         this.time = time;
     }
 
-    public String getPath() {
-        return path;
+    public int getRingtone() {
+        return ringtone;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setRingtone(int ringtone) {
+        this.ringtone = ringtone;
     }
 
     public int getPop() {

@@ -7,16 +7,20 @@ import com.shining.memo.model.Alarm;
 import com.shining.memo.model.AlarmImpl;
 import com.shining.memo.model.AlarmModel;
 import com.shining.memo.model.MemoDatabaseHelper;
+import com.shining.memo.model.TaskImpl;
+import com.shining.memo.model.TaskModel;
 
 public class AlarmPresenter {
 
     private Context context;
     private AlarmModel alarmModel;
+    private TaskModel taskModel;
     private MemoDatabaseHelper dbHelper;
 
     public AlarmPresenter(Context context) {
         this.context = context;
         this.alarmModel = new AlarmImpl();
+        this.taskModel = new TaskImpl(context);
         dbHelper=new MemoDatabaseHelper(context,"memo.db",null,1);
     }
 
@@ -35,6 +39,23 @@ public class AlarmPresenter {
         }
         return alarm;
     }
+
+    public boolean addAlarm(Alarm alarm){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try{
+            alarmModel.addAlarm(alarm,db);
+            taskModel.modifyTaskAlarm((int)alarm.getTaskId(),1,db);
+            db.setTransactionSuccessful();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
 
     public boolean modifyAlarm(Alarm alarm){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -56,6 +77,7 @@ public class AlarmPresenter {
         db.beginTransaction();
         try{
             alarmModel.deleteAlarm(taskId,db);
+            taskModel.modifyTaskAlarm(taskId,0,db);
             db.setTransactionSuccessful();
         }catch (Exception e){
             e.printStackTrace();
