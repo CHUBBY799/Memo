@@ -59,4 +59,7 @@
     <string name="title">title</string>
     <string name="item">item</string>
 
+    <string name="expand_icon">expand icon</string>
+    <string name="start_default">start default</string>
+
 </resources>

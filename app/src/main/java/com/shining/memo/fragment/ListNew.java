@@ -29,7 +29,7 @@ public class ListNew extends Fragment{
             public void onClick(View v) {
                 Intent textIntent = new Intent(getActivity(),ListActivity.class);
                 textIntent.putExtra("title", "new");
-                getActivity().startActivityForResult(textIntent, 1);
+                getActivity().startActivity(textIntent);
             }
         });
     }
