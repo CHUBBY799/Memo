@@ -97,7 +97,7 @@ public class Utils {
                 resultMonth = "November";
                 break;
             case 12:
-                resultMonth = "DecemberS";
+                resultMonth = "December";
                 break;
             default:
                 break;

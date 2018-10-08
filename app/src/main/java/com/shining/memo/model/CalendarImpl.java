@@ -23,6 +23,28 @@ public class CalendarImpl implements CalendarModel{
     }
 
     @Override
+    public JSONArray queryData(String month){
+        JSONArray taskDataArr = new JSONArray();
+        Cursor cursor = db.query("task", new String[]{"id", "title", "finished", "date"},"date = ?",new String[]{"__-" + month + "-__"},null,null,null);
+        if(cursor.moveToFirst()){
+            do{
+                try{
+                    JSONObject taskData = new JSONObject();
+                    taskData.put("id", cursor.getInt(cursor.getColumnIndex("id")));
+                    taskData.put("title", cursor.getString(cursor.getColumnIndex("title")));
+                    taskData.put("finished", cursor.getInt(cursor.getColumnIndex("finished")));
+                    taskData.put("date", cursor.getString(cursor.getColumnIndex("date")));
+                    taskDataArr.put(taskData);
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        return taskDataArr;
+    }
+
+    @Override
     public JSONArray queryData(List<LocalDate> dateList){
         JSONArray taskDataArr = new JSONArray();
         int length = dateList.size();
