@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.shining.memo">
 
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -38,15 +38,6 @@
             android:name=".view.AlarmActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".view.MemoActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN"/> -->
-            <!-- <category android:name="android.intent.category.LAUNCHER"/> -->
-            <!-- </intent-filter> -->
-        </activity>
-        <activity
             android:name=".view.CalendarActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
@@ -59,15 +50,20 @@
         <activity
             android:name=".view.PhotoConfirmActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".view.TestView"></activity>
+        <activity android:name=".view.TestView" />
+
         <receiver
             android:name=".receiver.AlarmReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.shining.memo.alarmandnotice"/>
+                <action android:name="com.shining.memo.alarmandnotice" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".home.MemoActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
