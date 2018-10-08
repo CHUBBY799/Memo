@@ -75,6 +75,7 @@ public class MonthView extends CalendarView {
 
                         mSolarPaint.setColor(mSolarTextColor);
                         canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
+                        drawPoint(canvas, rect, date, baseline);
                     } else {
                         mSolarPaint.setColor(mSolarTextColor);
                         canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
