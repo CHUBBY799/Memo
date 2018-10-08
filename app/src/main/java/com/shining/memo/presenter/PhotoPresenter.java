@@ -22,7 +22,7 @@ public class PhotoPresenter {
     private Context context;
 
     public PhotoPresenter(Context context) {
-        this(Environment.getExternalStorageDirectory()+"/photo/");
+        this(Environment.getExternalStorageDirectory()+"/OhMemo/photo/");
         this.context = context;
     }
 

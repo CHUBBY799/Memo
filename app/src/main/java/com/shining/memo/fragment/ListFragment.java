@@ -15,7 +15,6 @@ import com.shining.memo.adapter.ListContent;
 import com.shining.memo.bean.ListBean;
 import com.shining.memo.model.ListImpl;
 import com.shining.memo.model.ListModel;
-import com.shining.memo.presenter.ListPresenter;
 
 public class ListFragment extends Fragment {
 

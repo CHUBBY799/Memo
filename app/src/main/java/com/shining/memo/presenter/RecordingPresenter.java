@@ -6,6 +6,7 @@ import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.shining.memo.model.Alarm;
 import com.shining.memo.model.AlarmImpl;
@@ -18,6 +19,8 @@ import com.shining.memo.model.RecordingModel;
 import com.shining.memo.model.Task;
 import com.shining.memo.model.TaskImpl;
 import com.shining.memo.model.TaskModel;
+import com.shining.memo.model.Task_Recording;
+import com.shining.memo.utils.ToastUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +46,7 @@ public class RecordingPresenter {
         db.beginTransaction();
         try{
             long taskId = taskModel.addTask(task,db);
+            ToastUtils.showShort(context,taskId+"");
             Recording recording = new Recording();
             recording.setTaskId((int)taskId);
             recording.setRecordingMap(recordingMap);
@@ -61,6 +65,67 @@ public class RecordingPresenter {
         return true;
     }
 
+    public Task_Recording getTaskRecording(int taskId){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        Task_Recording task_recording = null;
+        try{
+            task_recording = new Task_Recording();
+            task_recording.setTask(taskModel.getTask(taskId,db));
+            task_recording.setRecording(recordingModel.getRecording(taskId,db));
+            db.setTransactionSuccessful();
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }finally {
+            db.endTransaction();
+        }
+        return task_recording;
+    }
+
+    public boolean modifyRecording(Task task, HashMap<Integer,RecordingContent> recordingMap,Alarm alarmObject){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try{
+            taskModel.modifyTask(task,db);
+            Alarm alarm = alarmModel.getAlarm((int)task.getId(),db);
+            if(alarm == null){
+                if(task.getAlarm() == 1 && alarmObject != null)
+                    alarmModel.addAlarm(alarmObject,db);
+            }else {
+                if(task.getAlarm() == 0)
+                    alarmModel.deleteAlarm((int)task.getId(),db);
+                else
+                    alarmModel.modifyAlarm(alarmObject,db);
+            }
+            Recording recording = new Recording();
+            recording.setTaskId((int)task.getId());
+            recording.setRecordingMap(recordingMap);
+            recordingModel.modifyRecording(recording,db);
+            db.setTransactionSuccessful();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    public boolean modifyUrgent(int taskId,int urgent){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try{
+            taskModel.modifyTaskUrgent(taskId,urgent,db);
+            db.setTransactionSuccessful();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }finally {
+            db.endTransaction();
+        }
+        return true;
+    }
 
     public static int insertIndex = -1;
     public HashMap<Integer, RecordingContent> insertRecording(HashMap<Integer, RecordingContent> oldMap, List<Spanned> text, int index, String filePath, String type) {

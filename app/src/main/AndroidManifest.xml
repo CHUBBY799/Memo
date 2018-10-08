@@ -38,15 +38,6 @@
             android:name=".view.AlarmActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".view.MemoActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN"/> -->
-            <!-- <category android:name="android.intent.category.LAUNCHER"/> -->
-            <!-- </intent-filter> -->
-        </activity>
-        <activity
             android:name=".view.CalendarActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
@@ -59,7 +50,8 @@
         <activity
             android:name=".view.PhotoConfirmActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".view.TestView"/>
+        <activity android:name=".view.RecordingViewActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <receiver
             android:name=".receiver.AlarmReceiver"
             android:enabled="true"
@@ -68,6 +60,9 @@
                 <action android:name="com.shining.memo.alarmandnotice"/>
             </intent-filter>
         </receiver>
+        <activity android:name=".home.MemoActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

@@ -21,7 +21,7 @@ public class MemoDatabaseHelper extends SQLiteOpenHelper{
             +"taskId integer,"
             +"date text,"
             +"time text,"
-            +"path text,"
+            +"path integer,"
             +"pop integer)";
     public static final String CREATE_RECORDING="create table recording("
             +"id integer primary key autoincrement,"

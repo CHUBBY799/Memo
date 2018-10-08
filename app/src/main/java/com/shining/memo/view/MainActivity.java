@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void audio(){
-        Intent calendarIntent = new Intent(this,TestView.class);
+        Intent calendarIntent = new Intent(this,RecordingViewActivity.class);
         startActivity(calendarIntent);
         pop.dismiss();
 //        Intent intent = new Intent();
