@@ -7,6 +7,7 @@
     android:focusable="true">
     <EditText
         android:id="@+id/item_editText"
+        android:textIsSelectable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="40dp"
@@ -15,13 +16,13 @@
         android:textSize="18dp"
         android:duplicateParentState="true"
         android:textColor="@color/alarm_background"
-        android:inputType="text|textCapSentences"
+        android:inputType="textMultiLine"
         android:paddingLeft="14dp"
         android:paddingRight="14dp"
         android:background="@null"
         android:paddingTop="6dp"
         android:gravity="bottom"
-        android:imeOptions="actionNext"
+        android:imeOptions="actionNone"
         android:textCursorDrawable="@drawable/cursor"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

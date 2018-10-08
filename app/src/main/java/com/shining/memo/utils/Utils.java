@@ -58,7 +58,7 @@ public class Utils {
     }
 
     /**
-     * 将数据月份转化成英语简写月份
+     * 将数据月份转化成英语月份
      */
     public static String formatMonthUS(int month){
         String resultMonth = null;
@@ -98,6 +98,54 @@ public class Utils {
                 break;
             case 12:
                 resultMonth = "December";
+                break;
+            default:
+                break;
+        }
+        return resultMonth;
+    }
+
+    /**
+     * 将英语简写月份转化成数据月份
+     */
+    public static int formatMonthNumber(String month){
+        int resultMonth = 0;
+        switch (month){
+            case "Jan.":
+                resultMonth = 1;
+                break;
+            case "Feb.":
+                resultMonth = 2;
+                break;
+            case "Mar.":
+                resultMonth = 3;
+                break;
+            case "Apr.":
+                resultMonth = 4;
+                break;
+            case "May.":
+                resultMonth = 5;
+                break;
+            case "Jun.":
+                resultMonth = 6;
+                break;
+            case "Jul.":
+                resultMonth = 7;
+                break;
+            case "Aug.":
+                resultMonth = 8;
+                break;
+            case "Sept.":
+                resultMonth = 9;
+                break;
+            case "Oct.":
+                resultMonth = 10;
+                break;
+            case "Nov.":
+                resultMonth = 11;
+                break;
+            case "Dec.":
+                resultMonth = 12;
                 break;
             default:
                 break;

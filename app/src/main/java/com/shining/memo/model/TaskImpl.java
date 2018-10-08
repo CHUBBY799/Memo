@@ -42,8 +42,8 @@ public class TaskImpl implements TaskModel {
 
     @Override
     public long addTask(Task task,SQLiteDatabase db) {
-        db.execSQL("insert into task(type,date,time,urgent,alarm,title,deleted) " +
-                "values(?,date(?,'localtime'),time(?,'localtime'),?,?,?,0)",new Object[]{
+        db.execSQL("insert into task(type,date,time,urgent,alarm,title,deleted,finished) " +
+                "values(?,date(?,'localtime'),time(?,'localtime'),?,?,?,0,0)",new Object[]{
                 task.getType(),"now","now",task.getUrgent(),task.getAlarm(),task.getTitle()
         });
         Cursor cursor=db.rawQuery("select last_insert_rowid() from task",null);

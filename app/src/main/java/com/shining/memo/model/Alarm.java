@@ -6,7 +6,7 @@ public class Alarm {
     private String date;
     private String time;
     private String path;
-    private String pop;
+    private int pop;
 
     public long getId() {
         return id;
@@ -48,11 +48,11 @@ public class Alarm {
         this.path = path;
     }
 
-    public String getPop() {
+    public int getPop() {
         return pop;
     }
 
-    public void setPop(String pop) {
+    public void setPop(int pop) {
         this.pop = pop;
     }
 }

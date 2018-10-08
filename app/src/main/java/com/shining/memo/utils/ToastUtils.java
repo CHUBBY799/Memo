@@ -1,4 +1,4 @@
-package com.shining.memo.presenter;
+package com.shining.memo.utils;
 
 import android.content.Context;
 import android.view.ViewGroup;
