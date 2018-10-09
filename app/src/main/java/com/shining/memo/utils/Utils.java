@@ -1,5 +1,11 @@
 package com.shining.memo.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 public class Utils {
 
     /**
@@ -151,5 +157,42 @@ public class Utils {
                 break;
         }
         return resultMonth;
+    }
+
+
+    public static String formatDayth(String day){
+        switch (day){
+            case "01":
+                return day+"st";
+            case "02":
+                return day+"nd";
+            case "03":
+                return day+"rd";
+            default:
+                return day+"th";
+        }
+    }
+//    把 yyyy-MM-dd HH:mm:ss  转化为 hh：mm am/pm
+    public static String formatToPmAm(String dateTime){
+        try{
+            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date dateHelp=sdf.parse(dateTime);
+            sdf=new SimpleDateFormat("KK:mm aa", Locale.ENGLISH);
+            return sdf.format(dateHelp);
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
+        return "haha";
+
+    }
+    public static String formatToMain(String date,String time){
+            String[] dates=date.split("-");
+            String[] times=time.split(":");
+            StringBuilder builder=new StringBuilder();
+            String help=date+" "+time;
+            help=formatToPmAm(help);
+            builder.append("at "+help+" ");
+            builder.append(formatDayth(dates[1])+" "+formatMonthSimUS(Integer.valueOf(dates[1])));
+            return builder.toString();
     }
 }

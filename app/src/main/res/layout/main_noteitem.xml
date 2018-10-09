@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="19dp">
+
+    <TextView
+        android:id="@+id/main_note_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="This is a note title"
+        android:textSize="16sp"
+        android:textColor="@color/main_task_titlecolor"
+        android:layout_marginLeft="25dp"/>
+    <TextView
+        android:id="@+id/main_note_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2018-10-08"
+        android:textSize="12sp"
+        android:textColor="@color/main_task_alarmcolor"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="10dp"/>
+</LinearLayout>

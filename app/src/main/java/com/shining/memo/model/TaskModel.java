@@ -19,4 +19,5 @@ public interface TaskModel {
     void modifyTaskAlarm(int taskId,int alarm,SQLiteDatabase db);
     void modifyTaskDeleted(int taskId,int deleted,SQLiteDatabase db);
     void modifyTaskFinished(int taskId,int finished,SQLiteDatabase db);
+    boolean hasAudioById(long id);
 }

@@ -205,4 +205,14 @@ public class TaskImpl implements TaskModel {
         }
         return list;
     }
+
+    @Override
+    public boolean hasAudioById(long id) {
+        SQLiteDatabase db=dbHelper.getReadableDatabase();
+        Cursor cursor=db.rawQuery("select * from recording where id = ? ",new String[]{String.valueOf(id)});
+        if(cursor.moveToFirst()){
+            return true;
+        }
+        return false;
+    }
 }

@@ -13,6 +13,8 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.shining.memo.R;
+import com.shining.memo.adapter.ListContent;
+import com.shining.memo.fragment.ListFragment;
 import com.shining.memo.fragment.ListNew;
 import com.shining.memo.fragment.NoteNew;
 import com.shining.memo.fragment.TaskNew;
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ListNew listNew;
     private NoteNew noteNew;
     private TaskNew taskNew;
+    private ListFragment listFragment;
 
     private FragmentManager fragmentManager;
     private PopupWindow pop;
@@ -129,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (index) {
             case 0:
                 task.setTextSize(30);
+                task.setTextColor(getColor(R.color.calendar_select));
                 if (taskNew == null) {
                     // 如果TaskFragment为空，则创建一个并添加到界面上
                     taskNew = new TaskNew();
@@ -140,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case 1:
                 list.setTextSize(30);
+                list.setTextColor(getColor(R.color.calendar_select));
                 if (listNew == null) {
                     // 如果ListFragment为空，则创建一个并添加到界面上
                     listNew = new ListNew();
@@ -150,9 +155,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     transaction.show(listNew);
                 }
 
+                if (listFragment == null) {
+                    // 如果ListFragment为空，则创建一个并添加到界面上
+                    listFragment = new ListFragment();
+                    transaction.add(R.id.content_list, listFragment);
+
+                } else {
+                    // 如果ListFragment不为空，则直接将它显示出来
+                    transaction.show(listFragment);
+                }
+
                 break;
             case 2:
                 note.setTextSize(30);
+                note.setTextColor(getColor(R.color.calendar_select));
                 if (noteNew == null) {
                     // 如果NoteFragment为空，则创建一个并添加到界面上
                     noteNew = new NoteNew();
@@ -183,6 +199,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (taskNew != null) {
             transaction.hide(taskNew);
         }
+        if (listFragment != null){
+            transaction.hide(listFragment);
+        }
     }
 
     /**
@@ -192,6 +211,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         list.setTextSize(18);
         note.setTextSize(18);
         task.setTextSize(18);
+
+        list.setTextColor(getColor(R.color.calendar_unselected));
+        note.setTextColor(getColor(R.color.calendar_unselected));
+        task.setTextColor(getColor(R.color.calendar_unselected));
     }
 
     public void onMenu(View v){

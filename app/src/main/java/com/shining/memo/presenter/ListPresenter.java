@@ -21,8 +21,8 @@ public class ListPresenter {
     /**
      * 插入数据控制逻辑单元
      */
-    public void insertPresenter(){
-        insertData(formatData());
+    public void insertPresenter(ListBean listBean){
+        insertData(listBean);
     }
 
     /**
