@@ -8,6 +8,7 @@ import android.text.Spanned;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.shining.memo.adapter.RecordingAdapter;
 import com.shining.memo.model.Alarm;
 import com.shining.memo.model.AlarmImpl;
 import com.shining.memo.model.AlarmModel;
@@ -41,11 +42,12 @@ public class RecordingPresenter {
         dbHelper=new MemoDatabaseHelper(context,"memo.db",null,1);
     }
 
-    public boolean saveRecording(Task task, HashMap<Integer,RecordingContent> recordingMap,Alarm alarmObject){
+    public long saveRecording(Task task, HashMap<Integer,RecordingContent> recordingMap,Alarm alarmObject){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
+        long taskId = -1;
         try{
-            long taskId = taskModel.addTask(task,db);
+            taskId = taskModel.addTask(task,db);
             ToastUtils.showShort(context,taskId+"");
             Recording recording = new Recording();
             recording.setTaskId((int)taskId);
@@ -58,11 +60,11 @@ public class RecordingPresenter {
             db.setTransactionSuccessful();
         }catch (Exception e){
             e.printStackTrace();
-            return false;
+            return -1;
         }finally {
             db.endTransaction();
         }
-        return true;
+        return taskId;
     }
 
     public Task_Recording getTaskRecording(int taskId){
@@ -127,11 +129,27 @@ public class RecordingPresenter {
         return true;
     }
 
+    public boolean modifyDeleted(int taskId,int deleted){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try{
+            taskModel.modifyTaskDeleted(taskId,deleted,db);
+            db.setTransactionSuccessful();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
     public static int insertIndex = -1;
     public HashMap<Integer, RecordingContent> insertRecording(HashMap<Integer, RecordingContent> oldMap, List<Spanned> text, int index, String filePath, String type) {
         HashMap<Integer, RecordingContent> map = new HashMap<>();
         Log.d("RecordingAdapter oldMap", oldMap.toString());
         int number = 0;
+        String html = "";
         if(text != null && oldMap != null){
             if(!text.get(0).toString().equals(""))
                 number = text.size();
@@ -144,16 +162,14 @@ public class RecordingPresenter {
             for(int i = 0; i < index; i++){
                 map.put(i,oldMap.get(i));
             }
-            Log.d("RecordingAdapter number", number+"");
+            Log.d("RecordingAdapter oldMap", number+"");
             if(number > 1){
                 RecordingContent content = new RecordingContent();
                 content.setType("text");
-//                String newStr = "";
-//                if(text.get(number - 1).charAt(0) == '\n')
-//                    newStr = text.get(number - 1).toString().substring(1);
-//                else
-//                    newStr = text.get(number - 1);
-                content.setContent(Html.toHtml(text.get(1)).substring(0,Html.toHtml(text.get(1)).length() - 1));
+                html = Html.toHtml(text.get(1));
+                if(html.length() > 0)
+                    html = html.substring(0,html.length() -1);
+                content.setContent(RecordingAdapter.parseUnicodeToStr(html));
                 content.setColor(color);
                 map.put(index + number,content);
                 content = new RecordingContent();
@@ -164,18 +180,28 @@ public class RecordingPresenter {
                 insertIndex = index + 1;
                 content = new RecordingContent();
                 content.setType("text");
-                content.setContent(Html.toHtml(text.get(0)).substring(0,Html.toHtml(text.get(0)).length() - 1));
+                html = Html.toHtml(text.get(0));
+                if(html.length() > 0)
+                    html = html.substring(0,html.length() -1);
+                content.setContent(RecordingAdapter.parseUnicodeToStr(html));
                 content.setColor(color);
                 map.put(index,content);
             }else {
                 if(text.size() > 1 || (text.size() ==1 && text.get(0).toString().equals(""))){
                     RecordingContent content = new RecordingContent();
                     content.setType("text");
-                    Log.d("TAG","if");
-                    if(text.size() > 1)
-                        content.setContent(Html.toHtml(text.get(1)).substring(0,Html.toHtml(text.get(1)).length() - 1));
-                    else
-                        content.setContent(Html.toHtml(text.get(0)).substring(0,Html.toHtml(text.get(0)).length() - 1));
+                    if(text.size() > 1){
+                        html = Html.toHtml(text.get(1));
+                        if(html.length() > 0)
+                            html = html.substring(0,html.length() -1);
+                        content.setContent(RecordingAdapter.parseUnicodeToStr(html));
+                    }
+                    else{
+                        html = Html.toHtml(text.get(0));
+                        if(html.length() > 0)
+                            html = html.substring(0,html.length() -1);
+                        content.setContent(RecordingAdapter.parseUnicodeToStr(html));
+                    }
                     content.setColor(color);
                     map.put(index + 1,content);
                     content = new RecordingContent();
@@ -186,10 +212,12 @@ public class RecordingPresenter {
                     insertIndex = index;
                 }
                 else {
-                    Log.d("TAG","else");
                     RecordingContent content = new RecordingContent();
                     content.setType("text");
-                    content.setContent(Html.toHtml(text.get(0)).substring(0,Html.toHtml(text.get(0)).length() - 1));
+                    html = Html.toHtml(text.get(0));
+                    if(html.length() > 0)
+                        html = html.substring(0,html.length() -1);
+                    content.setContent(RecordingAdapter.parseUnicodeToStr(html));
                     content.setColor(color);
                     map.put(index,content);
                     content = new RecordingContent();
@@ -210,7 +238,7 @@ public class RecordingPresenter {
         if(index >= 1)
             color = map.get(index - 1).getColor();
         else
-            color = "#000000";
+            color = "#666666";
         strContent = strContent.replace("\n","");
         if(strContent.equals(""))
         {
@@ -263,7 +291,6 @@ public class RecordingPresenter {
             map.put(index + 1,content);
             insertIndex = index + 1;
         }
-        Log.d("insertRecording",map.toString());
         return map;
     }
 }

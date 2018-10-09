@@ -46,8 +46,7 @@
 
     <color name="textcolor_red">#FF0000</color>
     <color name="textcolor_orange">#FF7F00</color>
-    <color name="textcolor_yellow">#FFFF00</color>
-    <color name="textcolor_green">#66CD00</color>
+    <color name="textcolor_gray">#AAAAAA</color>
     <color name="textcolor_black">#000000</color>
     <color name="textcolor_blue">#4169E1</color>
     <color name="textcolor_purple">#8B008B</color>

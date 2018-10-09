@@ -22,7 +22,7 @@
             android:id="@+id/photo_shelter"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/photo_shelter"
+            android:background="@color/half_transparent_orange"
             android:visibility="gone">
             <Button
                 android:id="@+id/photo_cancel"

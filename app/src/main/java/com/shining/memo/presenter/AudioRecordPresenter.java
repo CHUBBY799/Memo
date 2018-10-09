@@ -25,7 +25,7 @@ public class AudioRecordPresenter {
     private Context context;
     private long startTime,endTime;
     public AudioRecordPresenter(ViewRecord vAudioRec){
-        this(Environment.getExternalStorageDirectory()+"/OhMemo/recording");
+        this(Environment.getExternalStorageDirectory()+"/OhMemo/recording/");
         this.viewAudioRecording = vAudioRec;
         context = viewAudioRecording.getContext();
     }
@@ -47,9 +47,9 @@ public class AudioRecordPresenter {
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);// 设置麦克风
             mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
             mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
             Date date = new Date(System.currentTimeMillis());     //获取当前时间
-            filePath = FolderPath + simpleDateFormat.format(date) + ".amr" ;
+            filePath = FolderPath + "RCD_" + simpleDateFormat.format(date) + ".amr" ;
             mMediaRecorder.setOutputFile(filePath);
             mMediaRecorder.setMaxDuration(MAX_LENGTH);
             try {

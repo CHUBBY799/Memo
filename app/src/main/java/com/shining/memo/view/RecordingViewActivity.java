@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,12 +21,16 @@ import com.shining.memo.adapter.RecordingAdapter;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.model.Task_Recording;
 import com.shining.memo.presenter.RecordingPresenter;
+import com.shining.memo.utils.ToastUtils;
 
 import java.util.HashMap;
 
-public class RecordingViewActivity extends Activity implements View.OnClickListener,CompoundButton.OnCheckedChangeListener,RecordingAdapter.ViewChange {
+import static android.text.Html.FROM_HTML_MODE_COMPACT;
+
+public class RecordingViewActivity extends Activity implements View.OnClickListener,CompoundButton.OnCheckedChangeListener,RecordingAdapter.ViewChange,View.OnFocusChangeListener {
     private static final String TAG = RecordingViewActivity.class.getSimpleName();
     private static final int REQUEST_ALARM = 0xa11;
+    private static final int REQUEST_EDIT = 0xa12;
     private Button mBtnBack,mBtnDelete,mBtnShare,mBtnAlarm;
     private Switch mBtnUrgent;
     private RecyclerView mRecyclerView;
@@ -69,9 +75,10 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
         mBtnShare.setOnClickListener(this);
         mBtnAlarm.setOnClickListener(this);
         mBtnUrgent.setOnCheckedChangeListener(this);
+        mEditTitle.setOnFocusChangeListener(this);
 
         presenter = new RecordingPresenter(this);
-        taskId = getIntent().getIntExtra("taskId",1);
+        taskId = getIntent().getIntExtra("taskId",6);
     }
 
     public boolean isShouldHideInput(View v, MotionEvent event) {
@@ -95,18 +102,25 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.bottom_back:
-                Intent intent = new Intent();
-                intent.setClass(this,MainActivity.class);
-                startActivity(intent);
+                returnListPage();
                 break;
             case R.id.bottom_delete:
+                presenter.modifyDeleted(taskId,1);
+                returnListPage();
                 break;
             case R.id.bottom_share:
+                ToastUtils.showShort(this,"TBD");
                 break;
             case R.id.bottom_alarm:
                 clickAlarm();
                 break;
         }
+    }
+
+    private void returnListPage(){
+        Intent intent = new Intent();
+        intent.setClass(this,MainActivity.class);
+        startActivity(intent);
     }
 
     private void clickAlarm(){
@@ -125,6 +139,8 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
                     alarm = data.getIntExtra("alarm", 1);
                 }
                 break;
+            case REQUEST_EDIT:
+                break;
         }
     }
 
@@ -141,7 +157,14 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
 
     private void initData(){
         Task_Recording task_recording = presenter.getTaskRecording(taskId);
-        mEditTitle.setText(task_recording.getTask().getTitle());
+        Spanned spanned = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            spanned = Html.fromHtml(task_recording.getTask().getTitle(), FROM_HTML_MODE_COMPACT);
+        }
+        if(spanned != null && spanned.length() > 0)
+            mEditTitle.setText(spanned.subSequence(0,spanned.length() -1));
+        else
+            mEditTitle.setText(spanned);
         alarm = task_recording.getTask().getAlarm();
         urgent = task_recording.getTask().getUrgent();
         if(urgent == 0)
@@ -154,7 +177,19 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
     }
 
     @Override
-    public int getTaskId(){
-        return taskId;
+    public void changedView(){
+        Intent intent = new Intent();
+        intent.setClass(this, RecordingEditActivity.class);
+        intent.putExtra("taskId",taskId);
+        startActivityForResult(intent,REQUEST_EDIT);
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+    }
+
+    @Override
+    public void onFocusChange(View view, boolean b) {
+        if(b){
+            changedView();
+            Log.d("TAG",view.getId()+"");
+        }
     }
 }

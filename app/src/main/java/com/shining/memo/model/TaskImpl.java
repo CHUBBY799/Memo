@@ -76,6 +76,17 @@ public class TaskImpl implements TaskModel {
     }
 
     @Override
+    public String getTitle(int taskId, SQLiteDatabase db) {
+        String title = "";
+        Cursor cursor = db.rawQuery("select title from task " +
+                "where id = ? ",new String[]{String.valueOf(taskId)});
+        if(cursor.moveToFirst()){
+            title = cursor.getString(cursor.getColumnIndex("title"));
+        }
+        return title;
+    }
+
+    @Override
     public void deleteTask(int taskId, SQLiteDatabase db) {
         db.execSQL("delete from task " +
                 "where id = ?",new Object[]{taskId});

@@ -16,13 +16,17 @@ import android.widget.TextView;
 
 import com.shining.memo.R;
 import com.shining.memo.model.Alarm;
+import com.shining.memo.model.TaskModel;
 import com.shining.memo.presenter.AlarmPresenter;
 import com.shining.memo.utils.Utils;
 import com.shining.memo.widget.DatePickerView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class AlarmActivity extends AppCompatActivity implements View.OnClickListener{
@@ -88,37 +92,36 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     public void initParameters(){
         alarm = getIntent().getIntExtra("alarm",0);
         taskId = getIntent().getIntExtra("taskId",-1);
+        Calendar calendar = Calendar.getInstance();
         if(alarm == 1){
-            String[] dates = null,times = null;
+            String date,time;
             if(taskId == -1){
-                String date = getIntent().getStringExtra("date");
-                dates = date.split("-");
-                String time = getIntent().getStringExtra("time");
-                times = time.split(":");
+                date = getIntent().getStringExtra("date");
+                time = getIntent().getStringExtra("time");
                 ringtone = getIntent().getIntExtra("ringtone",1);
                 pop = getIntent().getIntExtra("pop",0);
             }else {
                 Alarm alarmObject = alarmPresenter.getAlarm(taskId);
-                dates = alarmObject.getDate().split("-");
-                times = alarmObject.getTime().split(":");
+                date = alarmObject.getDate();
+                time = alarmObject.getTime();
                 pop = alarmObject.getPop();
                 ringtone = alarmObject.getRingtone();
             }
-            year = dates[0];
-            month = Utils.formatMonthSimUS(Integer.parseInt(dates[1]));
-            day = dates[2];
-            hour = times[0];
-            minute = times[1];
+            SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            Date dates = new Date();
+            try {
+                dates = sdf.parse(date+" "+time);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            calendar.setTime(dates);
             alarm_save.setText("UPDATE ALARM CLOCK");
-            alarmPresenter = new AlarmPresenter(this);
-        }else {
-            Calendar calendar = Calendar.getInstance();
-            year = formatTimeUnit(calendar.get(Calendar.YEAR));
-            month = Utils.formatMonthSimUS(calendar.get(Calendar.MONTH)+1);
-            day = formatTimeUnit(calendar.get(Calendar.DAY_OF_MONTH));
-            hour = formatTimeUnit(calendar.get(Calendar.HOUR_OF_DAY));
-            minute = formatTimeUnit(calendar.get(Calendar.MINUTE));
         }
+        year = formatTimeUnit(calendar.get(Calendar.YEAR));
+        month = Utils.formatMonthSimUS(calendar.get(Calendar.MONTH)+1);
+        day = formatTimeUnit(calendar.get(Calendar.DAY_OF_MONTH));
+        hour = formatTimeUnit(calendar.get(Calendar.HOUR_OF_DAY));
+        minute = formatTimeUnit(calendar.get(Calendar.MINUTE));
     }
 
     private void alarmDelete(){
@@ -151,8 +154,10 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
             alarmObject.setTaskId(taskId);
             if(alarm == 1){
                 alarmPresenter.modifyAlarm(alarmObject);
+                alarmPresenter.setAlarmNotice(taskId);
             }else {
                 alarmPresenter.addAlarm(alarmObject);
+                alarmPresenter.setAlarmNotice(taskId);
             }
         }else {
             textIntent.putExtra("date",date);
@@ -160,21 +165,6 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
             textIntent.putExtra("ringtone", ringtone);
             textIntent.putExtra("pop", pop);
         }
-
-        Intent intent = new Intent();
-        intent.setAction("com.shining.memo.alarmandnotice");
-        intent.setComponent(new ComponentName("com.shining.memo","com.shining.memo.receiver.AlarmReceiver"));
-        intent.putExtra("ringtone",ringtone);
-        intent.putExtra("pop",pop);
-        pendingIntent = PendingIntent.getBroadcast(this,0x101,intent,0);
-        Calendar calendar=Calendar.getInstance();
-        calendar.set(Calendar.YEAR,Integer.parseInt(year));
-        calendar.set(Calendar.MONTH,Utils.formatMonthNumber(month)-1);
-        calendar.set(Calendar.DAY_OF_MONTH,Integer.parseInt(day));
-        calendar.set(Calendar.HOUR_OF_DAY,Integer.parseInt(hour));
-        calendar.set(Calendar.MINUTE,Integer.parseInt(minute));
-        calendar.set(Calendar.SECOND,0);
-        alarmManager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),pendingIntent);
         setResult(RESULT_OK, textIntent);
         finish();
     }
@@ -215,12 +205,12 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         for (int i = 0 ; i < 28 ; i++){
             dayList.add(formatTimeUnit(i+1) + "th");
         }
-        if (month.equals("Jan") || month.equals("Mar") || month.equals("May") || month.equals("Jul") || month.equals("Aug") || month.equals("Oct") || month.equals("Dec")) {
+        if (month.equals("Jan.") || month.equals("Mar.") || month.equals("May.") || month.equals("Jul.") || month.equals("Aug.") || month.equals("Oct.") || month.equals("Dec.")) {
             dayList.add(29 + "th");
             dayList.add(30 + "th");
             dayList.add(31 + "th");
         }
-        else if (month.equals("Apr") || month.equals("Jun") || month.equals("Sep") || month.equals("Nov")) {
+        else if (month.equals("Apr.") || month.equals("Jun.") || month.equals("Sept.") || month.equals("Nov.")) {
             dayList.add(29 + "th");
             dayList.add(30 + "th");
         }
@@ -271,6 +261,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         ringtoneReminder = findViewById(R.id.ringtone_reminder);
         popReminder = findViewById(R.id.pop_reminder);
         alarmManager = (AlarmManager) getSystemService(this.ALARM_SERVICE);
+        alarmPresenter = new AlarmPresenter(this);
     }
 
 
@@ -308,9 +299,6 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     private void changeColor(){
     }
 
-    private void initParameter(){
-
-    }
 
     private String formatTimeUnit(int unit) {
         return unit < 10 ? "0" + String.valueOf(unit) : String.valueOf(unit);
@@ -329,7 +317,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         day_pv.setOnSelectListener(new DatePickerView.onSelectListener() {
             @Override
             public void onSelect(String text) {
-                day = text;
+                day = text.substring(0,2);
             }
         });
 

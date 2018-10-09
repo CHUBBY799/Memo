@@ -12,20 +12,23 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import android.text.Html;
 import android.text.Spanned;
+import android.text.SpannedString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
@@ -50,6 +53,7 @@ import com.shining.memo.presenter.PhotoPresenter;
 import com.shining.memo.presenter.RecordingPresenter;
 import com.shining.memo.utils.ToastUtils;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,20 +61,24 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static android.text.Html.FROM_HTML_MODE_COMPACT;
 
-public class RecordingEditActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged,Switch.OnCheckedChangeListener{
+
+public class RecordingEditActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged,Switch.OnCheckedChangeListener,OnFocusChangeListener{
     private final static  String TAG = "RecordingEditActivity";
     private static final int MSG_RECORDING = 0x110;
     private static final int REQUEST_ALARM=0xb3;
     private static final int REQUEST_CAMERA=0xa1;
     private static final int REQUEST_GALLERY=0xa3;
     private Button mBtnCancel,mBtnConfirm,mBtnAlarm,mBtnEdit,mBtnRecord,mBtnPhoto,mBtnAudioCancel,mBtnFinish,mBtnGallery,mBtnCamera;
-    private Button mBtnFont,mBtnLine,mBtnFontSize,mBtnColor;
+    private Button mBtnBold,mBtnUnderLine,mBtnDeleteLine,mBtnColor,mBtnTextBack;
+    private Button mBtnColBack,mBtnColRed,mBtnColOrange,mBtnColBlue,mBtnColPurple,mBtnColGray,mBtnColBlack;
+    private ConstraintLayout layout;
     private Switch mSwitchUrgent;
     private TextView mTvTime;
     private EditText editTitle;
     private RecyclerView mRecyclerView;
-    private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false;
+    private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false ,titleOnFocus = false;
     private String photoPath="";
     private int urgent = 1,alarm = 0,taskId = -1;
     private Alarm alarmObject;
@@ -80,8 +88,6 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private RecordingPresenter recordingPresenter;
     private AlarmPresenter alarmPresenter;
     private PhotoPresenter photoPresenter;
-    private PopupWindow mFontPopupWindow;
-    private OnTextClick onTextClick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,10 +132,16 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             handler.removeMessages(MSG_RECORDING);
             isRecording = false;
             animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
+        }else if(isColorPick){
+            isColorPick = false;
+            animationTranslate(findViewById(R.id.bottom_recording_colorpick),findViewById(R.id.bottom_recording_textedit),500);
         }else if(isTextEdit){
             isTextEdit = false;
             animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit),500);
-        }else{
+        }else if(taskId != -1){
+            finish();
+            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        }else {
             super.onBackPressed();
         }
     }
@@ -149,15 +161,26 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         mBtnGallery = (Button)view.findViewById(R.id.photo_gallery);
         mBtnCamera = (Button)view.findViewById(R.id.photo_camera);
         view =  (View)findViewById(R.id.bottom_recording_textedit);
-        mBtnFont = (Button)view.findViewById(R.id.textedit_font);
-        mBtnLine = (Button)view.findViewById(R.id.textedit_line);
-        mBtnFontSize = (Button)view.findViewById(R.id.textedit_fontsize);
-        mBtnColor = (Button)view.findViewById(R.id.textedit_color);
+        mBtnTextBack = (Button)view.findViewById(R.id.bottom_textedit_back);
+        mBtnBold = (Button)view.findViewById(R.id.bottom_bold);
+        mBtnUnderLine = (Button)view.findViewById(R.id.bottom_underline);
+        mBtnDeleteLine = (Button)view.findViewById(R.id.bottom_deleteline);
+        mBtnColor = (Button)view.findViewById(R.id.bottom_color);
+        view =  (View)findViewById(R.id.bottom_recording_colorpick);
+        mBtnColBack = (Button)view.findViewById(R.id.bottom_colorpick_back);
+        mBtnColBlack = (Button)view.findViewById(R.id.colorpick_black);
+        mBtnColRed = (Button)view.findViewById(R.id.colorpick_red);
+        mBtnColOrange = (Button)view.findViewById(R.id.colorpick_orange);
+        mBtnColBlue = (Button)view.findViewById(R.id.colorpick_blue);
+        mBtnColPurple = (Button)view.findViewById(R.id.colorpick_purple);
+        mBtnColGray = (Button)view.findViewById(R.id.colorpick_gray);
+
         mSwitchUrgent = (Switch)findViewById(R.id.bottom_urgent);
         mBtnRecord = (Button)findViewById(R.id.bottom_audio);
         mBtnPhoto = (Button)findViewById(R.id.bottom_photo);
         mRecyclerView = (RecyclerView)findViewById(R.id.recording_recyclerView);
         editTitle = (EditText)findViewById(R.id.recording_title);
+        editTitle.setOnFocusChangeListener(this);
         mBtnCancel.setOnClickListener(this);
         mBtnConfirm.setOnClickListener(this);
         mBtnAlarm.setOnClickListener(this);
@@ -169,16 +192,22 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         mBtnCamera.setOnClickListener(this);
         mBtnGallery.setOnClickListener(this);
         mSwitchUrgent.setOnCheckedChangeListener(this);
-        mBtnFont.setOnClickListener(this);
-        mBtnLine.setOnClickListener(this);
-        mBtnFontSize.setOnClickListener(this);
+        mBtnTextBack.setOnClickListener(this);
+        mBtnBold.setOnClickListener(this);
+        mBtnUnderLine.setOnClickListener(this);
+        mBtnDeleteLine.setOnClickListener(this);
         mBtnColor.setOnClickListener(this);
-
+        mBtnColBack.setOnClickListener(this);
+        mBtnColBlack.setOnClickListener(this);
+        mBtnColRed.setOnClickListener(this);
+        mBtnColOrange.setOnClickListener(this);
+        mBtnColBlue.setOnClickListener(this);
+        mBtnColPurple.setOnClickListener(this);
+        mBtnColGray.setOnClickListener(this);
         presenter = new AudioRecordPresenter(this);
         photoPresenter = new PhotoPresenter(this);
         recordingPresenter = new RecordingPresenter(this);
         alarmPresenter = new AlarmPresenter(this);
-        onTextClick = new OnTextClick();
         taskId = getIntent().getIntExtra("taskId",-1);
     }
 
@@ -188,13 +217,20 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 mMap = new HashMap<>();
                 RecordingContent content = new RecordingContent();
                 content.setType("text");
-                content.setColor("#000000");
+                content.setColor("#666666");
                 content.setContent("");
                 mMap.put(mMap.size(),content);
             }
         }else{
             Task_Recording task_recording = recordingPresenter.getTaskRecording(taskId);
-            editTitle.setText(task_recording.getTask().getTitle());
+            Spanned spanned = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                spanned = Html.fromHtml(task_recording.getTask().getTitle(),FROM_HTML_MODE_COMPACT);
+            }
+            if(spanned != null && spanned.length() > 0)
+                editTitle.setText(spanned.subSequence(0,spanned.length() -1));
+            else
+                editTitle.setText(spanned);
             alarm = task_recording.getTask().getAlarm();
             if(alarm == 1){
                 alarmObject = alarmPresenter.getAlarm(taskId);
@@ -205,6 +241,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             mMap = task_recording.getRecording().getRecordingMap();
         }
         adapter = new RecordingAdapter(mMap,this,this);
+        if(taskId != -1)
+            adapter.setViewEdit(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -304,75 +342,65 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             case R.id.photo_camera:
                 photoPath = photoPresenter.takePicture(this,REQUEST_CAMERA);
                 break;
-            case R.id.textedit_font:
-                upPopwindow(mBtnFont,120,220,"font");
+            case R.id.bottom_textedit_back:
+                isTextEdit = false;
+                animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit),500);
                 break;
-            case R.id.textedit_line:
-                upPopwindow(mBtnLine,120,110,"line");
+            case R.id.bottom_bold:
+                clickBold();
                 break;
-            case R.id.textedit_fontsize:
-                upPopwindow(mBtnFontSize,120,110,"fontsize");
+            case R.id.bottom_underline:
+                clickUnderLine();
                 break;
-            case R.id.textedit_color:
-                upPopwindow(mBtnColor,120,385,"color");
+            case R.id.bottom_deleteline:
+                clickDeleteLine();
                 break;
+            case R.id.bottom_color:
+                isColorPick = true;
+                animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_colorpick),500);
+                break;
+            case R.id.bottom_colorpick_back:
+                clickColorBcak();
+                break;
+            case R.id.colorpick_red:
+                ClickColorRed();
+                break;
+            case R.id.colorpick_orange:
+                ClickColorOrange();
+                break;
+            case R.id.colorpick_blue:
+                ClickColorBlue();
+                break;
+            case R.id.colorpick_purple:
+                ClickColorPurple();
+                break;
+            case R.id.colorpick_gray:
+                ClickColorGray();
+                break;
+            case R.id.colorpick_black:
+                ClickColorBlack();
+                break;
+        }
+    }
 
-        }
-    }
-    private void upPopwindow(View btnPop,int width,int height,String type) {
-        View contentView = null;
-        switch(type){
-            case "font":
-                contentView = LayoutInflater.from(this).inflate(R.layout.textedit_font, null);
-                contentView.findViewById(R.id.textedit_bold).setOnClickListener(onTextClick);
-                contentView.findViewById(R.id.textedit_italy).setOnClickListener(onTextClick);
-                contentView.findViewById(R.id.textedit_italy_bold).setOnClickListener(onTextClick);
-                contentView.findViewById(R.id.textedit_normal).setOnClickListener(onTextClick);
-                break;
-            case "line":
-                contentView = LayoutInflater.from(this).inflate(R.layout.textedit_line, null);
-                contentView.findViewById(R.id.textedit_deleteline).setOnClickListener(onTextClick);
-                contentView.findViewById(R.id.textedit_underline).setOnClickListener(onTextClick);
-                break;
-            case "fontsize":
-                contentView = LayoutInflater.from(this).inflate(R.layout.textedit_fontsize, null);
-                contentView.findViewById(R.id.textedit_increase).setOnClickListener(onTextClick);
-                contentView.findViewById(R.id.textedit_decrease).setOnClickListener(onTextClick);
-                break;
-            case "color":
-                contentView = LayoutInflater.from(this).inflate(R.layout.textedit_color, null);
-                contentView.findViewById(R.id.textedit_color_red).setOnClickListener(onTextClick);
-                contentView.findViewById(R.id.textedit_color_orange).setOnClickListener(onTextClick);
-                contentView.findViewById(R.id.textedit_color_blue).setOnClickListener(onTextClick);
-                contentView.findViewById(R.id.textedit_color_yellow).setOnClickListener(onTextClick);
-                contentView.findViewById(R.id.textedit_color_purple).setOnClickListener(onTextClick);
-                contentView.findViewById(R.id.textedit_color_green).setOnClickListener(onTextClick);
-                contentView.findViewById(R.id.textedit_color_black).setOnClickListener(onTextClick);
-                break;
-        }
-        mFontPopupWindow = new PopupWindow(contentView, width, height);  // 尽量写成数值，要不然左右弹出的位置不好控制
-        mFontPopupWindow.setAnimationStyle(R.style.anim);
-        ColorDrawable dw = new ColorDrawable(this.getResources().getColor(R.color.item_btn_backgroud));
-        mFontPopupWindow.setOutsideTouchable(true);
-        mFontPopupWindow.setBackgroundDrawable(dw);
-        mFontPopupWindow.setOutsideTouchable(true);
-        mFontPopupWindow.setFocusable(true);
-        int popupWidth = mFontPopupWindow.getWidth();
-        int btnWidth = btnPop.getWidth();
-        mFontPopupWindow.showAsDropDown(btnPop, (btnWidth - popupWidth) / 2, 0);
-    }
 
     private void clickCancel(){
         Log.d(TAG, "clickCancel: ");
         if(taskId == -1){
+            for(int i = 0; i < mMap.size(); i++){
+                if((mMap.get(i).getType().equals("audio"))||(mMap.get(i).getType().equals("photo")
+                        && mMap.get(i).getContent().contains(Environment.getExternalStorageDirectory()+"/OhMemo/photo/"))){
+                        File file = new File(mMap.get(i).getContent());
+                        if (file.exists())
+                            file.delete();
+                }
+            }
             Intent intent = new Intent();
             intent.setClass(this,MainActivity.class);
             startActivity(intent);
         }else {
-            Intent intent = new Intent();
-            intent.putExtra("taskId",taskId);
-            intent.setClass(this,RecordingViewActivity.class);
-            startActivity(intent);
+            finish();
+            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         }
     }
     private void clickConfirm(){
@@ -381,10 +409,15 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         task.setType(taskType());
         task.setUrgent(urgent);
         task.setAlarm(alarm);
-        String title = editTitle.getText().toString();
+        String html = Html.toHtml(new SpannedString(editTitle.getText()));
+        if(html.length() > 0)
+            html = html.substring(0,html.length() -1);
+        String title = adapter.parseUnicodeToStr(html);
         task.setTitle(title);
         if(taskId == -1){
-            if(recordingPresenter.saveRecording(task,mMap,alarmObject)){
+            long id = 0;
+            if( (id = recordingPresenter.saveRecording(task,mMap,alarmObject)) != -1){
+                alarmPresenter.setAlarmNotice((int)id);
                 Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.setClass(this, MainActivity.class);
@@ -396,10 +429,16 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             task.setId(taskId);
             if(recordingPresenter.modifyRecording(task,mMap,alarmObject)){
                 Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                intent.putExtra("taskId",taskId);
-                intent.setClass(this,RecordingViewActivity.class);
-                startActivity(intent);
+                alarmPresenter.setAlarmNotice(taskId);
+                if(adapter.deletePath != null && adapter.deletePath.size() > 0){
+                    for(int i=0; i < adapter.deletePath.size(); i++){
+                        File file = new File(adapter.deletePath.get(i));
+                        if(file.exists())
+                            file.delete();
+                    }
+                }
+                finish();
+                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
             }else{
                 Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
             }
@@ -407,6 +446,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     }
     private void clickEdit(){
         isTextEdit = true;
+        if(layout == null)
+            layout = (ConstraintLayout)findViewById(R.id.recroding_edit_root);
         animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_textedit),500);
     }
     private void clickAlarm(){
@@ -750,7 +791,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         String html = Html.toHtml(text);
         if(html.length() > 0)
             html = html.substring(0,html.length() -1);
-        mMap.get(index).setContent(adapter.parseUnicodeToStr(html));
+        mMap.get(index).setContent(RecordingAdapter.parseUnicodeToStr(html));
         Log.d(TAG, "TextChanged: "+mMap.toString());
     }
 
@@ -763,72 +804,91 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         return "text";
     }
 
-    class OnTextClick implements View.OnClickListener{
-
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.textedit_bold:
-                    adapter.setTextFont(adapter.getCurrentIndex(),mRecyclerView,Typeface.BOLD);
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_italy:
-                    adapter.setTextFont(adapter.getCurrentIndex(),mRecyclerView,Typeface.ITALIC);
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_italy_bold:
-                    adapter.setTextFont(adapter.getCurrentIndex(),mRecyclerView,Typeface.BOLD_ITALIC);
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_normal:
-                    adapter.setTextFont(adapter.getCurrentIndex(),mRecyclerView,Typeface.NORMAL);
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_deleteline:
-                    adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,0);
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_underline:
-                    adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,1);
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_increase:
-                    adapter.setTextFontSize(adapter.getCurrentIndex(),mRecyclerView,1);
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_decrease:
-                    adapter.setTextFontSize(adapter.getCurrentIndex(),mRecyclerView,0);
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_color_red:
-                    adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_red));
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_color_yellow:
-                    adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_yellow));
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_color_orange:
-                    adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_orange));
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_color_green:
-                    adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_green));
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_color_black:
-                    adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_black));
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_color_blue:
-                    adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_blue));
-                    mFontPopupWindow.dismiss();
-                    break;
-                case R.id.textedit_color_purple:
-                    adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_purple));
-                    mFontPopupWindow.dismiss();
-                    break;
-            }
+    @Override
+    public void onFocusChange(View view, boolean b) {
+        if(b){
+            titleOnFocus = true;
+        }else {
+            titleOnFocus = false;
         }
+    }
+
+    private void clickBold(){
+        if(titleOnFocus){
+            adapter.setTextBold(adapter.getCurrentIndex(),mRecyclerView,editTitle);
+        }else{
+            adapter.setTextBold(adapter.getCurrentIndex(),mRecyclerView,null);
+        }
+        layout.requestFocus();
+    }
+    private void clickUnderLine(){
+        if(titleOnFocus){
+            adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,1,editTitle);
+        }else{
+            adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,1,null);
+        }
+        layout.requestFocus();
+    }
+    private void clickDeleteLine(){
+        if(titleOnFocus){
+            adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,0,editTitle);
+        }else{
+            adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,0,null);
+        }
+        layout.requestFocus();
+    }
+
+    private void clickColorBcak(){
+        isColorPick = false;
+        animationTranslate(findViewById(R.id.bottom_recording_colorpick),findViewById(R.id.bottom_recording_textedit),500);
+        layout.requestFocus();
+    }
+    private void ClickColorRed(){
+        if(titleOnFocus){
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_red,null),editTitle);
+        }else{
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_red,null),null);
+        }
+        clickColorBcak();
+    }
+    private void ClickColorOrange(){
+        if(titleOnFocus){
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_orange,null),editTitle);
+        }else{
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_orange,null),null);
+        }
+        clickColorBcak();
+    }
+    private void ClickColorBlue(){
+        if(titleOnFocus){
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_blue,null),editTitle);
+        }else{
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_blue,null),null);
+        }
+        clickColorBcak();
+    }
+    private void ClickColorPurple(){
+        if(titleOnFocus){
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_purple,null),editTitle);
+        }else{
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_purple,null),null);
+        }
+        clickColorBcak();
+    }
+    private void ClickColorGray(){
+        if(titleOnFocus){
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_gray,null),editTitle);
+        }else{
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_gray,null),null);
+        }
+        clickColorBcak();
+    }
+    private void ClickColorBlack(){
+        if(titleOnFocus){
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_black,null),editTitle);
+        }else{
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_black,null),null);
+        }
+        clickColorBcak();
     }
 }

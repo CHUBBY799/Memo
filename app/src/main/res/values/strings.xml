@@ -3,6 +3,7 @@
     <string name="add_text">add_text</string>
     <string name="urgent">urgent</string>
     <string name="edit_title_hint">Please input title of recording</string>
+    <string name="view_title_hint">None title of recording</string>
     <string name="edit_content_hint">Please input content of recording</string>
     <string name="text_cancel">×</string>
     <string name="text_clock">口</string>

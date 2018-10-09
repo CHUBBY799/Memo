@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 
 import com.shining.memo.utils.ToastUtils;
+import com.shining.memo.view.MainActivity;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -38,17 +41,21 @@ public class PhotoPresenter {
     public String takePicture(Activity activity,int requestCode) {
         if(hasSdcard()){
             //创建File对象，用于存储拍照后的照片
-            String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-            String fileName = timeStamp + ".jpg";
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String fileName = "IMG_"+ timeStamp + ".jpg";
             File outputImage=new File(FolderPath,fileName);
             String filePath = FolderPath + fileName;
             try{
                 if(outputImage.exists())
                     outputImage.delete();
                 outputImage.createNewFile();
-                Uri imageUri = Uri.fromFile(outputImage);
+
+                imageUri = Uri.fromFile(outputImage);
                 //启动相机程序
                 Intent intentCamera = new Intent();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    intentCamera.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); //添加这一句表示对目标应用临时授权该Uri所代表的文件
+                }
                 intentCamera.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
                 intentCamera.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                 activity.startActivityForResult(intentCamera,requestCode);

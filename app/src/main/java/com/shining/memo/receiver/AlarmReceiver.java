@@ -22,63 +22,74 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if(intent.getAction().equals("com.shining.memo.alarmandnotice")){
-            Log.d("AlarmReceiver", "onReceive: ");
-            String id = "my_channel_04";
-            String name="my_channel_name4";
-            NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-            Notification notification = null;
-            Intent intent1 = new Intent(context, RecordingViewActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, 0);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH);
-                mChannel.setDescription("memo notice");
-                mChannel.enableLights(true);
-                mChannel.setLightColor(Color.RED);
-                mChannel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
-                mChannel.enableVibration(true);
-                mChannel.setVibrationPattern(new long[]{100,200,300,400,500,600});
-                mChannel.setSound( RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),Notification.AUDIO_ATTRIBUTES_DEFAULT);
-                mChannel.setBypassDnd(true);
-                notificationManager.createNotificationChannel(mChannel);
-                notification = new Notification.Builder(context,id)
-                        .setTicker("Memo has new recording notice")
-                        .setContentTitle("Memo has new recording notice")
-                        .setContentText("hahaha")
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setPriority(Notification.PRIORITY_HIGH)
-                        .setDefaults(Notification.DEFAULT_ALL)
-                        .setAutoCancel(true)
-                        .setOngoing(false)
-                        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),R.drawable.import_from_gallery_icon))
-                        .setContentIntent(pendingIntent)
-                        .setOnlyAlertOnce(true)
-                        .setWhen(System.currentTimeMillis())
-                        .build();
-            }else {
-                notification = new Notification.Builder(context)
-                        .setTicker("Memo has new recording notice")
-                        .setContentTitle("Memo has new recording notice")
-                        .setContentText("hahaha")
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setPriority(Notification.PRIORITY_HIGH)
-                        .setDefaults(Notification.DEFAULT_ALL)
-                        .setAutoCancel(true)
-                        .setOngoing(false)
-                        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),R.drawable.import_from_gallery_icon))
-                        .setContentIntent(pendingIntent)
-                        .setOnlyAlertOnce(true)
-                        .setWhen(System.currentTimeMillis())
-                        .build();
+            int taskId = intent.getIntExtra("taskId",-1);
+            int pop = intent.getIntExtra("pop",-1);
+            int ringtone = intent.getIntExtra("ringtone",-1);
+            String title = "";
+            try{
+                if(intent.getStringExtra("title").equals(""))
+                    title = "无标题!";
+                else
+                    title = intent.getStringExtra("title");
+            }catch (Exception e){
+                e.printStackTrace();
             }
-            Log.d("TAG", "onReceive:"+notification.toString());
-            notificationManager.notify(0x1a42, notification);
+            Log.d("AlarmReceiver", "onReceive: pop"+ pop +"---ringtone"+ ringtone);
+            if(pop == 1){
+                String id = "my_channel_04";
+                String name="my_channel_name4";
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+                Notification notification = null;
+                Intent contentIntent = new Intent(context, RecordingViewActivity.class);
+                contentIntent.putExtra("taskId",taskId);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, contentIntent, 0);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH);
+                    notificationManager.createNotificationChannel(mChannel);
+                    notification = new Notification.Builder(context,id)
+                            .setTicker("Memo has new recording notice")
+                            .setContentTitle("Memo has new recording notice")
+                            .setContentText(title)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setDefaults(Notification.DEFAULT_ALL)
+                            .setAutoCancel(true)
+                            .setOngoing(false)
+                            .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),R.drawable.import_from_gallery_icon))
+                            .setContentIntent(pendingIntent)
+                            .setOnlyAlertOnce(true)
+                            .setWhen(System.currentTimeMillis())
+                            .build();
+                }else {
+                    notification = new Notification.Builder(context)
+                            .setTicker("Memo has new recording notice")
+                            .setContentTitle("Memo has new recording notice")
+                            .setContentText("hahaha")
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setDefaults(Notification.DEFAULT_ALL)
+                            .setAutoCancel(true)
+                            .setOngoing(false)
+                            .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),R.drawable.import_from_gallery_icon))
+                            .setContentIntent(pendingIntent)
+                            .setOnlyAlertOnce(true)
+                            .setWhen(System.currentTimeMillis())
+                            .build();
+                }
+                notificationManager.notify(0x1a42, notification);
+            }
+            if(ringtone == 1){
+
+            }
 //            Ringtone r = RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 //            r.play();
-            PowerManager pm = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
-            if (!pm.isScreenOn()) {
-                PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "con.shinging.memo:WakeAndLock");
-                wakeLock.acquire();  //点亮屏幕
-                wakeLock.release();  //任务结束后释放
+            if(ringtone ==1 || pop == 1){
+                PowerManager pm = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+                if (!pm.isScreenOn()) {
+                    PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "con.shinging.memo:WakeAndLock");
+                    wakeLock.acquire();  //点亮屏幕
+                    wakeLock.release();  //任务结束后释放
+                }
             }
         }
     }

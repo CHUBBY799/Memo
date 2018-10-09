@@ -9,11 +9,11 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:background="@color/content_background">
-
     <EditText
         android:id="@+id/recording_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textIsSelectable="true"
         android:layout_marginStart="25dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="25dp"
@@ -31,7 +31,6 @@
         android:textColorHint="@color/item_btn_textcolor"
         android:textCursorDrawable="@drawable/cursor"
         android:textSize="20dp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -41,6 +40,7 @@
         android:layout_marginEnd="25dp"
         android:layout_marginStart="25dp"
         android:layout_marginTop="5dp"
+        android:textIsSelectable="true"
         android:background="@color/underline_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -94,6 +94,9 @@
             android:visibility="gone"/>
         <include android:id="@+id/bottom_recording_textedit"
             layout="@layout/bottom_recording_textedit"
+            android:visibility="gone"/>
+        <include android:id="@+id/bottom_recording_colorpick"
+            layout="@layout/bottom_recording_colorpick"
             android:visibility="gone"/>
     </LinearLayout>
 
