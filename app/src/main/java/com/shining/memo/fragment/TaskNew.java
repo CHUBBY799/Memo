@@ -12,6 +12,6 @@ import com.shining.memo.R;
 public class TaskNew extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.task_title, container, false);
+        return inflater.inflate(R.layout.task_new, container, false);
     }
 }

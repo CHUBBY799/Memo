@@ -30,8 +30,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private String title;
     private JSONArray itemArr;
 
-    private ListPresenter listPresenter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +65,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public ListBean formatData(){
         ListBean listBean = new ListBean();
-        listBean.setState(false);
         listBean.setTitle(title);
         listBean.setItemArr(itemArr.toString());
         return listBean;
@@ -83,7 +80,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * 保存并向主界面返回数据
+     * 保存并向数据库中插入数据
      */
     private void listConfirm(){
         listConfirm.setFocusable(true);
@@ -94,14 +91,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         itemArr = listItemAdapter.getItemArr();
         itemArr.remove(itemArr.length() - 1);
 
-        listPresenter = new ListPresenter(this);
+        ListPresenter listPresenter = new ListPresenter(this);
         listPresenter.insertPresenter();
-
-        Intent listIntent = new Intent();
-        listIntent.putExtra("state",false);
-        listIntent.putExtra("title", title);
-        listIntent.putExtra("itemArr", itemArr.toString());
-        setResult(RESULT_OK, listIntent);
         finish();
     }
 

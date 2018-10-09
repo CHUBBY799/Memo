@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.shining.memo">
 
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -24,7 +24,7 @@
         tools:replace="android:allowBackup">
         <activity
             android:name=".view.MainActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,22 +50,16 @@
         <activity
             android:name=".view.PhotoConfirmActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
-        <!--<activity android:name=".view.TestView" />-->
-
-
         <activity android:name=".view.RecordingViewActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
         <receiver
             android:name=".receiver.AlarmReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.shining.memo.alarmandnotice" />
+                <action android:name="com.shining.memo.alarmandnotice"/>
             </intent-filter>
         </receiver>
-
         <activity android:name=".home.MemoActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
