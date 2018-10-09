@@ -60,4 +60,6 @@
     <color name="main_task_titlecolor">#FF666666</color>
     <color name="main_task_alarmcolor">#FFAAAAAA</color>
     <color name="main_task_completecolor">#FFCCCCCC</color>
+    <color name="main_task_clickcolor">#FFFF8833</color>
+    <color name="main_task_noclickcolor">#FFCCCCCC</color>
 </resources>

@@ -59,6 +59,12 @@
     <string name="title">title</string>
     <string name="item">item</string>
 
+
+    <!--main string-->
+    <string name="main_add_task">Add a new task</string>
+    <string name="main_add_list">Add a new list</string>
+    <string name="main_add_note">Add a new note</string>
+
     <string name="expand_icon">expand icon</string>
     <string name="start_default">start default</string>
 

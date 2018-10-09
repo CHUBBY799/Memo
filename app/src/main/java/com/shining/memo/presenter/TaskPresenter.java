@@ -11,11 +11,11 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class MemoPresenter implements MemoContract.Presenter{
+public class TaskPresenter implements MemoContract.Presenter{
     private MemoContract.View mView;
     private TaskImpl taskModel;
 
-    public MemoPresenter(MemoContract.View view, TaskImpl taskModel){
+    public TaskPresenter(MemoContract.View view, TaskImpl taskModel){
         mView=view;
         this.taskModel=taskModel;
     }
@@ -28,4 +28,7 @@ public class MemoPresenter implements MemoContract.Presenter{
        tasks.addAll(taskModel.getNotAlarmTasksByUrgentDesc(0));
        return tasks;
     }
+//    public boolean hasAudioById(long id){
+//        return taskModel.hasAudioById(id);
+//    }
 }
