@@ -26,9 +26,9 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
     private Context context;
     private int length;
     private int id[];
+    private int selected[];
     private String[] list_title;
     private Boolean[] expandState;
-    private Boolean[] startState;
     private Boolean[][] itemState;
     private String[][] itemContent;
 
@@ -65,6 +65,9 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             state.setHeight(15);
             state.setGravity(CENTER);
             state.setBackground(context.getDrawable(R.drawable.non_oval_background));
+            if (itemState[holder.getAdapterPosition()][index]){
+                state.setText("√");
+            }
             state.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -92,6 +95,7 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             public void onClick(View v) {
                 Intent intent = new Intent(context, ListActivity.class);
                 intent.putExtra("id", id[holder.getAdapterPosition()]);
+                intent.putExtra("selected", selected[holder.getAdapterPosition()]);
                 intent.putExtra("title", list_title[holder.getAdapterPosition()]);
 
                 JSONArray itemArr = new JSONArray();
@@ -125,15 +129,18 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             }
         });
 
+        if (selected[holder.getAdapterPosition()] == 1){
+            startIcon.setBackground(context.getDrawable(R.drawable.star_selected_icon));
+        }
         startIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(startState[holder.getAdapterPosition()]){
+                if(selected[holder.getAdapterPosition()] == 1){
                     startIcon.setBackground(context.getDrawable(R.drawable.star_default_icon));
-                    startState[holder.getAdapterPosition()] = false;
+                    selected[holder.getAdapterPosition()] = 0;
                 }else{
                     startIcon.setBackground(context.getDrawable(R.drawable.star_selected_icon));
-                    startState[holder.getAdapterPosition()] = true;
+                    selected[holder.getAdapterPosition()] = 1;
                 }
             }
         });
@@ -147,17 +154,17 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
     public void setInfo(ListBean[] listBeans){
         this.length = listBeans.length;
         id = new int[length];
+        selected = new int[length];
         list_title = new String[length];
         expandState = new Boolean[length];
-        startState = new Boolean[length];
         itemState = new Boolean[length][];
         itemContent = new String[length][];
         JSONArray itemArr;
         for (int i = 0 ; i < length ; i++){
             id[i] = (int)listBeans[i].getId();
+            selected[i] = listBeans[i].getSelected();
             list_title[i] = listBeans[i].getTitle();
             expandState[i] = false;
-            startState[i] = false;
             try{
                 itemArr = new JSONArray(listBeans[i].getItemArr());
                 itemState[i] = new Boolean[itemArr.length()];
@@ -174,6 +181,30 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
         }
     }
 
+    public ListBean[] getInfo(){
+        ListBean[] listBeans = new ListBean[length];
+        for (int i = 0 ; i < length ; i++){
+            ListBean listBean = new ListBean();
+            listBean.setId(id[i]);
+            listBean.setSelected(selected[i]);
+            JSONArray itemArr = new JSONArray();
+            try{
+                for (int j = 0 ; j < itemState[i].length ; j++){
+                    JSONObject item = new JSONObject();
+                    item.put("state", itemState[i][j]);
+                    item.put("content", itemContent[i][j]);
+                    itemArr.put(item);
+
+                }
+
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+            listBean.setItemArr(itemArr.toString());
+            listBeans[i] = listBean;
+        }
+        return listBeans;
+    }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView expandIcon;

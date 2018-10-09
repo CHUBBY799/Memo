@@ -28,6 +28,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private ListItemAdapter listItemAdapter;
 
     private int id;
+    private int selected;
     private String title;
     private JSONArray itemArr;
 
@@ -38,6 +39,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
         Intent intent = getIntent();
         id = intent.getIntExtra("id", -1);
+        selected = intent.getIntExtra("selected", 0);
         if(id != -1){
             title = intent.getStringExtra("title");
             try{
@@ -79,6 +81,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     public ListBean formatData(){
         ListBean listBean = new ListBean();
         listBean.setId(id);
+        listBean.setSelected(selected);
         listBean.setTitle(title);
         listBean.setItemArr(itemArr.toString());
         return listBean;

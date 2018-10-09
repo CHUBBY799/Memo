@@ -29,7 +29,7 @@ public class MemoDatabaseHelper extends SQLiteOpenHelper{
             +"recordingInfo text)";
     public static final String CREATE_TB_LIST="create table tb_list("
             +"id integer primary key autoincrement,"
-            +"state integer,"
+            +"selected integer,"
             +"title text,"
             +"itemArr text)";
     public MemoDatabaseHelper(Context context, String name,

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.shining.memo.bean.ListBean;
 
 public class ListImpl implements ListModel {
@@ -19,6 +20,7 @@ public class ListImpl implements ListModel {
     @Override
     public void insertData(ListBean listBean){
         ContentValues values = new ContentValues();
+        values.put("selected", listBean.getSelected());
         values.put("title", listBean.getTitle());
         values.put("itemArr",listBean.getItemArr());
         db.insert("tb_list", null, values);
@@ -32,14 +34,16 @@ public class ListImpl implements ListModel {
         if(cursor.moveToFirst()){
             do{
                 int id = cursor.getInt(cursor.getColumnIndex("id"));
+                int selected = cursor.getInt(cursor.getColumnIndex("selected"));
                 String title = cursor.getString(cursor.getColumnIndex("title"));
                 String itemArr = cursor.getString(cursor.getColumnIndex("itemArr"));
+
                 ListBean listBean = new ListBean();
                 listBean.setId(id);
+                listBean.setSelected(selected);
                 listBean.setTitle(title);
                 listBean.setItemArr(itemArr);
-                listBeans[m] = listBean;
-                m++;
+                listBeans[m++] = listBean;
             }while (cursor.moveToNext());
         }
         cursor.close();
@@ -72,8 +76,19 @@ public class ListImpl implements ListModel {
     @Override
     public void updateDataById(ListBean listBean){
         ContentValues values = new ContentValues();
+        values.put("selected", listBean.getSelected());
         values.put("title", listBean.getTitle());
         values.put("itemArr", listBean.getItemArr());
         db.update("tb_list", values, "id = ?", new String[]{String.valueOf(listBean.getId())});
+    }
+
+    @Override
+    public void updateAllDataById(ListBean[] listBeans){
+        for (ListBean listBean : listBeans){
+            ContentValues values = new ContentValues();
+            values.put("selected", listBean.getSelected());
+            values.put("itemArr", listBean.getItemArr());
+            db.update("tb_list", values, "id = ?", new String[]{String.valueOf(listBean.getId())});
+        }
     }
 }

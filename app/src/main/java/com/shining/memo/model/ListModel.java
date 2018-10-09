@@ -8,4 +8,5 @@ public interface ListModel {
     ListBean queryDataByTitle(String title);
     void deleteDataByTitle(String title);
     void updateDataById(ListBean listBean);
+    void updateAllDataById(ListBean[] listBeans);
 }

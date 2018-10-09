@@ -47,4 +47,18 @@ public class ListFragment extends Fragment {
             listFragment.setAdapter(listContent);
         }
     }
+
+
+    /**
+     * 解除 Fragment 与 Activity 的关联
+     */
+    @Override
+    public void onDetach() {
+        ListBean[] listBeans = listContent.getInfo();
+        if (listBeans != null){
+            ListModel listModel = new ListImpl(context);
+            listModel.updateAllDataById(listBeans);
+        }
+        super.onDetach();
+    }
 }

@@ -2,6 +2,7 @@ package com.shining.memo.bean;
 
 public class ListBean {
     private long id;
+    private int selected;
     private String title;
     private String itemArr;
 
@@ -11,6 +12,14 @@ public class ListBean {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public int getSelected(){
+        return selected;
+    }
+
+    public void setSelected(int selected){
+        this.selected = selected;
     }
 
     public String getTitle() {

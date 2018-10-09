@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (index) {
             case 0:
                 task.setTextSize(30);
-                task.setTextColor(getResources().getColor(R.color.calendar_select));
+                task.setTextColor(getColor(R.color.calendar_select));
                 if (taskNew == null) {
                     // 如果TaskFragment为空，则创建一个并添加到界面上
                     taskNew = new TaskNew();
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case 1:
                 list.setTextSize(30);
-                list.setTextColor(getResources().getColor(R.color.calendar_select));
+                list.setTextColor(getColor(R.color.calendar_select));
                 if (listNew == null) {
                     // 如果ListFragment为空，则创建一个并添加到界面上
                     listNew = new ListNew();
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case 2:
                 note.setTextSize(30);
-                note.setTextColor(getResources().getColor(R.color.calendar_select));
+                note.setTextColor(getColor(R.color.calendar_select));
                 if (noteNew == null) {
                     // 如果NoteFragment为空，则创建一个并添加到界面上
                     noteNew = new NoteNew();
@@ -236,9 +236,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         note.setTextSize(18);
         task.setTextSize(18);
 
-        list.setTextColor(getResources().getColor(R.color.calendar_unselected));
-        note.setTextColor(getResources().getColor(R.color.calendar_unselected));
-        task.setTextColor(getResources().getColor(R.color.calendar_unselected));
+        list.setTextColor(getColor(R.color.calendar_unselected));
+        note.setTextColor(getColor(R.color.calendar_unselected));
+        task.setTextColor(getColor(R.color.calendar_unselected));
     }
 
     public void onMenu(View v){
