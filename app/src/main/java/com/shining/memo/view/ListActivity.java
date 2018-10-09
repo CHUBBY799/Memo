@@ -27,6 +27,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView listContent;
     private ListItemAdapter listItemAdapter;
 
+    private int id;
     private String title;
     private JSONArray itemArr;
 
@@ -34,6 +35,18 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+        Intent intent = getIntent();
+        id = intent.getIntExtra("id", -1);
+        if(id != -1){
+            title = intent.getStringExtra("title");
+            try{
+                itemArr = new JSONArray(intent.getStringExtra("itemArr"));
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
         initView();
         initComponent();
         initData();
@@ -65,6 +78,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public ListBean formatData(){
         ListBean listBean = new ListBean();
+        listBean.setId(id);
         listBean.setTitle(title);
         listBean.setItemArr(itemArr.toString());
         return listBean;
@@ -90,9 +104,13 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         title = listTitle.getText().toString();
         itemArr = listItemAdapter.getItemArr();
         itemArr.remove(itemArr.length() - 1);
-
         ListPresenter listPresenter = new ListPresenter(this);
-        listPresenter.insertPresenter();
+
+        if(id == -1){
+            listPresenter.insertPresenter(formatData());
+        }else {
+            listPresenter.updatePresenter(formatData());
+        }
         finish();
     }
 
@@ -121,15 +139,19 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      * 初始化数据
      */
     private void initData(){
-        itemArr = new JSONArray();
-        JSONObject itemInfo = new JSONObject();
-        try{
-            itemInfo.put("state", false);
-            itemInfo.put("content", "");
-        }catch (JSONException e){
-            e.printStackTrace();
+        if(id == -1){
+            itemArr = new JSONArray();
+            JSONObject itemInfo = new JSONObject();
+            try{
+                itemInfo.put("state", false);
+                itemInfo.put("content", "");
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+            itemArr.put(itemInfo);
+        }else {
+            listTitle.setText(title);
         }
-        itemArr.put(itemInfo);
         listItemAdapter.setInfo(itemArr, itemArr.length());
         listContent.setAdapter(listItemAdapter);
     }
