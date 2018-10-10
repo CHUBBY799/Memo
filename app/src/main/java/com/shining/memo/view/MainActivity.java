@@ -77,20 +77,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void addText(){
-        Intent textIntent = new Intent(this,RecordingEditActivity.class);
+        Intent textIntent = new Intent(this, RecordingEditActivity.class);
         startActivity(textIntent);
         pop.dismiss();
     }
 
     private void calendar(){
-        Intent calendarIntent = new Intent(this,CalendarActivity.class);
+        Intent calendarIntent = new Intent(this, CalendarActivity.class);
         startActivity(calendarIntent);
         pop.dismiss();
     }
 
     private void audio(){
-        Intent alarmIntent = new Intent(this,RecordingViewActivity.class);
-        startActivity(alarmIntent);
+        Intent calendarIntent = new Intent(this, RecordingViewActivity.class);
+        startActivity(calendarIntent);
         pop.dismiss();
     }
 
