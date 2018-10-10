@@ -5,24 +5,27 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.shining.memo.R;
+import com.shining.memo.home.fragment.ListFragment;
 import com.shining.memo.home.fragment.NoteFragment;
 import com.shining.memo.home.fragment.TaskFragment;
-import com.shining.memo.model.Task;
 import com.shining.memo.model.TaskImpl;
 import com.shining.memo.presenter.MemoContract;
 import com.shining.memo.presenter.TaskPresenter;
 import com.shining.memo.view.CalendarActivity;
+import com.shining.memo.view.ListActivity;
 
 public class MemoActivity extends AppCompatActivity implements MemoContract.View,View.OnClickListener{
+    private static final String TAG = "MemoActivity";
     private Fragment currentFragment;
     private TaskFragment taskFragment;
+    private ListFragment listFragment;
 
     private TextView task,list,note,addText,currentClickText;
     private ImageButton calendar;
@@ -36,6 +39,7 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_home);
         initView();
+        initListener();
         initData();
     }
     public void initView(){
@@ -46,6 +50,14 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
         add=findViewById(R.id.main_titlebar_add);
         addText=findViewById(R.id.main_titlebar_addtext);
     }
+
+    public void initListener(){
+        task.setOnClickListener(this);
+        list.setOnClickListener(this);
+        note.setOnClickListener(this);
+        add.setOnClickListener(this);
+    }
+
     public void initData(){
         taskPresenter=new TaskPresenter(this,new TaskImpl(this));
         taskFragment=new TaskFragment();
@@ -82,12 +94,17 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
         switch(v.getId()){
             case R.id.main_titlebar_task:
                 onClickTitle((TextView)v);
-                switchFragment(taskFragment);
+                switchFragment(taskFragment).commit();
                 add.setTag(currentFragment);
                 addText.setText(getResources().getString(R.string.main_add_task));
                 break;
             case R.id.main_titlebar_list:
                 onClickTitle((TextView)v);
+                if(listFragment == null){
+                    listFragment = new ListFragment();
+                }
+                switchFragment(listFragment).commit();
+                addText.setText(getResources().getString(R.string.main_add_list));
                 break;
             case R.id.main_titlebar_note:
                 onClickTitle((TextView)v);
@@ -102,10 +119,14 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
         }
     }
     private void onClickAdd(View v){
-        if(v.getTag() instanceof TaskFragment){
+        if(currentFragment instanceof TaskFragment){
+            Log.d(TAG, "onClickAdd: ");
 
-        }else if(v.getTag() instanceof NoteFragment){
+        }else if(currentFragment instanceof NoteFragment){
 
+        }else {
+            Intent listActivity = new Intent(this, ListActivity.class);
+            startActivity(listActivity);
         }
     }
     private void onClickTitle(TextView textView){

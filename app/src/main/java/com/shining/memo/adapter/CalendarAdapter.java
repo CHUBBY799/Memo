@@ -1,19 +1,24 @@
 package com.shining.memo.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.shining.memo.R;
+import com.shining.memo.view.RecordingViewActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static android.support.v4.text.HtmlCompat.FROM_HTML_MODE_COMPACT;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyViewHolder> {
 
@@ -50,7 +55,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         holder.taskTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context,task_id[holder.getAdapterPosition()] + " " + taskTitle.getText(),Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, RecordingViewActivity.class);
+                intent.putExtra("taskId", task_id[holder.getAdapterPosition()]);
+                context.startActivity(intent);
             }
         });
     }
@@ -72,7 +79,15 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                 JSONObject taskData = taskDataArr.getJSONObject(i);
                 task_id[i] = taskData.getInt("id");
                 task_finished[i] = taskData.getInt("finished");
-                task_title[i] = taskData.getString("title");
+                Spanned spanned = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    spanned = Html.fromHtml(taskData.getString("title"), FROM_HTML_MODE_COMPACT);
+                }
+                if(spanned != null && spanned.length() > 0)
+                    task_title[i] = (spanned.subSequence(0,spanned.length() -1)).toString();
+                else if(spanned != null){
+                    task_title[i] = spanned.toString();
+                }
                 task_day[i] = taskData.getString("day");
                 task_month[i] = taskData.getString("month");
             }catch (JSONException e){
