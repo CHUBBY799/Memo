@@ -88,8 +88,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
             if(task.getInt("alarm")==0){
                 holder.alarm.setText("no alarm");
             }else {
-                String alarmHelp= Utils.formatToMain(task.getString("alarmDate")
-                        ,task.getString("alarmTime"));
+//                String alarmHelp= Utils.formatToMain(task.getString("alarmDate")
+//                        ,task.getString("alarmTime"));
+                holder.alarm.setText(task.getString("alarmDate")+" "+task.getString("alarmTime"));
             }
         }catch (Exception e){
             e.printStackTrace();

@@ -31,7 +31,7 @@ public class TaskFragment extends Fragment{
         View view=inflater.inflate(R.layout.main_task,container,false);
         initData();
         mRecycleView=view.findViewById(R.id.main_task_recycler);
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(container.getContext());
+        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(getActivity());
         mRecycleView.setLayoutManager(linearLayoutManager);
         mAdapter=new TaskAdapter(mTasks);
         mRecycleView.setAdapter(mAdapter);
@@ -50,4 +50,9 @@ public class TaskFragment extends Fragment{
         mPresenter=presenter;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshData();
+    }
 }

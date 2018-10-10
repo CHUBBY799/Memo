@@ -139,7 +139,7 @@ public class TaskImpl implements TaskModel {
         List<JSONObject> tasks=new ArrayList<>();
         Cursor cursor=db.rawQuery("select" +selectColNames
                 + "from task t inner join alarm a on t.id=a.taskId "
-                + "where urgent=? and deleted=0 "
+                + "where urgent=? and deleted=0 and finished=0 "
                 + "order by alarmDate desc,alarmTime desc",new String[]{String.valueOf(urgent)});
         try{
             while (cursor.moveToNext()){
