@@ -1,6 +1,7 @@
 package com.shining.memo.home;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -16,10 +17,15 @@ import com.shining.memo.home.fragment.ListFragment;
 import com.shining.memo.home.fragment.NoteFragment;
 import com.shining.memo.home.fragment.TaskFragment;
 import com.shining.memo.model.TaskImpl;
+import com.shining.memo.model.TextImpl;
 import com.shining.memo.presenter.MemoContract;
 import com.shining.memo.presenter.TaskPresenter;
 import com.shining.memo.view.CalendarActivity;
+
+import com.shining.memo.view.RecordingEditActivity;
+
 import com.shining.memo.view.ListActivity;
+
 
 public class MemoActivity extends AppCompatActivity implements MemoContract.View,View.OnClickListener{
     private static final String TAG = "MemoActivity";
@@ -60,15 +66,18 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
 
     public void initData(){
         taskPresenter=new TaskPresenter(this,new TaskImpl(this));
+        task.setOnClickListener(this);
+        list.setOnClickListener(this);
+        note.setOnClickListener(this);
+        calendar.setOnClickListener(this);
+        add.setOnClickListener(this);
+//        initTestData();
         taskFragment=new TaskFragment();
         taskFragment.setPresenter(taskPresenter);
-        switchFragment(taskFragment);
-        add.setTag(currentFragment);
+        switchFragment(taskFragment).commit();
         addText.setText(getResources().getString(R.string.main_add_task));
         onClickTitle(task);
     }
-
-
     private FragmentTransaction switchFragment(Fragment targetFragment) {
 
         FragmentTransaction transaction = getSupportFragmentManager()
@@ -120,13 +129,15 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
     }
     private void onClickAdd(View v){
         if(currentFragment instanceof TaskFragment){
-            Log.d(TAG, "onClickAdd: ");
-
+            Intent calendarIntent = new Intent(this, RecordingEditActivity.class);
+            startActivity(calendarIntent);
         }else if(currentFragment instanceof NoteFragment){
-
+            //添加add note跳转
+            Log.d(TAG, "onClickAdd: ");
         }else {
             Intent listActivity = new Intent(this, ListActivity.class);
             startActivity(listActivity);
+
         }
     }
     private void onClickTitle(TextView textView){
