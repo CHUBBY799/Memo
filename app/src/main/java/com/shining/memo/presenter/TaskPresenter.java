@@ -1,11 +1,6 @@
 package com.shining.memo.presenter;
 
-import android.content.Context;
-
-import com.shining.memo.model.Task;
 import com.shining.memo.model.TaskImpl;
-import com.shining.memo.model.TextImpl;
-import com.shining.memo.model.TextModel;
 
 import org.json.JSONObject;
 

@@ -203,7 +203,13 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         dayList.clear();
         int intYear = Integer.parseInt(year);
         for (int i = 0 ; i < 28 ; i++){
-            dayList.add(formatTimeUnit(i+1) + "th");
+            //if (i == 0){
+                //dayList.add(formatTimeUnit(i+1) + "st");
+            //}else if (i == 1){
+                //dayList.add(formatTimeUnit(i+1) + "nd");
+            //}else {
+                dayList.add(formatTimeUnit(i+1) + "th");
+            //}
         }
         if (month.equals("Jan.") || month.equals("Mar.") || month.equals("May.") || month.equals("Jul.") || month.equals("Aug.") || month.equals("Oct.") || month.equals("Dec.")) {
             dayList.add(29 + "th");

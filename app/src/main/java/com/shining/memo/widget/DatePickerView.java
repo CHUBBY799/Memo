@@ -26,8 +26,8 @@ public class DatePickerView extends View {
     private boolean isInit;
     private onSelectListener mSelectListener;
 
-    private float mMaxTextSize = 80;
-    private float mMinTextSize = 40;
+    private float mMaxTextSize = 40;
+    private float mMinTextSize = 20;
     private float mMaxTextAlpha = 255;
     private float mMinTextAlpha = 120;
     private int mViewHeight;
@@ -211,7 +211,7 @@ public class DatePickerView extends View {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setTextAlign(Paint.Align.CENTER);
-        mPaint.setColor(ContextCompat.getColor(context, R.color.alarm_selected));
+        mPaint.setColor(ContextCompat.getColor(context, R.color.recording_title));
         //第二个paint
         nPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         nPaint.setStyle(Paint.Style.FILL);
@@ -225,8 +225,8 @@ public class DatePickerView extends View {
         mViewHeight = getMeasuredHeight();
         mViewWidth = getMeasuredWidth();
         // 按照View的高度计算字体大小
-        mMaxTextSize = mViewHeight / 8f;
-        mMinTextSize = mMaxTextSize / 2f;
+        mMaxTextSize = mViewHeight / 12f;
+        mMinTextSize = mMaxTextSize / 1.3f;
         if (!mDataList.isEmpty()){
             isInit = true;
         }
@@ -267,7 +267,7 @@ public class DatePickerView extends View {
 
     private void drawOtherText(Canvas canvas, int position, int type) {
         float d = MARGIN_ALPHA * mMinTextSize * position + type * mMoveLen;
-        float scale = parabola(mViewHeight / 4.0f, d);
+        float scale = parabola(mViewHeight / 10.0f, d);
         float size = (mMaxTextSize - mMinTextSize) * scale + mMinTextSize;
         nPaint.setTextSize(size);
         nPaint.setAlpha((int) ((mMaxTextAlpha - mMinTextAlpha) * scale + mMinTextAlpha));
