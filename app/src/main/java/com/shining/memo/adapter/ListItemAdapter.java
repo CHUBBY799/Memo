@@ -20,6 +20,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
     private Context context;
     private int length;
     private JSONArray itemArr;
+    private boolean addItem;
 
     public ListItemAdapter(Context context) {
         this.context = context;
@@ -74,29 +75,24 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
             }
         });
 
+        if(holder.getAdapterPosition() == length - 1 && addItem){
+            itemContent.setFocusable(true);
+            itemContent.setFocusableInTouchMode(true);
+            itemContent.requestFocus();
+            addItem = false;
+        }
         itemContent.setOnFocusChangeListener(new android.view.View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    if (holder.getAdapterPosition() == length - 1){
-                        try {
-                            JSONObject itemInfo = new JSONObject();
-                            itemInfo.put("state", false);
-                            itemInfo.put("content", "");
-                            itemArr.put(itemInfo);
-                            setInfo(itemArr, itemArr.length());
-                            notifyItemChanged(length);
-                        }catch (JSONException e){
-                            e.printStackTrace();
-                        }
-                    }
-                } else {
-                    int contentIndex = holder.getAdapterPosition();
+                if (!hasFocus) {
+                    int contentIndex = holder.getLayoutPosition();
                     if(itemContent.getText().toString().equals("")){
                         itemArr.remove(contentIndex);
                         setInfo(itemArr, itemArr.length());
                         notifyItemRemoved(contentIndex);
-                        notifyItemRangeChanged(contentIndex,length - contentIndex);
+                        if (contentIndex != length - 1){
+                            notifyItemRangeChanged(contentIndex,length - contentIndex);
+                        }
                     }else {
                         try {
                             boolean tempState = (!itemState.getText().toString().equals(""));
@@ -123,12 +119,19 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
         this.itemArr = itemArr;
     }
 
+    public void addInfo(JSONObject item){
+        itemArr.put(item);
+        this.length = itemArr.length();
+        addItem = true;
+        notifyItemChanged(length);
+    }
+
     public JSONArray getItemArr(){
         return itemArr;
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
-        EditText itemContent;
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        public EditText itemContent;
         TextView itemState;
         public MyViewHolder(View itemView) {
             super(itemView);

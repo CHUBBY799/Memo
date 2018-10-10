@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.shining.memo.R;
 import com.shining.memo.adapter.ListItemAdapter;
@@ -23,6 +24,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button listCancel;
     private Button listConfirm;
+    private Button addItem;
     private EditText listTitle;
     private RecyclerView listContent;
     private ListItemAdapter listItemAdapter;
@@ -63,6 +65,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.list_confirm:
                 listConfirm();
                 break;
+            case R.id.add_item:
+                addItem();
             default:
                 break;
         }
@@ -105,16 +109,38 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         listConfirm.requestFocus();
 
         title = listTitle.getText().toString();
-        itemArr = listItemAdapter.getItemArr();
-        itemArr.remove(itemArr.length() - 1);
-        ListPresenter listPresenter = new ListPresenter(this);
-
-        if(id == -1){
-            listPresenter.insertPresenter(formatData());
+        if(title.equals("")){
+            Toast.makeText(this, "Please input title", Toast.LENGTH_SHORT).show();
+            listTitle.setFocusable(true);
+            listTitle.setFocusableInTouchMode(true);
+            listTitle.requestFocus();
         }else {
-            listPresenter.updatePresenter(formatData());
+            itemArr = listItemAdapter.getItemArr();
+            itemArr.remove(itemArr.length() - 1);
+            ListPresenter listPresenter = new ListPresenter(this);
+
+            if(id == -1){
+                listPresenter.insertPresenter(formatData());
+            }else {
+                listPresenter.updatePresenter(formatData());
+            }
+            finish();
         }
-        finish();
+    }
+
+    private void addItem(){
+        try {
+            JSONObject itemInfo = new JSONObject();
+            itemInfo.put("state", false);
+            itemInfo.put("content", "");
+            listItemAdapter.addInfo(itemInfo);
+            listContent.scrollToPosition(listItemAdapter.getItemCount()-1);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        listConfirm.setFocusable(true);
+        listConfirm.setFocusableInTouchMode(true);
+        listConfirm.requestFocus();
     }
 
     /**
@@ -123,6 +149,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private void initView(){
         listCancel = findViewById(R.id.list_cancel);
         listConfirm = findViewById(R.id.list_confirm);
+        addItem = findViewById(R.id.add_item);
         listTitle = findViewById(R.id.list_title);
 
         listContent = findViewById(R.id.list_content);
@@ -136,6 +163,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private void initComponent(){
         listCancel.setOnClickListener(this);
         listConfirm.setOnClickListener(this);
+        addItem.setOnClickListener(this);
     }
 
     /**
