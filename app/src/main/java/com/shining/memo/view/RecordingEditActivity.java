@@ -4,12 +4,15 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -345,6 +348,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             case R.id.bottom_textedit_back:
                 isTextEdit = false;
                 animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit),500);
+                layout.requestFocus();
                 break;
             case R.id.bottom_bold:
                 clickBold();
@@ -363,22 +367,22 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 clickColorBcak();
                 break;
             case R.id.colorpick_red:
-                ClickColorRed();
+                clickColorChanged(1);
                 break;
             case R.id.colorpick_orange:
-                ClickColorOrange();
+                clickColorChanged(2);
                 break;
             case R.id.colorpick_blue:
-                ClickColorBlue();
+                clickColorChanged(3);
                 break;
             case R.id.colorpick_purple:
-                ClickColorPurple();
+                clickColorChanged(4);
                 break;
             case R.id.colorpick_gray:
-                ClickColorGray();
+                clickColorChanged(5);
                 break;
             case R.id.colorpick_black:
-                ClickColorBlack();
+                clickColorChanged(0);
                 break;
         }
     }
@@ -395,9 +399,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                             file.delete();
                 }
             }
-            Intent intent = new Intent();
-            intent.setClass(this,MainActivity.class);
-            startActivity(intent);
+            finish();
         }else {
             finish();
             overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
@@ -419,9 +421,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             if( (id = recordingPresenter.saveRecording(task,mMap,alarmObject)) != -1){
                 alarmPresenter.setAlarmNotice((int)id);
                 Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                intent.setClass(this, MainActivity.class);
-                startActivity(intent);
+                finish();
             }else{
                 Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
             }
@@ -469,13 +469,11 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         switch (requestCode){
             case REQUEST_ALARM:
                 if (resultCode == RESULT_OK){
-                    if(alarm == 0){
-                        alarmObject = new Alarm();
-                        alarmObject.setDate(data.getStringExtra("date"));
-                        alarmObject.setTime(data.getStringExtra("time"));
-                        alarmObject.setPop(data.getIntExtra("pop",0));
-                        alarmObject.setRingtone(data.getIntExtra("ringtone",0));
-                    }
+                    alarmObject = new Alarm();
+                    alarmObject.setDate(data.getStringExtra("date"));
+                    alarmObject.setTime(data.getStringExtra("time"));
+                    alarmObject.setPop(data.getIntExtra("pop",0));
+                    alarmObject.setRingtone(data.getIntExtra("ringtone",0));
                     alarm =  data.getIntExtra("alarm",1);
                 }
                 break;
@@ -560,16 +558,25 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     Handler handler = new Handler(){
         public void handleMessage(android.os.Message msg) {
             startTime++;
+            onCreateDialog();
             ToastUtils.showShort(RecordingEditActivity.this,(4 - startTime)+"");
             if (startTime == 4) {
                 handler.removeMessages(MSG_RECORDING);
                 startTime = 0;
                 presenter.startRecord();
+                dialog.dismiss();
             }
             else
                 handler.sendEmptyMessageDelayed(MSG_RECORDING, 1000);
         };
     };
+
+    private AlertDialog dialog;
+    private void onCreateDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.Theme_AppCompat_Light_Dialog);
+        builder.setCancelable(false);
+        dialog = builder.show();
+    }
 
     private void clickAudioCancel(){
         Log.d(TAG, "clickAudioCancel: ");
@@ -819,7 +826,6 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         }else{
             adapter.setTextBold(adapter.getCurrentIndex(),mRecyclerView,null);
         }
-        layout.requestFocus();
     }
     private void clickUnderLine(){
         if(titleOnFocus){
@@ -827,7 +833,6 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         }else{
             adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,1,null);
         }
-        layout.requestFocus();
     }
     private void clickDeleteLine(){
         if(titleOnFocus){
@@ -835,60 +840,93 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         }else{
             adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,0,null);
         }
-        layout.requestFocus();
     }
 
     private void clickColorBcak(){
         isColorPick = false;
         animationTranslate(findViewById(R.id.bottom_recording_colorpick),findViewById(R.id.bottom_recording_textedit),500);
-        layout.requestFocus();
     }
-    private void ClickColorRed(){
-        if(titleOnFocus){
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_red,null),editTitle);
-        }else{
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_red,null),null);
+
+    private void clickColorChanged(int pos){
+        int color = 0;
+        switch (pos){
+            case 0:
+                color = getResources().getColor(R.color.textcolor_black,null);
+                break;
+            case 1:
+                color = getResources().getColor(R.color.textcolor_red,null);
+                break;
+            case 2:
+                color = getResources().getColor(R.color.textcolor_orange,null);
+                break;
+            case 3:
+                color = getResources().getColor(R.color.textcolor_blue,null);
+                break;
+            case 4:
+                color = getResources().getColor(R.color.textcolor_purple,null);
+                break;
+            case 5:
+                color = getResources().getColor(R.color.textcolor_gray,null);
+                break;
         }
-        clickColorBcak();
-    }
-    private void ClickColorOrange(){
         if(titleOnFocus){
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_orange,null),editTitle);
-        }else{
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_orange,null),null);
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color,editTitle);
+        }else if(adapter.getCurrentIndex() != -1){
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color,null);
         }
-        clickColorBcak();
+            resetColorBackground();
+            RecordingAdapter.currentColor = color;
+            switch (pos){
+                case 0:
+                    mBtnColBlack.setBackground(getResources().getDrawable(R.drawable.color_oval_black,null));
+                    RecordingAdapter.colorPos = 0;
+                    break;
+                case 1:
+                    mBtnColRed.setBackground(getResources().getDrawable(R.drawable.color_oval_red,null));
+                    RecordingAdapter.colorPos = 1;
+                    break;
+                case 2:
+                    mBtnColOrange.setBackground(getResources().getDrawable(R.drawable.color_oval_orange,null));
+                    RecordingAdapter.colorPos = 2;
+                    break;
+                case 3:
+                    mBtnColBlue.setBackground(getResources().getDrawable(R.drawable.color_oval_blue,null));
+                    RecordingAdapter.colorPos = 3;
+                    break;
+                case 4:
+                    mBtnColPurple.setBackground(getResources().getDrawable(R.drawable.color_oval_purple,null));
+                    RecordingAdapter.colorPos = 4;
+                    break;
+                case 5:
+                    mBtnColGray.setBackground(getResources().getDrawable(R.drawable.color_oval_gray,null));
+                    RecordingAdapter.colorPos = 5;
+                    break;
+            }
+
     }
-    private void ClickColorBlue(){
-        if(titleOnFocus){
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_blue,null),editTitle);
-        }else{
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_blue,null),null);
+
+    private void resetColorBackground(){
+        switch (RecordingAdapter.colorPos){
+            case 0:
+                mBtnColBlack.setBackground(getResources().getDrawable(R.drawable.color_ring_black,null));
+                break;
+            case 1:
+                mBtnColRed.setBackground(getResources().getDrawable(R.drawable.color_ring_red,null));
+                break;
+            case 2:
+                mBtnColOrange.setBackground(getResources().getDrawable(R.drawable.color_ring_orange,null));
+                break;
+            case 3:
+                mBtnColBlue.setBackground(getResources().getDrawable(R.drawable.color_ring_blue,null));
+                break;
+            case 4:
+                mBtnColPurple.setBackground(getResources().getDrawable(R.drawable.color_ring_purple,null));
+                break;
+            case 5:
+                mBtnColGray.setBackground(getResources().getDrawable(R.drawable.color_ring_gray,null));
+                break;
         }
-        clickColorBcak();
     }
-    private void ClickColorPurple(){
-        if(titleOnFocus){
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_purple,null),editTitle);
-        }else{
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_purple,null),null);
-        }
-        clickColorBcak();
-    }
-    private void ClickColorGray(){
-        if(titleOnFocus){
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_gray,null),editTitle);
-        }else{
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_gray,null),null);
-        }
-        clickColorBcak();
-    }
-    private void ClickColorBlack(){
-        if(titleOnFocus){
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_black,null),editTitle);
-        }else{
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,getResources().getColor(R.color.textcolor_black,null),null);
-        }
-        clickColorBcak();
-    }
+
+
 }

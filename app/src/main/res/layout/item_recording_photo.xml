@@ -25,17 +25,10 @@
             android:background="@color/half_transparent_orange"
             android:visibility="gone">
             <Button
-                android:id="@+id/photo_cancel"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@id/photo_delete"
-                android:background="@drawable/cancel_icon" />
-            <Button
                 android:id="@+id/photo_delete"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:background="@drawable/close_btn_48x48px"
+                android:background="@drawable/cancel_icon"
                 android:layout_alignParentRight="true"/>
         </RelativeLayout>
 

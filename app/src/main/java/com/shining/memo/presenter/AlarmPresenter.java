@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 
 import com.shining.memo.model.Alarm;
 import com.shining.memo.model.AlarmImpl;
@@ -124,14 +125,7 @@ public class AlarmPresenter {
         db.beginTransaction();
         try{
             alarmObject = alarmModel.getAlarm(taskId,db);
-            Spanned spanned = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                spanned = Html.fromHtml(taskModel.getTitle(taskId,db),Html.FROM_HTML_MODE_COMPACT);
-            }
-            if(spanned.length() > 0)
-                title = spanned.subSequence(0,spanned.length() - 1).toString();
-            else
-                title = "";
+            title = taskModel.getTitle(taskId,db);
             db.setTransactionSuccessful();
         }catch (Exception e){
             e.printStackTrace();
@@ -147,11 +141,13 @@ public class AlarmPresenter {
                 intent.putExtra("pop",alarmObject.getPop());
                 intent.putExtra("taskId",taskId);
                 intent.putExtra("title",title);
+                intent.putExtra("time",alarmObject.getTime());
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context,taskId,intent,PendingIntent.FLAG_UPDATE_CURRENT);
-                SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd hh:mm");
+                SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm");
                 Calendar calendar = Calendar.getInstance();
                 try {
                     calendar.setTime(sdf.parse(alarmObject.getDate()+" "+alarmObject.getTime()));
+                    Log.d("alarmTime",sdf.parse(alarmObject.getDate()+" "+alarmObject.getTime()).toString());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

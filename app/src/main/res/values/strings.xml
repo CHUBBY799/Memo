@@ -52,14 +52,13 @@
     <string name="audio_time_length">00:00:00</string>
     <string name="photo_gallery">GALLERY</string>
     <string name="photo_camera">CAMERA</string>
-
+    <string name="alarm_comfirm">OK</string>
     <string name="list_launches_icon">List launches Icon</string>
     <string name="cancer">Cancer</string>
     <string name="confirm">Confirm</string>
     <string name="state">state</string>
     <string name="title">title</string>
     <string name="item">item</string>
-
 
     <!--main string-->
     <string name="main_add_task">Add a new task</string>

@@ -51,9 +51,8 @@
     <color name="textcolor_black">#000000</color>
     <color name="textcolor_blue">#4169E1</color>
     <color name="textcolor_purple">#8B008B</color>
-    
-    
-    
+    <color name="alarm_btn_background">#FF8833</color>
+
      <!--main color-->
     <color name="main_line">#FFEEEEEE</color>
     <color name="main_task_titlecolor">#FF666666</color>

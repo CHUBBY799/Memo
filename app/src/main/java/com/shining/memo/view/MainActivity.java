@@ -13,7 +13,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.shining.memo.R;
-import com.shining.memo.adapter.ListContent;
 import com.shining.memo.fragment.ListFragment;
 import com.shining.memo.fragment.ListNew;
 import com.shining.memo.fragment.NoteNew;
@@ -90,8 +89,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void audio(){
-        Intent calendarIntent = new Intent(this,RecordingViewActivity.class);
-        startActivity(calendarIntent);
+        Intent alarmIntent = new Intent(this,RecordingViewActivity.class);
+        startActivity(alarmIntent);
         pop.dismiss();
     }
 

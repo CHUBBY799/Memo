@@ -15,7 +15,7 @@
         android:lineSpacingMultiplier="1"
         android:textSize="18dp"
         android:duplicateParentState="true"
-        android:textColor="@color/alarm_background"
+        android:textColor="@color/recording_title"
         android:inputType="textMultiLine"
         android:paddingLeft="14dp"
         android:paddingRight="14dp"

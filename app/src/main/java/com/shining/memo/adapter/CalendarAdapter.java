@@ -1,8 +1,12 @@
 package com.shining.memo.adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +38,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.calendar_item, parent,false));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         final TextView taskFinished = holder.taskFinished;
@@ -43,10 +48,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         if (task_finished[position] == 0){
             taskFinished.setBackground(null);
         }
-        taskTitle.setText(task_title[position]);
+        Spanned spanned = Html.fromHtml(task_title[position],Html.FROM_HTML_MODE_COMPACT);
+        if(spanned.length() > 0)
+            taskTitle.setText(spanned.subSequence(0,spanned.length() -1));
+        else
+            taskTitle.setText("No title！");
         taskDate.setText(task_day[position]);
         taskMonth.setText(task_month[position]);
-
         holder.taskTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
