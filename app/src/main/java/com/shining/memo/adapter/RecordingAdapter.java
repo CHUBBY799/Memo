@@ -665,25 +665,26 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         relativeLayout.getLayoutParams().width = imageView.getWidth();
         if(textChanged.getRecyclerView() != null)
             (textChanged.getRecyclerView()).scrollToPosition((int)itemView.getTag());
-        AlphaAnimation appearAnimation = new AlphaAnimation(0, 1);
-        appearAnimation.setDuration(500);
-        AlphaAnimation disappearAnimation = new AlphaAnimation(1, 0);
-        disappearAnimation.setDuration(500);
-        imageView.startAnimation(disappearAnimation);
-        disappearAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                imageView.setVisibility(View.GONE);
-            }
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-        relativeLayout.startAnimation(appearAnimation);
-        relativeLayout.setVisibility(View.VISIBLE);
+//        AlphaAnimation appearAnimation = new AlphaAnimation(0, 1);
+//        appearAnimation.setDuration(500);
+//        AlphaAnimation disappearAnimation = new AlphaAnimation(1, 0);
+//        disappearAnimation.setDuration(500);
+//        imageView.startAnimation(disappearAnimation);
+//        disappearAnimation.setAnimationListener(new Animation.AnimationListener() {
+//            @Override
+//            public void onAnimationStart(Animation animation) {
+//            }
+//            @Override
+//            public void onAnimationEnd(Animation animation) {
+//                imageView.setVisibility(View.GONE);
+//            }
+//            @Override
+//            public void onAnimationRepeat(Animation animation) {
+//            }
+//        });
+//        relativeLayout.startAnimation(appearAnimation);
+//        relativeLayout.setVisibility(View.VISIBLE);
+
         shelterSize size = new shelterSize();
         size.width = imageView.getWidth();
         size.height = imageView.getHeight();

@@ -118,9 +118,7 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
     }
 
     private void returnListPage(){
-        Intent intent = new Intent();
-        intent.setClass(this,MainActivity.class);
-        startActivity(intent);
+        finish();
     }
 
     private void clickAlarm(){

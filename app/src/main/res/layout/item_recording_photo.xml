@@ -39,7 +39,12 @@
                 android:layout_alignParentRight="true"/>
         </RelativeLayout>
 
-        <com.shining.memo.widget.ResizableImageView
+        <com.shining.memo.widget.MaskImageView
+            android:clickable="true"
+            app:mask_color="#88000000"
+            app:mask_level="foreground"
+            app:is_ignore_alpha="false"
+            app:is_show_mask_on_click="true"
             android:id="@+id/item_imageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -18,5 +18,17 @@
         <attr name="lineColor" format="color"/>
         <attr name="lineWidth" format="dimension"/>
     </declare-styleable>
+    <declare-styleable name="MaskImageView">
+        <attr name="mask_level" format="enum">
+            <enum name="background" value="1"/>
+            <enum name="foreground" value="2"/>
+        </attr>
+        <!-- 设置了setClickable(true)才生效,默认开启遮罩-->
+        <attr name="is_show_mask_on_click" format="boolean"/>
+        <attr name="mask_color" format="color"/>
+        <!--是否忽略图片的透明度，默认为true,透明部分不显示遮罩 -->
+        <attr name="is_ignore_alpha" format="boolean"/>
+
+    </declare-styleable>
 
 </resources>
