@@ -48,6 +48,7 @@ public abstract class CalendarPager extends ViewPager {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CalendarPager);
         Attrs.solarTextColor = ta.getColor(R.styleable.CalendarPager_solarTextColor, ContextCompat.getColor(context, R.color.solarTextColor));
         Attrs.lunarTextColor = ta.getColor(R.styleable.CalendarPager_lunarTextColor, ContextCompat.getColor(context, R.color.lunarTextColor));
+        Attrs.toDayColor = ta.getColor(R.styleable.CalendarPager_selectCircleColor, ContextCompat.getColor(context, R.color.toDayColor));
         Attrs.selectCircleColor = ta.getColor(R.styleable.CalendarPager_selectCircleColor, ContextCompat.getColor(context, R.color.selectCircleColor));
         Attrs.hintColor = ta.getColor(R.styleable.CalendarPager_hintColor, ContextCompat.getColor(context, R.color.hintColor));
         Attrs.solarTextSize = ta.getDimension(R.styleable.CalendarPager_solarTextSize, Utils.sp2px(context, 18));
