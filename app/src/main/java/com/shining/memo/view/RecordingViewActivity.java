@@ -53,12 +53,12 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
         super.onResume();
     }
 
-    @Override
-    public void onBackPressed(){
-        Intent intent = new Intent();
-        intent.setClass(this,MainActivity.class);
-        startActivity(intent);
-    }
+//    @Override
+//    public void onBackPressed(){
+//        Intent intent = new Intent();
+//        intent.setClass(this,MainActivity.class);
+//        startActivity(intent);
+//    }
 
     private void init(){
         View view = (View)findViewById(R.id.bottom_recording_view);
