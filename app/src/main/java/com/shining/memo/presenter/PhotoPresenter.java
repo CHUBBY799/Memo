@@ -7,10 +7,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
 
 import com.shining.memo.utils.ToastUtils;
-import com.shining.memo.view.MainActivity;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
