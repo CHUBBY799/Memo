@@ -7,10 +7,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
 
 import com.shining.memo.utils.ToastUtils;
-import com.shining.memo.view.MainActivity;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -74,7 +72,7 @@ public class PhotoPresenter {
     //打开相册
     public void openAlbum(Activity activity,int requestCode){
         Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setAction(Intent.ACTION_PICK);
         intent.setType("image/*");
         activity.startActivityForResult(intent, requestCode); // 打开相册
     }
@@ -86,5 +84,6 @@ public class PhotoPresenter {
         String state = Environment.getExternalStorageState();
         return state.equals(Environment.MEDIA_MOUNTED);
     }
+
 
 }

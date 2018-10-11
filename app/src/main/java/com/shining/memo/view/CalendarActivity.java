@@ -15,11 +15,9 @@ import com.shining.calendar.listener.OnCalendarChangedListener;
 
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 
 import com.shining.memo.R;
@@ -65,26 +63,12 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         calendar_month.setText(Utils.formatMonthUS(date.getMonthOfYear()));
         CalendarPresenter calendarPresenter = new CalendarPresenter(this);
 
-        //设置原点
-        taskDataArr = calendarPresenter.queryData(Utils.formatTimeUnit(date.getMonthOfYear()));
-        List<String> pointList = new ArrayList<>();
-        int length = taskDataArr.length();
-        for (int i = 0 ; i < length ; i++){
-            try {
-                JSONObject taskData = taskDataArr.getJSONObject(i);
-                int finished = taskData.getInt("finished");
-                if(finished == 0){
-                    pointList.add(taskData.getString("date"));
-                }
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
-        HashSet<String> hs = new HashSet<>(pointList);
-        pointList = new ArrayList<>(hs);
+        //设置圆点
+        List<String> pointList = new ArrayList<>(calendarPresenter.queryData(date.getYear()+"-"+Utils.formatTimeUnit(date.getMonthOfYear())));
         ncalendar.setPoint(pointList);
 
         //根据选择的日期集合查询数据库
+        Collections.reverse(dateList);
         taskDataArr = calendarPresenter.queryData(dateList);
         calendarAdapter.setInfo(taskDataArr, taskDataArr.length());
         recyclerView.setAdapter(calendarAdapter);

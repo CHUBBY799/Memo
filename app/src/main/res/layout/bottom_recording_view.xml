@@ -14,7 +14,7 @@
             android:id="@+id/bottom_back"
             android:layout_width="22dp"
             android:layout_height="22dp"
-            android:background="@drawable/back_icon"
+            android:background="@drawable/back_ripple"
             android:layout_alignParentLeft="true"/>
 
         <Button

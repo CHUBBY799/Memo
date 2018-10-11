@@ -6,9 +6,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.v4.content.ContextCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
+import com.shining.calendar.R;
 import com.shining.calendar.listener.OnClickMonthViewListener;
 import com.shining.calendar.utils.Attrs;
 import com.shining.calendar.utils.Utils;
@@ -61,11 +63,12 @@ public class MonthView extends CalendarView {
                 if (Utils.isEqualsMonth(date, mInitialDate)) {
                     //当天和选中的日期不绘制农历
                     if (Utils.isToday(date)) {
-                        mSolarPaint.setColor(mSelectCircleColor);
+                        mSolarPaint.setColor(mToDayColor);
                         int centerY = mRowNum == 5 ? rect.centerY() : (rect.centerY() + (mHeight / 5 - mHeight / 6) / 2);
                         canvas.drawCircle(rect.centerX(), centerY, mSelectCircleRadius, mSolarPaint);
                         mSolarPaint.setColor(Color.WHITE);
                         canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
+                        drawPoint(canvas, rect, date, baseline);
                     } else if (mSelectDateList != null && mSelectDateList.contains(date)) {
                         mSolarPaint.setColor(mSelectCircleColor);
                         int centerY = mRowNum == 5 ? rect.centerY() : (rect.centerY() + (mHeight / 5 - mHeight / 6) / 2);
@@ -141,8 +144,8 @@ public class MonthView extends CalendarView {
     //绘制圆点
     public void drawPoint(Canvas canvas, Rect rect, LocalDate date, int baseline) {
         if (pointList != null && pointList.contains(date.toString())) {
-            mLunarPaint.setColor(mPointColor);
-            canvas.drawCircle(rect.centerX(), baseline + getMonthHeight() / 30, mPointSize, mLunarPaint);
+            mLunarPaint.setColor(mSelectCircleColor);
+            canvas.drawCircle(rect.centerX(), baseline + getMonthHeight() / 20, mPointSize, mLunarPaint);
         }
     }
 

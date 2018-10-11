@@ -168,6 +168,7 @@
     </android.support.constraint.ConstraintLayout>
 
     <Button
+        style="?android:attr/borderlessButtonStyle"
         android:id="@+id/alarm_save"
         android:layout_width="0dp"
         android:layout_height="55dp"

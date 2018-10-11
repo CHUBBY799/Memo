@@ -94,7 +94,7 @@ public class MaskImageView extends android.support.v7.widget.AppCompatImageView 
     protected void onDraw(Canvas canvas) {
 
         if (mIsIgnoreAlpha) { // 忽略透明度
-            if (mIsShowMaskOnClick && isPressed()) {
+            if (mIsShowMaskOnClick) {
                 // 绘制遮罩层
                 setDrawableColorFilter(mColorFilter);
             } else {
@@ -104,14 +104,14 @@ public class MaskImageView extends android.support.v7.widget.AppCompatImageView 
         } else { // 不忽略透明度
             setDrawableColorFilter(null);
             if (mMaskLevel == MASK_LEVEL_BACKGROUND) { // 背景图
-                if (mIsShowMaskOnClick && isPressed()) {
+                if (mIsShowMaskOnClick) {
                     // 绘制遮罩层
                     canvas.drawColor(mShadeColor);
                 }
                 super.onDraw(canvas);
-            } else { // 前景图
+            } else  if (mMaskLevel == MASK_LEVEL_FOREGROUND){ // 前景图
                 super.onDraw(canvas);
-                if (mIsShowMaskOnClick && isPressed()) {
+                if (mIsShowMaskOnClick) {
                     // 绘制遮罩层
                     canvas.drawColor(mShadeColor);
                 }
@@ -126,7 +126,7 @@ public class MaskImageView extends android.support.v7.widget.AppCompatImageView 
     @Override
     protected void drawableStateChanged(){
         super.drawableStateChanged();
-        invalidate();
+    //    invalidate();
     }
 
     public boolean isIsIgnoreAlpha() {

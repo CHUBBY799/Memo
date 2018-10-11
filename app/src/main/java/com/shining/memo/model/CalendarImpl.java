@@ -11,9 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashSet;
 import java.util.List;
 
-public class CalendarImpl implements CalendarModel{
+public class  CalendarImpl implements CalendarModel{
 
     private SQLiteDatabase db;
 
@@ -23,25 +24,16 @@ public class CalendarImpl implements CalendarModel{
     }
 
     @Override
-    public JSONArray queryData(String month){
-        JSONArray taskDataArr = new JSONArray();
-        Cursor cursor = db.query("task", new String[]{"id", "title", "finished", "date"},"date = ?",new String[]{"__-" + month + "-__"},null,null,null);
+    public HashSet<String> queryData(String year_month){
+        HashSet<String> dateList = new HashSet<>();
+        Cursor cursor = db.query("task", new String[]{"date"},"date like ? and finished = ?",new String[]{year_month + "-__", "0"},null,null,null);
         if(cursor.moveToFirst()){
             do{
-                try{
-                    JSONObject taskData = new JSONObject();
-                    taskData.put("id", cursor.getInt(cursor.getColumnIndex("id")));
-                    taskData.put("title", cursor.getString(cursor.getColumnIndex("title")));
-                    taskData.put("finished", cursor.getInt(cursor.getColumnIndex("finished")));
-                    taskData.put("date", cursor.getString(cursor.getColumnIndex("date")));
-                    taskDataArr.put(taskData);
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
+                dateList.add(cursor.getString(cursor.getColumnIndex("date")));
             }while (cursor.moveToNext());
         }
         cursor.close();
-        return taskDataArr;
+        return dateList;
     }
 
     @Override
@@ -49,14 +41,13 @@ public class CalendarImpl implements CalendarModel{
         JSONArray taskDataArr = new JSONArray();
         int length = dateList.size();
         for(int i = 0 ; i < length ; i++){
-            Cursor cursor = db.query("task", new String[]{"id", "title", "finished"},"date = ?",new String[]{dateList.get(i).toString()},null,null,null);
+            Cursor cursor = db.query("task", new String[]{"id", "title"},"date = ? and finished = ?",new String[]{dateList.get(i).toString(), "0"},null,null,null);
             if(cursor.moveToFirst()){
                 do{
                     try{
                         JSONObject taskData = new JSONObject();
                         taskData.put("id", cursor.getInt(cursor.getColumnIndex("id")));
                         taskData.put("title", cursor.getString(cursor.getColumnIndex("title")));
-                        taskData.put("finished", cursor.getInt(cursor.getColumnIndex("finished")));
                         taskData.put("day", Utils.formatTimeUnit(dateList.get(i).getDayOfMonth()));
                         taskData.put("month", Utils.formatMonthSimUS(dateList.get(i).getMonthOfYear()));
                         taskDataArr.put(taskData);

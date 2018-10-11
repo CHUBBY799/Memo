@@ -31,6 +31,7 @@ public abstract class CalendarView extends View {
     protected Paint mSolarPaint;
     protected Paint mLunarPaint;
     protected float mSelectCircleRadius;//选中圆的半径
+    protected int mToDayColor;
     protected int mSelectCircleColor;//选中圆的颜色
     protected boolean isShowLunar;//是否显示农历
 
@@ -57,6 +58,7 @@ public abstract class CalendarView extends View {
         mSolarTextSize = Attrs.solarTextSize;
         mLunarTextSize = Attrs.lunarTextSize;
         mSelectCircleRadius = Attrs.selectCircleRadius;
+        mToDayColor = Attrs.toDayColor;
         mSelectCircleColor = Attrs.selectCircleColor;
         isShowLunar = Attrs.isShowLunar;
 
