@@ -143,5 +143,4 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
             itemContent = itemView.findViewById(R.id.item_content);
         }
     }
-
 }
