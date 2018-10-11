@@ -16,7 +16,6 @@
         android:textSize="18dp"
         android:duplicateParentState="true"
         android:textColor="@color/recording_title"
-        android:hint="@string/item_text_hint"
         android:textColorHint="@color/hintColor"
         android:inputType="textMultiLine"
         android:paddingLeft="17dp"

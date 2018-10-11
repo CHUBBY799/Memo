@@ -95,7 +95,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private RecyclerView mRecyclerView;
     private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false ,titleOnFocus = false,noBackKey = false;
     private String photoPath="";
-    private int urgent = 1,alarm = 0,taskId = -1;
+    private int urgent = 0,alarm = 0,taskId = -1;
     private Alarm alarmObject;
     private RecordingAdapter adapter;
     private HashMap<Integer,RecordingContent> mMap;

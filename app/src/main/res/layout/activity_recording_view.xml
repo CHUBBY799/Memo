@@ -24,6 +24,7 @@
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
         android:textAlignment="gravity"
+        android:textStyle="bold"
         android:textColor="@color/recording_title"
         android:textColorHint="@color/hintColor"
         android:textCursorDrawable="@drawable/cursor"

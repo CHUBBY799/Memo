@@ -31,7 +31,7 @@
             android:layout_width="44dp"
             android:layout_height="22dp"
             android:layout_marginStart="20dp"
-            android:checked="true"
+            android:checked="false"
             android:thumb="@drawable/urgent_thumb_selector"
             android:track="@drawable/urgent_track_selector" />
 

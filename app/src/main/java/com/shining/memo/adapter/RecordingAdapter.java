@@ -271,6 +271,10 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                     break;
             }
         }
+        if(map.size() == 1 && map.get(0).getType().equals("text")){
+            SpannableString ss = new SpannableString(context.getResources().getString(R.string.item_text_hint));
+            textViewHolder.editText.setHint(ss);
+        }
     }
 
     @Override
@@ -892,6 +896,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             SpannableString spannableString = new SpannableString(editText.getText());
             spannableString = updateTextColor(spannableString,startIndex,endIndex,color);
             editText.setText(spannableString);
+            editText.setSelection(startIndex,endIndex);
         }
     }
     private SpannableString updateTextColor(SpannableString spannableString,int start,int end,int insertColor){
@@ -936,6 +941,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             else
                 spannableString = updateText(spannableString,startIndex,endIndex,new StrikethroughSpan());
             editText.setText(spannableString);
+            editText.setSelection(startIndex,endIndex);
         }
     }
 
@@ -954,6 +960,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             SpannableString spannableString = new SpannableString(editText.getText());
             spannableString = updateText(spannableString,startIndex,endIndex,new StyleSpan(Typeface.BOLD));
             editText.setText(spannableString);
+            editText.setSelection(startIndex,endIndex);
         }
     }
 
