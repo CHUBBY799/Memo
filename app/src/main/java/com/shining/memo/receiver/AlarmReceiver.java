@@ -51,6 +51,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 Notification notification = null;
                 Intent contentIntent = new Intent(context, RecordingViewActivity.class);
                 contentIntent.putExtra("taskId",taskId);
+                contentIntent.putExtra("isNotification",true);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, taskId, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH);

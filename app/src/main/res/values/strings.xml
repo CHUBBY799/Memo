@@ -3,8 +3,11 @@
     <string name="add_text">add_text</string>
     <string name="urgent">urgent</string>
     <string name="edit_title_hint">Please input title of recording</string>
+    <string name="edit_title_hint_zh">请输入标题内容</string>
     <string name="view_title_hint">None title of recording</string>
+    <string name="view_title_hint_zh">无标题</string>
     <string name="edit_content_hint">Please input content of recording</string>
+    <string name="item_text_hint">请输入正文内容</string>
     <string name="alarm_clock">Alarm Clock</string>
     <string name="set_alarm_clock">set an alarm clock</string>
     <string name="ringtone_reminder">Ringtone reminder</string>

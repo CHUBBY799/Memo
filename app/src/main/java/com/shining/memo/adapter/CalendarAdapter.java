@@ -54,7 +54,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         }
         Spanned spanned = Html.fromHtml(task_title[position],Html.FROM_HTML_MODE_COMPACT);
         if(spanned.length() > 0)
-            taskTitle.setText(spanned.subSequence(0,spanned.length() -1));
+            taskTitle.setText(spanned.subSequence(0,spanned.length() -1).toString());
         else
             taskTitle.setText("No title！");
         taskDate.setText(task_day[position]);

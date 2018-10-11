@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -25,19 +26,27 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import android.text.Html;
+import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.SpannedString;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewAnimationUtils;
+import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -78,10 +87,13 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private Button mBtnColBack,mBtnColRed,mBtnColOrange,mBtnColBlue,mBtnColPurple,mBtnColGray,mBtnColBlack;
     private ConstraintLayout layout;
     private Switch mSwitchUrgent;
-    private TextView mTvTime;
+    private TextView mTvTime,dialogTv;
     private EditText editTitle;
+    private AlertDialog dialog;
+    private PopupWindow volumePopWindow;
+    private ImageView volumeImage;
     private RecyclerView mRecyclerView;
-    private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false ,titleOnFocus = false;
+    private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false ,titleOnFocus = false,noBackKey = false;
     private String photoPath="";
     private int urgent = 1,alarm = 0,taskId = -1;
     private Alarm alarmObject;
@@ -109,6 +121,11 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         Log.d(TAG, "onResume: ");
         super.onResume();
         if(isRecording) {
+            if(volumePopWindow != null){
+                noBackKey = true;
+                volumePopWindow.dismiss();
+                volumeImage = null;
+            }
             animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
             isRecording = false;
         }
@@ -132,6 +149,11 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit),500);
         }else if(isRecording){
             presenter.cancelRecord();
+            mTvTime.setText("00:00:00");
+            if(volumePopWindow != null){
+                volumePopWindow.dismiss();
+                volumeImage = null;
+            }
             handler.removeMessages(MSG_RECORDING);
             isRecording = false;
             animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
@@ -145,7 +167,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             finish();
             overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         }else {
-            super.onBackPressed();
+            finish();
+            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         }
     }
 
@@ -212,6 +235,9 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         recordingPresenter = new RecordingPresenter(this);
         alarmPresenter = new AlarmPresenter(this);
         taskId = getIntent().getIntExtra("taskId",-1);
+        SpannableString ss = new SpannableString(editTitle.getHint());
+        ss.setSpan(new StyleSpan(Typeface.BOLD),0,ss.length(),Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        editTitle.setHint(ss);
     }
 
     private void initData(){
@@ -399,8 +425,11 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                             file.delete();
                 }
             }
+            setResult(RESULT_CANCELED);
             finish();
+            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         }else {
+            setResult(RESULT_CANCELED);
             finish();
             overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         }
@@ -421,7 +450,9 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             if( (id = recordingPresenter.saveRecording(task,mMap,alarmObject)) != -1){
                 alarmPresenter.setAlarmNotice((int)id);
                 Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
                 finish();
+                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
             }else{
                 Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
             }
@@ -437,6 +468,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                             file.delete();
                     }
                 }
+                setResult(RESULT_OK);
                 finish();
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
             }else{
@@ -537,6 +569,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private void clickRerecording(){
         Log.d(TAG, "clickRerecording: ");
         try {
+        //    hideInputMethod(this,getCurrentFocus());
             if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)
@@ -558,24 +591,59 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     Handler handler = new Handler(){
         public void handleMessage(android.os.Message msg) {
             startTime++;
-            onCreateDialog();
-            ToastUtils.showShort(RecordingEditActivity.this,(4 - startTime)+"");
+            if(startTime == 1)
+                onCreateDialog();
+            else if(startTime < 4){
+                if(dialogTv != null)
+                    dialogTv.setText(String.valueOf(4 - startTime));
+            }
             if (startTime == 4) {
                 handler.removeMessages(MSG_RECORDING);
                 startTime = 0;
                 presenter.startRecord();
-                dialog.dismiss();
+                if(dialog != null)
+                    dialog.dismiss();
+                onCreateVolumePopWindow();
             }
             else
                 handler.sendEmptyMessageDelayed(MSG_RECORDING, 1000);
         };
     };
 
-    private AlertDialog dialog;
     private void onCreateDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.Theme_AppCompat_Light_Dialog);
-        builder.setCancelable(false);
-        dialog = builder.show();
+        builder.setView(R.layout.countdown);
+        dialog = builder.show();dialogTv = dialog.findViewById(R.id.countdown_view);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.dialog_anim;
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                handler.removeMessages(MSG_RECORDING);
+                startTime = 0;
+                onBackPressed();
+            }
+        });
+    }
+    private void onCreateVolumePopWindow(){
+        View view = LayoutInflater.from(this).inflate(R.layout.volumedisplay,null);
+        volumePopWindow = new PopupWindow(view, ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,true);
+        volumeImage = (ImageView)view.findViewById(R.id.volume_view);
+        volumePopWindow.setTouchable(false);
+        volumePopWindow.setBackgroundDrawable(new ColorDrawable());
+        volumePopWindow.setAnimationStyle(R.style.anim);
+        volumePopWindow.showAtLocation(view,Gravity.BOTTOM,0,-140);
+        noBackKey = false;
+        volumePopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                if(!noBackKey)
+                    onBackPressed();
+            }
+        });
     }
 
     private void clickAudioCancel(){
@@ -583,6 +651,11 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         presenter.cancelRecord();
         isRecording = false;
         mTvTime.setText("00:00:00");
+        if(volumePopWindow != null){
+            noBackKey = true;
+            volumePopWindow.dismiss();
+            volumeImage = null;
+        }
         animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
     }
 
@@ -591,6 +664,11 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         presenter.stopRecord();
         isRecording = false;
         mTvTime.setText("00:00:00");
+        if(volumePopWindow != null){
+            noBackKey = true;
+            volumePopWindow.dismiss();
+            volumeImage = null;
+        }
         handler.removeMessages(MSG_RECORDING);
         animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
     }
@@ -642,7 +720,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
 
     @Override
     public void onUpdate(double db, long time) {
-//        mIvVolume.getDrawable().setLevel((int)(db / 10));
+        if(volumeImage != null)
+            volumeImage.getDrawable().setLevel((int)db);
         Log.d(TAG, "onUpdate: "+time);
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
@@ -927,6 +1006,5 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 break;
         }
     }
-
 
 }

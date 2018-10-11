@@ -33,8 +33,9 @@
     <color name="add_new">#A9A9A9</color>
     <color name="list_finish">#f9883c</color>
 
+    <string name="hint_color">#AAAAAA </string>
     <color name="item_btn_backgroud">#FFF6F0</color>
-    <color name="item_btn_textcolor">#FF8833 </color>
+    <color name="item_btn_textcolor">#FF8833</color>
     <color name="half_transparent_orange">#8EFF8833 </color>
     <color name="photo_divider">#EEEEEE</color>
 
