@@ -39,6 +39,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.shining.memo.R;
+import com.shining.memo.model.FontType;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.presenter.AudioPlayPresenter;
 
@@ -72,7 +73,9 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     private int CurrentIndex = -1,btnIndex = -1;
     private String CurrentType = "";
     private boolean isView = false,isViewEdit = false;
-    public static int currentColor,colorPos;
+    public static int currentColor,colorPos,pos;
+    public static boolean typeChanged = false;
+    public FontType fontType;
 
     private ViewChange viewChange;
     public List<String> deletePath;
@@ -147,8 +150,10 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         presenter = new AudioPlayPresenter(context,this);
         isView = false;
         this.textChanged =textChanged;
-        currentColor = context.getColor(R.color.recording_title);
+        currentColor = context.getColor(R.color.textcolor_black);
         colorPos = 0;
+        typeChanged = false;
+        fontType = new FontType();
     }
 
     public int getRequestFocusableIndex() {
@@ -342,19 +347,34 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         }
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            Log.d("onTextChanged",s+"-----"+start);
-           // mSpanned = updateAllTypeSpan(dispatchPositionColor(new SpannableString(editText.getText()),start,count));
-            mSpanned = updateAllTypeSpan(new SpannableString(editText.getText()));
-            textChanged.TextChanged(mSpanned,(int)itemView.getTag());
+            Log.d("onTextChanged",s+"-----"+start + "--"+before+"--"+count);
+            mSpanned = new SpannableString(editText.getText());
+//            if(start == 0 && editText.getText().length() == count && count > 0){
+//                fontType.setmColorSpan(new ForegroundColorSpan(currentColor));
+//                mSpanned.setSpan(fontType.getmColorSpan(),start,count,Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+//                pos = count;
+//                typeChanged = false;
+//            }else if(pos == start && !typeChanged){
+//                if(before != 0)
+//                    pos -= before;
+//                else
+//                    pos += count;
+//            }
+//            else{
+//                mSpanned = dispatchPositionColor(new SpannableString(editText.getText()),start,count);
+//            }
+            textChanged.TextChanged(updateAllTypeSpan(mSpanned),(int)itemView.getTag());
         }
         @Override
         public void afterTextChanged(Editable s) {
-            if(!Html.toHtml(new SpannableString(editText.getText())).equals(Html.toHtml(mSpanned))){
+            if(!Html.toHtml(new SpannableString(editText.getText())).equals(Html.toHtml(mSpanned)) || editText.getText().length() == 0){
                 editText.removeTextChangedListener(this);
                 int index = editText.getSelectionStart();
                 editText.setText(mSpanned);
                 editText.setSelection(index);
                 editText.addTextChangedListener(this);
+                fontType.disconnectSpan(mSpanned);
+
             }
         }
 
@@ -675,7 +695,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             }
             @Override
             public void onAnimationEnd(Animation animation) {
-                imageView.setVisibility(View.GONE);
+                imageView.setVisibility(View.VISIBLE);
             }
             @Override
             public void onAnimationRepeat(Animation animation) {
@@ -886,11 +906,13 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         if(index != -1 && (index - textChanged.getCurrentFirstIndex() >= 0)){
             TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(index - textChanged.getCurrentFirstIndex()));
             int startIndex = textViewHolder.editText.getSelectionStart(),endIndex = textViewHolder.editText.getSelectionEnd();
-            SpannableString spannableString = new SpannableString(textViewHolder.editText.getText());
-            spannableString = updateTextColor(spannableString,startIndex,endIndex,color);
-            textViewHolder.editText.setText(spannableString);
-            textViewHolder.editText.setSelection(startIndex,endIndex);
-            textChanged.TextChanged(spannableString,index);
+            if(startIndex != endIndex){
+                SpannableString spannableString = new SpannableString(textViewHolder.editText.getText());
+                spannableString = updateTextColor(spannableString,startIndex,endIndex,color);
+                textViewHolder.editText.setText(spannableString);
+                textViewHolder.editText.setSelection(startIndex,endIndex);
+                textChanged.TextChanged(spannableString,index);
+            }
         }else if(editText != null){
             int startIndex = editText.getSelectionStart(),endIndex = editText.getSelectionEnd();
             SpannableString spannableString = new SpannableString(editText.getText());
@@ -1033,10 +1055,12 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     }
 
     private SpannableString updateAllTypeSpan(SpannableString spannableString){
-        Object[] spans = spannableString.getSpans(0,spannableString.length(),Object.class);
-        for(int i = 0; i < spans.length; i++){
-            if(spannableString.getSpanStart(spans[i]) == spannableString.getSpanEnd(spans[i]))
-                spannableString.removeSpan(spans[i]);
+        if(spannableString != null){
+            Object[] spans = spannableString.getSpans(0,spannableString.length(),Object.class);
+            for(int i = 0; i < spans.length; i++){
+                if(spannableString.getSpanStart(spans[i]) == spannableString.getSpanEnd(spans[i]))
+                    spannableString.removeSpan(spans[i]);
+            }
         }
         return spannableString;
     }

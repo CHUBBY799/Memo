@@ -22,14 +22,15 @@
             android:id="@+id/photo_shelter"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/half_transparent_orange"
+            android:background="@color/photo_shelter"
             android:visibility="gone">
             <Button
                 android:id="@+id/photo_delete"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@drawable/cancel_icon"
-                android:layout_alignParentRight="true"/>
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@drawable/photo_delete_icon"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
         </RelativeLayout>
 
         <com.shining.memo.widget.ResizableImageView
@@ -39,6 +40,5 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/audio_rerecording_shape"
             android:scaleType="fitCenter" />
-
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

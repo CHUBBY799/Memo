@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.SpannedString;
@@ -74,8 +73,6 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         initTimer();
         addListener();
         setSelectedTime();
-        Spanned Spanned = Html.fromHtml("<p dir=\"ltr\" >V型基金经理<span style=\"color:#4169E1;\">室内设计</span>定义气</p>");
-        ToastUtils.showShort(this,Spanned);
     }
 
     @Override

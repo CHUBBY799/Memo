@@ -54,6 +54,7 @@
             app:layout_constraintTop_toBottomOf="@id/alarm_time"
             app:layout_constraintBottom_toTopOf="@+id/alarm_ok"/>
         <Button
+            style="?android:attr/borderlessButtonStyle"
             android:id="@+id/alarm_ok"
             android:layout_width="match_parent"
             android:layout_height="49dp"
