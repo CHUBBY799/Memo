@@ -33,8 +33,9 @@
     <color name="add_new">#A9A9A9</color>
     <color name="list_finish">#f9883c</color>
 
+    <string name="hint_color">#AAAAAA </string>
     <color name="item_btn_backgroud">#FFF6F0</color>
-    <color name="item_btn_textcolor">#FF8833 </color>
+    <color name="item_btn_textcolor">#FF8833</color>
     <color name="half_transparent_orange">#8EFF8833 </color>
     <color name="photo_divider">#EEEEEE</color>
 
@@ -51,9 +52,8 @@
     <color name="textcolor_black">#000000</color>
     <color name="textcolor_blue">#4169E1</color>
     <color name="textcolor_purple">#8B008B</color>
-    
-    
-    
+    <color name="alarm_btn_background">#FF8833</color>
+
      <!--main color-->
     <color name="main_line">#FFEEEEEE</color>
     <color name="main_task_titlecolor">#FF666666</color>

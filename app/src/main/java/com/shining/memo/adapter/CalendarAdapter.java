@@ -1,8 +1,11 @@
 package com.shining.memo.adapter;
 
 import android.content.Context;
+
+import android.os.Build;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -39,6 +42,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.calendar_item, parent,false));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         final TextView taskTitle = holder.taskTitle;

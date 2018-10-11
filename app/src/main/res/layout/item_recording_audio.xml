@@ -13,7 +13,7 @@
         tools:ignore="MissingConstraints">
         <EditText
             android:id="@+id/btn_edit_strat"
-            android:layout_width="15dp"
+            android:layout_width="17dp"
             android:layout_height="match_parent"
             android:background="@null"
             android:gravity="right|center_vertical"

@@ -33,13 +33,15 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".view.RecordingEditActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:windowSoftInputMode="stateVisible|adjustPan|stateHidden|stateAlwaysHidden" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+          <!--android:windowSoftInputMode="stateVisible|adjustPan|stateHidden|stateAlwaysHidden"-->
         <activity
             android:name=".view.PhotoConfirmActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".view.RecordingViewActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".view.AlarmClockActivity"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"/>
         <receiver
             android:name=".receiver.AlarmReceiver"
             android:enabled="true"

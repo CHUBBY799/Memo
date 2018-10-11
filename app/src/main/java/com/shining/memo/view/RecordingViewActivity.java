@@ -2,12 +2,15 @@ package com.shining.memo.view;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,6 +41,7 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
     private EditText mEditTitle;
     private int taskId;
     private int urgent = 0,alarm = 0;
+    private boolean isNotification = false;
     private RecordingPresenter presenter;
     private HashMap<Integer,RecordingContent> mMap;
 
@@ -54,12 +58,13 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
         super.onResume();
     }
 
-//    @Override
-//    public void onBackPressed(){
-//        Intent intent = new Intent();
-//        intent.setClass(this,MainActivity.class);
-//        startActivity(intent);
-//    }
+
+    @Override
+    public void onBackPressed(){
+        finish();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+    }
+
 
     private void init(){
         View view = (View)findViewById(R.id.bottom_recording_view);
@@ -78,8 +83,12 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
         mBtnUrgent.setOnCheckedChangeListener(this);
         mEditTitle.setOnFocusChangeListener(this);
 
+        SpannableString ss = new SpannableString(mEditTitle.getHint());
+        ss.setSpan(new StyleSpan(Typeface.BOLD),0,ss.length(),Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        mEditTitle.setHint(ss);
         presenter = new RecordingPresenter(this);
         taskId = getIntent().getIntExtra("taskId",6);
+        isNotification = getIntent().getBooleanExtra("isNotification",false);
     }
 
     public boolean isShouldHideInput(View v, MotionEvent event) {
@@ -119,9 +128,15 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
     }
 
     private void returnListPage(){
-        Intent intent = new Intent();
-        intent.setClass(this, MemoActivity.class);
-        startActivity(intent);
+        if(isNotification){
+            Intent intent = new Intent();
+            intent.setClass(this,MemoActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        }else {
+            finish();
+            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        }
     }
 
     private void clickAlarm(){
