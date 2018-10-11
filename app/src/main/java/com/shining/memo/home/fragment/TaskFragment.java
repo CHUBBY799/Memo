@@ -34,6 +34,13 @@ public class TaskFragment extends Fragment{
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(getActivity());
         mRecycleView.setLayoutManager(linearLayoutManager);
         mAdapter=new TaskAdapter(mTasks);
+        mAdapter.setCallback(new TaskAdapter.Callback() {
+            @Override
+            public void finishTaskById(int id) {
+                mPresenter.finishTaskById(id);
+//                refreshData();
+            }
+        });
         mRecycleView.setAdapter(mAdapter);
         return view;
     }

@@ -1,5 +1,6 @@
 package com.shining.memo.model;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -186,7 +187,7 @@ public class TaskImpl implements TaskModel {
         List<JSONObject> list=new ArrayList<>();
         Cursor cursor=db.rawQuery("select id as taskId,type,title " +
                 "from task " +
-                "where urgent = ? and deleted =0 and alarm = 0 " +
+                "where urgent = ? and finished =0 and deleted =0 and alarm = 0 " +
                 "order by date desc,time desc",new String[]{String.valueOf(urgent)});
         try{
             while (cursor.moveToNext()){
@@ -214,5 +215,12 @@ public class TaskImpl implements TaskModel {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void finishTaskById(int id) {
+        SQLiteDatabase db=dbHelper.getWritableDatabase();
+        db.execSQL("update task set finished = 1 and alarm = 0 " +
+                "and date = date(?,'localtime') and time = time(?,'localtime') where id = ?",new Object[]{"now","now",id});
     }
 }
