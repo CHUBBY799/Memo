@@ -18,6 +18,7 @@ import android.widget.Switch;
 
 import com.shining.memo.R;
 import com.shining.memo.adapter.RecordingAdapter;
+import com.shining.memo.home.MemoActivity;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.model.Task_Recording;
 import com.shining.memo.presenter.RecordingPresenter;
@@ -119,7 +120,7 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
 
     private void returnListPage(){
         Intent intent = new Intent();
-        intent.setClass(this,MainActivity.class);
+        intent.setClass(this, MemoActivity.class);
         startActivity(intent);
     }
 

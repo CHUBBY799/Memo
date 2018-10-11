@@ -19,8 +19,10 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
 
     private Context context;
     private int length;
-    private JSONArray itemArr;
     private boolean addItem;
+    private JSONArray itemArr;
+    private boolean[] state;
+    private String[] content;
 
     public ListItemAdapter(Context context) {
         this.context = context;
@@ -33,41 +35,32 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-        final EditText itemContent = holder.itemContent;
         final TextView itemState = holder.itemState;
+        final EditText itemContent = holder.itemContent;
 
-        final JSONObject itemInfo;
-        String content = null;
-        boolean state = false;
-        try {
-            itemInfo = itemArr.getJSONObject(position);
-            content = itemInfo.getString("content");
-            state = itemInfo.getBoolean("state");
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-
-        itemContent.setText(content);
-        if (state){
-            itemState.setText(R.string.list_finish);
+        itemContent.setText(content[position]);
+        if (state[position]){
+            itemState.setBackground(context.getDrawable(R.drawable.group));
         }
 
         itemState.setOnClickListener(new View.OnClickListener() {
-            int stateIndex = holder.getAdapterPosition();
-            boolean tempState;
+
             @Override
             public void onClick(View v) {
-                if (itemState.getText().toString().equals("")){
-                    itemState.setText(R.string.list_finish);
-                    tempState = true;
+                int stateIndex = holder.getLayoutPosition();
+                if (state[stateIndex]){
+                    itemState.setBackground(context.getDrawable(R.drawable.group_2));
+                    itemContent.setTextColor(context.getColor(R.color.recording_title));
+                    state[stateIndex] = false;
                 }else {
-                    itemState.setText("");
-                    tempState = false;
+                    itemState.setBackground(context.getDrawable(R.drawable.group));
+                    itemContent.setTextColor(context.getColor(R.color.recording_title));
+                    state[stateIndex] = true;
                 }
                 try {
                     JSONObject itemInfo = new JSONObject();
-                    itemInfo.put("state", tempState);
-                    itemInfo.put("content", itemContent.getText().toString());
+                    itemInfo.put("state", state[stateIndex]);
+                    itemInfo.put("content", content[stateIndex]);
                     itemArr.put(stateIndex, itemInfo);
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -86,7 +79,8 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     int contentIndex = holder.getLayoutPosition();
-                    if(itemContent.getText().toString().equals("")){
+                    content[contentIndex] = itemContent.getText().toString();
+                    if(content[contentIndex].equals("")){
                         itemArr.remove(contentIndex);
                         setInfo(itemArr, itemArr.length());
                         notifyItemRemoved(contentIndex);
@@ -95,10 +89,9 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
                         }
                     }else {
                         try {
-                            boolean tempState = (!itemState.getText().toString().equals(""));
                             JSONObject itemInfo = new JSONObject();
-                            itemInfo.put("state", tempState);
-                            itemInfo.put("content", itemContent.getText().toString());
+                            itemInfo.put("state", state[contentIndex]);
+                            itemInfo.put("content", content[contentIndex]);
                             itemArr.put(contentIndex, itemInfo);
                         }catch (JSONException e){
                             e.printStackTrace();
@@ -117,11 +110,22 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
     public void setInfo(JSONArray itemArr, int length){
         this.length = length;
         this.itemArr = itemArr;
+        state = new boolean[length];
+        content = new String[length];
+        for (int i = 0 ; i < length ; i++){
+            try {
+                JSONObject itemInfo = itemArr.getJSONObject(i);
+                state[i] = itemInfo.getBoolean("state");
+                content[i] = itemInfo.getString("content");
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
     }
 
     public void addInfo(JSONObject item){
         itemArr.put(item);
-        this.length = itemArr.length();
+        setInfo(itemArr, itemArr.length());
         addItem = true;
         notifyItemChanged(length);
     }
@@ -131,12 +135,12 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public EditText itemContent;
         TextView itemState;
+        public EditText itemContent;
         public MyViewHolder(View itemView) {
             super(itemView);
-            itemContent = itemView.findViewById(R.id.item_content);
             itemState = itemView.findViewById(R.id.item_state);
+            itemContent = itemView.findViewById(R.id.item_content);
         }
     }
 

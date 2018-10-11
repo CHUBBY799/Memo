@@ -43,6 +43,7 @@ import android.widget.Toast;
 
 import com.shining.memo.R;
 import com.shining.memo.adapter.RecordingAdapter;
+import com.shining.memo.home.MemoActivity;
 import com.shining.memo.model.Alarm;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.model.Task;
@@ -396,7 +397,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 }
             }
             Intent intent = new Intent();
-            intent.setClass(this,MainActivity.class);
+            intent.setClass(this,MemoActivity.class);
             startActivity(intent);
         }else {
             finish();
@@ -420,7 +421,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 alarmPresenter.setAlarmNotice((int)id);
                 Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
-                intent.setClass(this, MainActivity.class);
+                intent.setClass(this, MemoActivity.class);
                 startActivity(intent);
             }else{
                 Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();

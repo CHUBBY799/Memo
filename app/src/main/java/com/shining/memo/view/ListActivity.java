@@ -104,10 +104,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      * 保存并向数据库中插入数据
      */
     private void listConfirm(){
-        listConfirm.setFocusable(true);
-        listConfirm.setFocusableInTouchMode(true);
-        listConfirm.requestFocus();
-
         title = listTitle.getText().toString();
         if(title.equals("")){
             Toast.makeText(this, "Please input title", Toast.LENGTH_SHORT).show();
@@ -116,7 +112,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             listTitle.requestFocus();
         }else {
             itemArr = listItemAdapter.getItemArr();
-            itemArr.remove(itemArr.length() - 1);
+            itemArr.remove(itemArr.length());
             ListPresenter listPresenter = new ListPresenter(this);
 
             if(id == -1){
