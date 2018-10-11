@@ -4,6 +4,7 @@ public class Attrs {
     public static int solarTextColor;
     public static int lunarTextColor ;
     public static int hintColor ;
+    public static int toDayColor;
     public static int selectCircleColor;
     public static float solarTextSize ;
     public static float lunarTextSize;

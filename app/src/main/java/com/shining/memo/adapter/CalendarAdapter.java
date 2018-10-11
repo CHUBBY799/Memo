@@ -49,6 +49,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         final TextView taskTitle = holder.taskTitle;
         final TextView taskDate = holder.taskDate;
         final TextView taskMonth = holder.taskMonth;
+
         if (task_finished[position] == 0){
             taskFinished.setBackground(null);
         }
@@ -57,6 +58,11 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
             taskTitle.setText(spanned.subSequence(0,spanned.length() -1).toString());
         else
             taskTitle.setText("No title！");
+
+        //if (task_finished[position] == 0){
+            //taskFinished.setBackground(null);
+        //}
+        taskTitle.setText(task_title[position]);
         taskDate.setText(task_day[position]);
         taskMonth.setText(task_month[position]);
         holder.taskTitle.setOnClickListener(new View.OnClickListener() {

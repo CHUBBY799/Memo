@@ -58,11 +58,13 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
         super.onResume();
     }
 
+
     @Override
     public void onBackPressed(){
         finish();
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
+
 
     private void init(){
         View view = (View)findViewById(R.id.bottom_recording_view);

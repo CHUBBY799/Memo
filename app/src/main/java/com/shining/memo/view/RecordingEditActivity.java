@@ -884,7 +884,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private String taskType(){
         Log.d(TAG, "taskType: ");
         for(int i = 0; i < mMap.size(); i++){
-            if(mMap.get(i).getType() == "audio")
+            if(mMap.get(i).getType().equals("audio"))
                 return "audio";
         }
         return "text";

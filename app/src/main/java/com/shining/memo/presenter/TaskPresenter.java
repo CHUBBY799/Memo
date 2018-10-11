@@ -23,6 +23,10 @@ public class TaskPresenter implements MemoContract.Presenter{
        tasks.addAll(taskModel.getNotAlarmTasksByUrgentDesc(0));
        return tasks;
     }
+
+    public void finishTaskById(int id){
+        taskModel.finishTaskById(id);
+    }
 //    public boolean hasAudioById(long id){
 //        return taskModel.hasAudioById(id);
 //    }
