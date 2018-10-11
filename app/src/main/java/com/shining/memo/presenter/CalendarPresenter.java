@@ -7,6 +7,7 @@ import com.shining.memo.view.CalendarActivity;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class CalendarPresenter {
@@ -16,8 +17,8 @@ public class CalendarPresenter {
         this.calendarModel = new CalendarImpl(calendarView.getContext());
     }
 
-    public JSONArray queryData(String month){
-        return calendarModel.queryData(month);
+    public HashSet<String> queryData(String year_month){
+        return calendarModel.queryData(year_month);
     }
 
     public JSONArray queryData(List<LocalDate> dateList){

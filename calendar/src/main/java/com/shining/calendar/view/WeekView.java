@@ -53,10 +53,11 @@ public class WeekView extends CalendarView {
             int baseline = (rect.bottom + rect.top - fontMetrics.bottom - fontMetrics.top) / 2;
 
             if (Utils.isToday(date)) {
-                mSolarPaint.setColor(mSelectCircleColor);
+                mSolarPaint.setColor(mToDayColor);
                 canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius, mSolarPaint);
                 mSolarPaint.setColor(Color.WHITE);
                 canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
+                drawPoint(canvas, rect, date, baseline);
             } else if (mSelectDateList != null && mSelectDateList.contains(date)) {
                 mSolarPaint.setColor(mSelectCircleColor);
                 canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius, mSolarPaint);
@@ -64,6 +65,7 @@ public class WeekView extends CalendarView {
                 canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius - mHollowCircleStroke, mSolarPaint);
                 mSolarPaint.setColor(mSolarTextColor);
                 canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
+                drawPoint(canvas, rect, date, baseline);
             } else {
                 mSolarPaint.setColor(mSolarTextColor);
                 canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
@@ -102,8 +104,8 @@ public class WeekView extends CalendarView {
 
     public void drawPoint(Canvas canvas, Rect rect, LocalDate date, int baseline) {
         if (pointList != null && pointList.contains(date.toString())) {
-            mLunarPaint.setColor(mPointColor);
-            canvas.drawCircle(rect.centerX(), baseline - getHeight() / 3, mPointSize, mLunarPaint);
+            mLunarPaint.setColor(mSelectCircleColor);
+            canvas.drawCircle(rect.centerX(), baseline + getHeight() / 4, mPointSize, mLunarPaint);
         }
     }
 

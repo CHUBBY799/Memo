@@ -17,7 +17,6 @@ import com.shining.memo.home.fragment.ListFragment;
 import com.shining.memo.home.fragment.NoteFragment;
 import com.shining.memo.home.fragment.TaskFragment;
 import com.shining.memo.model.TaskImpl;
-import com.shining.memo.model.TextImpl;
 import com.shining.memo.presenter.MemoContract;
 import com.shining.memo.presenter.TaskPresenter;
 import com.shining.memo.view.CalendarActivity;
