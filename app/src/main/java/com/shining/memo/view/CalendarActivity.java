@@ -48,11 +48,12 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
             @Override
             public void onClick(View v) {
                 finish();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        calendarAdapter = new CalendarAdapter(this);
+        calendarAdapter = new CalendarAdapter(this, this);
         ncalendar.setOnCalendarChangedListener(this);
     }
 
@@ -84,5 +85,11 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         recyclerView = findViewById(R.id.recyclerView);
         calendar_month = findViewById(R.id.calendar_month);
         calendar_close = findViewById(R.id.calendar_close);
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

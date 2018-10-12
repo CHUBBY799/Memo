@@ -1,7 +1,6 @@
 package com.shining.memo.home;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -123,6 +122,7 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
             case R.id.main_titlebar_calendar:
                 Intent calendarIntent = new Intent(this,CalendarActivity.class);
                 startActivity(calendarIntent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
         }
     }
@@ -136,15 +136,15 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
         }else {
             Intent listActivity = new Intent(this, ListActivity.class);
             startActivity(listActivity);
-
         }
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
     private void onClickTitle(TextView textView){
         if(currentClickText!=null){
-            currentClickText.setTextColor(getResources().getColor(R.color.main_task_noclickcolor));
+            currentClickText.setTextColor(getColor(R.color.main_task_noclickcolor));
             currentClickText.setTextSize(16);
         }
-        textView.setTextColor(getResources().getColor(R.color.main_task_clickcolor));
+        textView.setTextColor(getColor(R.color.main_task_clickcolor));
         textView.setTextSize(24);
         currentClickText=textView;
     }

@@ -36,7 +36,7 @@ public class ListFragment extends Fragment {
             listFragment = getActivity().findViewById(R.id.list_fragment);
         }
         listFragment.setLayoutManager(new LinearLayoutManager(context));
-        listContent = new ListContent(context);
+        listContent = new ListContent(context, getActivity());
     }
 
     @Override

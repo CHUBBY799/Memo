@@ -54,7 +54,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
                     state[stateIndex] = false;
                 }else {
                     itemState.setBackground(context.getDrawable(R.drawable.group));
-                    itemContent.setTextColor(context.getColor(R.color.recording_title));
+                    itemContent.setTextColor(context.getColor(R.color.calendar_unselected));
                     state[stateIndex] = true;
                 }
                 try {

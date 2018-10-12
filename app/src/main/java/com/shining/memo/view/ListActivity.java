@@ -95,9 +95,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      * 退出
      */
     private void listCancel(){
-        Intent listIntent = new Intent();
-        setResult(RESULT_CANCELED, listIntent);
         finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     /**
@@ -107,24 +106,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         listConfirm.setFocusable(true);
         listConfirm.setFocusableInTouchMode(true);
         listConfirm.requestFocus();
-
-        title = listTitle.getText().toString();
-        if(title.equals("")){
-            Toast.makeText(this, "Please input title", Toast.LENGTH_SHORT).show();
-            listTitle.setFocusable(true);
-            listTitle.setFocusableInTouchMode(true);
-            listTitle.requestFocus();
-        }else {
-            itemArr = listItemAdapter.getItemArr();
-            ListPresenter listPresenter = new ListPresenter(this);
-
-            if(id == -1){
-                listPresenter.insertPresenter(formatData());
-            }else {
-                listPresenter.updatePresenter(formatData());
-            }
-            finish();
-        }
     }
 
     private void addItem(){
@@ -137,9 +118,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         }catch (JSONException e){
             e.printStackTrace();
         }
-        listConfirm.setFocusable(true);
-        listConfirm.setFocusableInTouchMode(true);
-        listConfirm.requestFocus();
+        addItem.setFocusable(true);
+        addItem.setFocusableInTouchMode(true);
+        addItem.requestFocus();
     }
 
     /**
@@ -163,6 +144,32 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         listCancel.setOnClickListener(this);
         listConfirm.setOnClickListener(this);
         addItem.setOnClickListener(this);
+
+        listConfirm.setOnFocusChangeListener(new android.view.View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    title = listTitle.getText().toString();
+                    if(title.equals("")){
+                        Toast.makeText(ListActivity.this, "Please input title", Toast.LENGTH_SHORT).show();
+                        listTitle.setFocusable(true);
+                        listTitle.setFocusableInTouchMode(true);
+                        listTitle.requestFocus();
+                    }else {
+                        itemArr = listItemAdapter.getItemArr();
+                        ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+
+                        if(id == -1){
+                            listPresenter.insertPresenter(formatData());
+                        }else {
+                            listPresenter.updatePresenter(formatData());
+                        }
+                        finish();
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -184,5 +191,11 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         }
         listItemAdapter.setInfo(itemArr, itemArr.length());
         listContent.setAdapter(listItemAdapter);
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

@@ -4,15 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="45dp"
-    android:layout_marginStart="20dp"
-    android:layout_marginEnd="20dp"
+    android:layout_marginStart="25dp"
+    android:layout_marginEnd="25dp"
     android:layout_marginBottom="10dp"
     android:background="@drawable/white_rectangle_background">
 
     <TextView
         android:id="@+id/item_state"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
         android:layout_marginStart="16dp"
         android:background="@drawable/group_2"
         android:gravity="center"
@@ -20,21 +20,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:ignore="all"
+    <EditText xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/item_content"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:textColor="@color/add_new"
-        android:textSize="16sp"
+        android:layout_marginStart="15dp"
         android:background="@null"
+        android:inputType="textLongMessage"
+        android:textColor="@color/recording_title"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/item_state"
         app:layout_constraintTop_toTopOf="parent"
-        android:inputType="textLongMessage" />
+        tools:ignore="all" />
 
 </android.support.constraint.ConstraintLayout>
