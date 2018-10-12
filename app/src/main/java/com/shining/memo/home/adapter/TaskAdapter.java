@@ -21,6 +21,8 @@ import com.shining.memo.view.RecordingViewActivity;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
 //    private List<Task> tasks;
@@ -28,6 +30,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
 //    private List<String> alarms;
 
     private List<JSONObject> tasks;
+    private boolean click=false;
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         View mView;
@@ -62,6 +65,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
     public ViewHolder onCreateViewHolder(@NonNull final ViewGroup viewGroup, final int i) {
         View view= LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.main_taskitem,viewGroup,false);
         final ViewHolder holder=new ViewHolder(view);
+        holder.mView.setClickable(true);
+        holder.complete.setClickable(true);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,24 +86,32 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
         holder.complete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int position=holder.getLayoutPosition();
-                JSONObject task=tasks.get(position);
-                try{
-                    final int id=task.getInt("taskId");
-                    holder.confirm.setVisibility(View.VISIBLE);
-                    callback.finishTaskById(id);
-                    tasks.remove(position);
-                    holder.confirm.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyItemRemoved(position);
-                            notifyItemRangeRemoved(position,tasks.size());
-                        }
-                    },1000);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                if (!click) {
+                    click=true;
+                    final int position = holder.getLayoutPosition();
+                    final JSONObject task = tasks.get(position);
+                    try {
+                        final int id = task.getInt("taskId");
+                        Log.d("hh", "onClick: "+id);
+                        holder.confirm.setVisibility(View.VISIBLE);
+                        callback.finishTaskById(id);
+                        holder.complete.setClickable(false);
+                        holder.mView.setClickable(false);
+                        tasks.remove(position);
+                        android.os.Handler handler = new android.os.Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                notifyItemRemoved(position);
+                                notifyItemRangeRemoved(position,tasks.size());
+                                click=false;
+                            }
+                        }, 1000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
+                }
             }
         });
         return holder;
@@ -106,20 +119,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.complete.setClickable(true);
+        holder.mView.setClickable(true);
         int p=holder.getLayoutPosition();
-//        Task task=tasks.get(p);
-//        if(hasAudio.get(p)){
-//            holder.type.setImageResource(R.drawable.audio_type_icon);
-//        }else {
-//            holder.type.setImageResource(R.drawable.text_type_icon);
-//        }
-//        if(task.getUrgent()==0){
-//            holder.urgent.setVisibility(View.INVISIBLE);
-//        }else {
-//            holder.urgent.setVisibility(View.VISIBLE);
-//        }
-//        holder.title.setText(task.getTitle());
-//        holder.alarm.setText(alarms.get(p));
         try{
             holder.confirm.setVisibility(View.INVISIBLE);
             JSONObject task=tasks.get(p);
