@@ -13,6 +13,8 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.shining.memo.R;
@@ -34,10 +36,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
     private String[] task_day;
     private String[] task_month;
     private int length;
+    private Animation animation;
 
     public CalendarAdapter(Context context, CalendarActivity calendarActivity) {
         this.context = context;
         this.calendarActivity = calendarActivity;
+        this.animation = AnimationUtils.loadAnimation(context, R.anim.slide_in_top);
     }
 
     @Override
@@ -53,6 +57,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         final TextView taskMonth = holder.taskMonth;
         final ConstraintLayout calendarItem = holder.calendarItem;
 
+        calendarItem.startAnimation(animation);
         taskTitle.setText(task_title[position]);
         taskDate.setText(task_day[position]);
         taskMonth.setText(task_month[position]);

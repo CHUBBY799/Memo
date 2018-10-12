@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -59,7 +61,6 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
 
             final TextView content = new TextView(context);
             content.setPadding(30,0,0,0);
-            content.setTextColor(context.getColor(R.color.recording_title));
             content.setTextSize(18);
             content.setGravity(CENTER);
             content.setText(itemContent[position][i]);
@@ -70,12 +71,13 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             lp.width = 44;
             lp.height= 44;
             state.setLayoutParams(lp);
-            state.setTextColor(context.getColor(R.color.calendar_select));
             state.setGravity(CENTER);
-            state.setBackground(context.getDrawable(R.drawable.group_2));
             if (itemState[holder.getAdapterPosition()][index]){
                 state.setBackground(context.getDrawable(R.drawable.group));
                 content.setTextColor(context.getColor(R.color.calendar_unselected));
+            }else {
+                state.setBackground(context.getDrawable(R.drawable.group_2));
+                content.setTextColor(context.getColor(R.color.recording_title));
             }
             state.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -124,6 +126,13 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             }
         });
 
+        final TranslateAnimation showAnim = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 1.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f);
+        showAnim.setDuration(500);
+
         expandIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,6 +141,7 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
                     expandIcon.setBackground(context.getDrawable(R.drawable.fold_icon));
                     expandState[holder.getAdapterPosition()] = false;
                 }else{
+                    listItem.startAnimation(showAnim);
                     listItem.setVisibility(View.VISIBLE);
                     expandIcon.setBackground(context.getDrawable(R.drawable.expand_icon));
                     expandState[holder.getAdapterPosition()] = true;

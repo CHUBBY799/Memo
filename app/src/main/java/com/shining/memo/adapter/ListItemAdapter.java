@@ -23,6 +23,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
     private JSONArray itemArr;
     private boolean[] state;
     private String[] content;
+    private int addNum;
 
     public ListItemAdapter(Context context) {
         this.context = context;
@@ -38,10 +39,14 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
         final TextView itemState = holder.itemState;
         final EditText itemContent = holder.itemContent;
 
-        itemContent.setText(content[position]);
         if (state[position]){
             itemState.setBackground(context.getDrawable(R.drawable.group));
+            itemContent.setTextColor(context.getColor(R.color.calendar_unselected));
+        }else {
+            itemState.setBackground(context.getDrawable(R.drawable.group_2));
+            itemContent.setTextColor(context.getColor(R.color.recording_title));
         }
+        itemContent.setText(content[position]);
 
         itemState.setOnClickListener(new View.OnClickListener() {
 
@@ -68,12 +73,6 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
             }
         });
 
-        if(holder.getAdapterPosition() == length - 1 && addItem){
-            itemContent.setFocusable(true);
-            itemContent.setFocusableInTouchMode(true);
-            itemContent.requestFocus();
-            addItem = false;
-        }
         itemContent.setOnFocusChangeListener(new android.view.View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -86,6 +85,8 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
                         notifyItemRemoved(contentIndex);
                         if (contentIndex != length - 1 || contentIndex == 0){
                             notifyItemRangeChanged(contentIndex,length - contentIndex);
+                        }else {
+                            notifyItemChanged(length - 1);
                         }
                     }else {
                         try {
@@ -100,6 +101,13 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
                 }
             }
         });
+
+        if(holder.getAdapterPosition() == length - 1 && addItem){
+            itemContent.setFocusable(true);
+            itemContent.setFocusableInTouchMode(true);
+            itemContent.requestFocus();
+            addItem = false;
+        }
     }
 
     @Override
@@ -124,6 +132,12 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
     }
 
     public void addInfo(JSONObject item){
+        if (++addNum == 1 && length == 1 && content[0].equals("")){
+            itemArr.remove(0);
+            setInfo(itemArr, itemArr.length());
+            notifyItemRemoved(0);
+            notifyItemChanged(0);
+        }
         itemArr.put(item);
         setInfo(itemArr, itemArr.length());
         addItem = true;
