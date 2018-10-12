@@ -121,7 +121,7 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
             case R.id.bottom_share:
                 ToastUtils.showShort(this,"TBD");
                 break;
-            case R.id.bottom_view_alarm:
+            case R.id.bottom_alarm:
                 clickAlarm();
                 break;
         }
@@ -187,16 +187,16 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
         if(urgent == 0)
             mBtnUrgent.setChecked(false);
         mMap = task_recording.getRecording().getRecordingMap();
-        RecordingAdapter adapter = null;// new RecordingAdapter(mMap,this,this);
+        RecordingAdapter adapter = null;//new RecordingAdapter(mMap,this,this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
-
     @Override
     public void onFocusChange(View view, boolean b) {
         if(b){
+
             Log.d("TAG",view.getId()+"");
         }
     }

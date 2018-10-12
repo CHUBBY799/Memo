@@ -3,6 +3,7 @@ package com.shining.memo.presenter;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.Log;
+import android.widget.Button;
 
 import com.shining.memo.utils.ToastUtils;
 
@@ -12,26 +13,21 @@ public class AudioPlayPresenter {
     private static MediaPlayer mMediaPlayer;
     private Context context;
     private onStopPlay onStopPlay;
+    public Button currentButton;
 
     public AudioPlayPresenter(Context context, onStopPlay onStop) {
         this.context = context;
         onStopPlay = onStop;
     }
 
-    public String getPlayFilePath() {
-        return playFilePath;
-    }
-
     public void setPlayFilePath(String playFilePath) {
         this.playFilePath = playFilePath;
     }
 
-    long start;
     public synchronized void doPlay(){
         if(!playFilePath.equals("")){
             //配置播放器 MediaPlayer
             if(mMediaPlayer == null){
-                start = System.currentTimeMillis();
                 mMediaPlayer = new MediaPlayer();
                 try {
                     mMediaPlayer.setDataSource(playFilePath);
@@ -39,15 +35,11 @@ public class AudioPlayPresenter {
                     mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                         @Override
                         public void onCompletion(MediaPlayer mp) {
-                            long end = System.currentTimeMillis();
-                            long interval = (end - start)/1000;
-                            Log.d("interval",String.valueOf(interval));
                             mMediaPlayer.reset();
                             mMediaPlayer.release();
                             mMediaPlayer = null;
                             playFilePath = "";
-                            onStopPlay.onStopPlay();
-                  //          viewAudioSetting.onStopPlay();
+                            onStopPlay.onStopPlay(currentButton);
                         }
                     });
 
@@ -59,10 +51,8 @@ public class AudioPlayPresenter {
                             mMediaPlayer.reset();
                             mMediaPlayer.release();
                             mMediaPlayer = null;
-                 //           mHandlerProgress.removeMessages(MSG_PROGRESS_UPDATE);
-                //            viewAudioSetting.onStopPlay();
                             //释放播放器
-                            onStopPlay.onStopPlay();
+                            onStopPlay.onStopPlay(currentButton);
                             return true;
                         }
                     });
@@ -70,11 +60,6 @@ public class AudioPlayPresenter {
                     mMediaPlayer.setVolume(1,1);
                     mMediaPlayer.setLooping(false);
                     mMediaPlayer.prepare();
-             //       intervalCalculate();
-              //      roundProgress = 0;
-             //       viewAudioSetting.onUpdateProgress(roundProgress);
-             //       st = System.currentTimeMillis();
-            //        mHandlerProgress.sendEmptyMessageDelayed(MSG_PROGRESS_UPDATE, 100);
                     playFilePath = "";
                     mMediaPlayer.start();
 
@@ -86,14 +71,10 @@ public class AudioPlayPresenter {
                     mMediaPlayer.release();
                     mMediaPlayer = null;
                     playFilePath = "";
-                    onStopPlay.onStopPlay();
-                //    mHandlerProgress.removeMessages(MSG_PROGRESS_UPDATE);
-               //     viewAudioSetting.onStopPlay();
+                    onStopPlay.onStopPlay(currentButton);
                 }
             }else {
                 mMediaPlayer.start();
-               // mHandlerProgress.sendEmptyMessage(MSG_PROGRESS_UPDATE);
-
             }
         }
     }
@@ -104,12 +85,16 @@ public class AudioPlayPresenter {
             mMediaPlayer.release();
             mMediaPlayer = null;
             playFilePath = "";
-            onStopPlay.onStopPlay();
+            onStopPlay.onStopPlay(currentButton);
         }
+    }
+
+    public void onPausePlay(){
+        mMediaPlayer.pause();
     }
 
 
     public interface onStopPlay{
-        void onStopPlay();
+        void onStopPlay(Button btn);
     }
 }

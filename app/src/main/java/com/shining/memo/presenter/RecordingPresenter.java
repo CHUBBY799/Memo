@@ -48,7 +48,6 @@ public class RecordingPresenter {
         long taskId = -1;
         try{
             taskId = taskModel.addTask(task,db);
-            ToastUtils.showShort(context,taskId+"");
             Recording recording = new Recording();
             recording.setTaskId((int)taskId);
             recording.setRecordingMap(recordingMap);

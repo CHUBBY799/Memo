@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -73,6 +74,8 @@ import static android.text.Html.FROM_HTML_MODE_COMPACT;
 
 public class RecordingEditActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged,Switch.OnCheckedChangeListener,OnFocusChangeListener{
     private final static  String TAG = "RecordingEditActivity";
+    private static final int REQUEST_AUDIO_PERMISSION = 0xc1;
+    private static final int REQUEST_CAMERA_PERMISSION = 0xc2;
     private static final int MSG_RECORDING = 0x110;
     private static final int REQUEST_ALARM=0xb3;
     private static final int REQUEST_CAMERA=0xa1;
@@ -92,7 +95,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false ,titleOnFocus = false,noBackKey = false,isView = false;
     private String photoPath="";
     private int urgent = 0,alarm = 0,taskId = -1;
-    private boolean isNotification;
+    private boolean isNotification,requestPermission;
     private OonClickView onClickView;
     private Alarm alarmObject;
     private RecordingAdapter adapter;
@@ -118,7 +121,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     protected void onResume() {
         Log.d(TAG, "onResume: ");
         super.onResume();
-        if(isRecording) {
+        if(isRecording && !requestPermission) {
             if(volumePopWindow != null){
                 noBackKey = true;
                 volumePopWindow.dismiss();
@@ -127,6 +130,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit));
             isRecording = false;
         }
+        if(requestPermission)
+            requestPermission = false;
     }
 
     @Override
@@ -233,7 +238,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         photoPresenter = new PhotoPresenter(this);
         recordingPresenter = new RecordingPresenter(this);
         alarmPresenter = new AlarmPresenter(this);
-        taskId = getIntent().getIntExtra("taskId",1);
+        taskId = getIntent().getIntExtra("taskId",-1);
         isNotification = getIntent().getBooleanExtra("isNotification",false);
         if(taskId != -1){
             isView = true;
@@ -293,13 +298,19 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                hideInputMethod(RecordingEditActivity.this,getCurrentFocus());
+            }
+        });
     }
 
     public static Boolean hideInputMethod(Context context, View v) {
         Log.d(TAG, "hideInputMethod: ");
         InputMethodManager imm = (InputMethodManager) context
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
+        if (imm != null && v!= null) {
             return imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         }
         return false;
@@ -491,8 +502,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 }
                 animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
                 isView = true;
-//                adapter.setView(true);
-//                mRecyclerView.clearFocus();
+                adapter.setView(true);
+                mRecyclerView.clearFocus();
                 initData();
             }else{
                 Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
@@ -505,12 +516,11 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             layout = (ConstraintLayout)findViewById(R.id.recroding_edit_root);
         animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_textedit));
     }
+
     private void clickAlarm(){
         Log.d(TAG, "clickAlarm: ");
         Intent alarmIntent = new Intent(this, AlarmActivity.class);
         if(isView){
-            Log.d(TAG,"alarm"+alarm + "taskId" +taskId);
-            Log.d(TAG,alarmObject.toString());
             alarmIntent.putExtra("taskId",taskId);
             alarmIntent.putExtra("alarm",alarm);
         } else {
@@ -587,6 +597,29 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        Log.d(TAG,"onRequestPermissionsResult");
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case REQUEST_AUDIO_PERMISSION:
+                if(grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    isRecording = true;
+                    animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio));
+                    handler.sendEmptyMessageDelayed(MSG_RECORDING,600);
+                    requestPermission = true;
+                }
+                break;
+            case REQUEST_CAMERA_PERMISSION:
+                if(grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_photo));
+                    isPhotoChoosing = true;
+                }
+                break;
+        }
+    }
+
+    @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         Log.d(TAG, "onCheckedChanged: ");
         if (b){
@@ -601,14 +634,9 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private void clickRerecording(){
         Log.d(TAG, "clickRerecording: ");
         try {
-        //    hideInputMethod(this,getCurrentFocus());
             if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)
-                        && shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-                    ToastUtils.showShort(this, "您已经拒绝过一次");
-                }
-                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_AUDIO_PERMISSION);
             } else {
                 isRecording = true;
                 animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio));
@@ -708,7 +736,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
 
     public void animationTranslate(final View oldView, final View newView){
         Log.d(TAG, "animationTranslate: ");
-        final int duration = 500;
+        final int duration = 300;
         Animator animator = ViewAnimationUtils.createCircularReveal(oldView,0,oldView.getHeight()/2,oldView.getWidth(),0);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         animator.setDuration(duration);
@@ -736,10 +764,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         Log.d(TAG, "cliclPhotoRecording: ");
         if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                 ||checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-            if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-                ToastUtils.showShort(this, "您已经拒绝过一次");
-            }
-            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE},1);
+            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE},REQUEST_CAMERA_PERMISSION);
         }else {
             animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_photo));
             isPhotoChoosing = true;

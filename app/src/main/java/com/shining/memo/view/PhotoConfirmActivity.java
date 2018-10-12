@@ -42,7 +42,7 @@ public class PhotoConfirmActivity extends Activity implements View.OnClickListen
             mImageView.setImageBitmap(bm);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            mImageView.setImageResource(R.drawable.alarm_clock_btn_48x48px);
+            mImageView.setImageResource(R.drawable.image_null_icon);
         }
     }
 

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shining.memo.R;
@@ -24,6 +25,8 @@ public class AlarmClockActivity extends Activity{
     private Button mBtnOk;
     private TextView mTvTitle,mTvTime;
     private String time,title;
+    private int urgent;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,7 @@ public class AlarmClockActivity extends Activity{
         mBtnOk = (Button)findViewById(R.id.alarm_ok);
         mTvTitle = (TextView)findViewById(R.id.alarm_title);
         mTvTime = (TextView)findViewById(R.id.alarm_time);
+        imageView = (ImageView)findViewById(R.id.alarmclock_urgent);
         mBtnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,6 +65,7 @@ public class AlarmClockActivity extends Activity{
         try{
             time = getIntent().getStringExtra("time");
             title = getIntent().getStringExtra("title");
+            urgent = getIntent().getIntExtra("urgent",0);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -76,6 +81,8 @@ public class AlarmClockActivity extends Activity{
             mTvTitle.setText(spanned.subSequence(0,spanned.length() - 1));
         else
             mTvTitle.setText("No title!");
+        if(urgent == 0)
+            imageView.setVisibility(View.GONE);
     }
 
     @Override
