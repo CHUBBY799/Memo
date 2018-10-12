@@ -14,8 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shining.memo.R;
-import com.shining.memo.model.Task;
-import com.shining.memo.utils.Utils;
 import com.shining.memo.view.RecordingViewActivity;
 
 import org.json.JSONObject;
@@ -23,6 +21,8 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
+
+import static android.support.v4.text.HtmlCompat.FROM_HTML_MODE_COMPACT;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
 //    private List<Task> tasks;
@@ -136,8 +136,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
                 holder.audioTitle2.setVisibility(View.INVISIBLE);
                 holder.type.setImageResource(R.drawable.text_type_icon);
                 String title=task.getString("title");
-                Spanned spanned= Html.fromHtml(title,Html.FROM_HTML_MODE_COMPACT);
-                if(spanned.length()>0){
+                Spanned spanned = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    spanned = Html.fromHtml(title,FROM_HTML_MODE_COMPACT);
+                }
+                if(spanned != null && spanned.length()>0){
                     title=spanned.subSequence(0,spanned.length()-1).toString();
                 }
                 holder.title.setText(title);

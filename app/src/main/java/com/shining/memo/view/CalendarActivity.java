@@ -17,6 +17,7 @@ import org.joda.time.LocalDate;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.shining.memo.R;
@@ -67,6 +68,7 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         ncalendar.setPoint(pointList);
 
         //根据选择的日期集合查询数据库
+        Collections.reverse(dateList);
         taskDataArr = calendarPresenter.queryData(dateList);
         calendarAdapter.setInfo(taskDataArr, taskDataArr.length());
         recyclerView.setAdapter(calendarAdapter);

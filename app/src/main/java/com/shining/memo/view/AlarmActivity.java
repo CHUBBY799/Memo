@@ -1,12 +1,15 @@
 package com.shining.memo.view;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.ComponentName;
+
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.SpannedString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,8 +19,8 @@ import android.widget.TextView;
 
 import com.shining.memo.R;
 import com.shining.memo.model.Alarm;
-import com.shining.memo.model.TaskModel;
 import com.shining.memo.presenter.AlarmPresenter;
+import com.shining.memo.utils.ToastUtils;
 import com.shining.memo.utils.Utils;
 import com.shining.memo.widget.DatePickerView;
 
@@ -42,8 +45,6 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     private TextView ringtoneReminder;
     private TextView popReminder;
     private AlarmPresenter alarmPresenter;
-    private AlarmManager alarmManager;
-    private PendingIntent pendingIntent;
 
     //需要保存和传递的参数
     private String year;
@@ -51,7 +52,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     private String day;
     private String hour;
     private String minute;
-    private int ringtone;
+    private int ringtone = 1;
     private int pop;
     private int alarm;
     private int taskId;
@@ -266,7 +267,6 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         popSwitch = findViewById(R.id.pop_switch);
         ringtoneReminder = findViewById(R.id.ringtone_reminder);
         popReminder = findViewById(R.id.pop_reminder);
-        alarmManager = (AlarmManager) getSystemService(this.ALARM_SERVICE);
         alarmPresenter = new AlarmPresenter(this);
     }
 

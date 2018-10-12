@@ -33,12 +33,13 @@
     <color name="add_new">#A9A9A9</color>
     <color name="list_finish">#f9883c</color>
 
+    <string name="hint_color">#AAAAAA </string>
     <color name="item_btn_backgroud">#FFF6F0</color>
-    <color name="item_btn_textcolor">#FF8833 </color>
+    <color name="item_btn_textcolor">#FF8833</color>
     <color name="half_transparent_orange">#8EFF8833 </color>
     <color name="photo_divider">#EEEEEE</color>
 
-    <color name="photo_shelter">#8E000000</color>
+    <color name="photo_shelter">#80000000</color>
     <!--calendar color-->
     <color name="calendar_select">#FF8833</color>
     <color name="calendar_unselected">#CCCCCC</color>
@@ -48,12 +49,12 @@
     <color name="textcolor_red">#FF0000</color>
     <color name="textcolor_orange">#FF7F00</color>
     <color name="textcolor_gray">#AAAAAA</color>
-    <color name="textcolor_black">#000000</color>
+    <color name="textcolor_black">#666666</color>
     <color name="textcolor_blue">#4169E1</color>
     <color name="textcolor_purple">#8B008B</color>
-    
-    
-    
+    <color name="alarm_btn_background">#FF8833</color>
+    <color name="volume_background">#B0FF8833</color>
+
      <!--main color-->
     <color name="main_line">#FFEEEEEE</color>
     <color name="main_task_titlecolor">#FF666666</color>

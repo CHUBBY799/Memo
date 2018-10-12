@@ -10,9 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingStart="15dp"
+        android:paddingStart="17dp"
         android:paddingTop="8dp"
-        android:paddingEnd="15dp"
+        android:paddingEnd="17dp"
         android:paddingBottom="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,30 +22,28 @@
             android:id="@+id/photo_shelter"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/half_transparent_orange"
+            android:background="@color/photo_shelter"
             android:visibility="gone">
             <Button
-                android:id="@+id/photo_cancel"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@id/photo_delete"
-                android:background="@drawable/cancel_icon" />
-            <Button
                 android:id="@+id/photo_delete"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@drawable/close_btn_48x48px"
-                android:layout_alignParentRight="true"/>
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@drawable/photo_delete_icon"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"/>
         </RelativeLayout>
 
-        <com.shining.memo.widget.ResizableImageView
+        <com.shining.memo.widget.MaskImageView
+            app:mask_color="#88000000"
+            app:mask_level="foreground"
+            app:is_ignore_alpha="false"
+            app:is_show_mask_on_click="true"
             android:id="@+id/item_imageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:background="@drawable/audio_rerecording_shape"
             android:scaleType="fitCenter" />
-
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

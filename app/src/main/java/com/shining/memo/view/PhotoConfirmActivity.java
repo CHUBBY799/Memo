@@ -32,6 +32,7 @@ public class PhotoConfirmActivity extends Activity implements View.OnClickListen
         mBtnCancel.setOnClickListener(this);
         mImageView = (ImageView)findViewById(R.id.photo_image);
         photoPath = getIntent().getStringExtra("photoPath");
+        Log.d("PhotoConfirmActivity", "onCreate: "+photoPath);
         try {
             FileInputStream in = new FileInputStream(photoPath);
             BitmapFactory.Options options = new BitmapFactory.Options();

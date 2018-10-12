@@ -23,15 +23,6 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
         <activity
-            android:name=".view.MainActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        </activity>
-        <activity
             android:name=".view.AlarmActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
@@ -42,13 +33,15 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".view.RecordingEditActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:windowSoftInputMode="stateVisible|adjustPan|stateHidden|stateAlwaysHidden" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+          <!--android:windowSoftInputMode="stateVisible|adjustPan|stateHidden|stateAlwaysHidden"-->
         <activity
             android:name=".view.PhotoConfirmActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".view.RecordingViewActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".view.AlarmClockActivity"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"/>
         <receiver
             android:name=".receiver.AlarmReceiver"
             android:enabled="true"

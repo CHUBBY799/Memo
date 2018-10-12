@@ -52,38 +52,44 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             final int index = i;
             LinearLayout layout = new LinearLayout(context);
             layout.setOrientation(LinearLayout.HORIZONTAL);
+            layout.setPadding(0,20,0,0);
 
             final TextView content = new TextView(context);
             content.setPadding(32,0,0,0);
             content.setTextColor(context.getColor(R.color.recording_title));
             content.setTextSize(20);
+            content.setGravity(CENTER);
             content.setText(itemContent[position][i]);
 
             final TextView state = new TextView(context);
+            layout.addView(state);
+            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)state.getLayoutParams();
+            lp.width = 65;
+            lp.height= 65;
+            state.setLayoutParams(lp);
             state.setTextColor(context.getColor(R.color.calendar_select));
-            state.setWidth(15);
-            state.setHeight(15);
             state.setGravity(CENTER);
-            state.setBackground(context.getDrawable(R.drawable.non_oval_background));
+            state.setBackground(context.getDrawable(R.drawable.group_2));
             if (itemState[holder.getAdapterPosition()][index]){
-                state.setText("√");
+                state.setBackground(context.getDrawable(R.drawable.group));
+                content.setTextColor(context.getColor(R.color.calendar_unselected));
             }
             state.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (itemState[holder.getAdapterPosition()][index]){
-                        state.setText("");
+                        state.setBackground(context.getDrawable(R.drawable.group_2));
                         content.setTextColor(context.getColor(R.color.recording_title));
                         itemState[holder.getAdapterPosition()][index] = false;
                     }else {
-                        state.setText("√");
+                        state.setBackground(context.getDrawable(R.drawable.group));
                         content.setTextColor(context.getColor(R.color.calendar_unselected));
                         itemState[holder.getAdapterPosition()][index] = true;
                     }
                 }
             });
 
-            layout.addView(state);
+            //layout.addView(state);
             layout.addView(content);
             listItem.addView(layout);
         }

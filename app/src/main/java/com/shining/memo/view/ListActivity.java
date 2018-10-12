@@ -116,7 +116,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             listTitle.requestFocus();
         }else {
             itemArr = listItemAdapter.getItemArr();
-            itemArr.remove(itemArr.length() - 1);
             ListPresenter listPresenter = new ListPresenter(this);
 
             if(id == -1){

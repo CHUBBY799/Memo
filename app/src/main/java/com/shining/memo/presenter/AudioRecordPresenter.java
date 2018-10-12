@@ -142,7 +142,7 @@ public class AudioRecordPresenter {
     };
 
     private int BASE = 100;
-    private int SPACE = 1000;// 间隔取样时间
+    private int SPACE = 100;// 间隔取样时间
     private void updateMicStatus() {
 
         if (mMediaRecorder != null) {

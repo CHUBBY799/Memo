@@ -1,8 +1,12 @@
 package com.shining.memo.adapter;
 
 import android.content.Context;
+
+import android.os.Build;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
@@ -24,7 +28,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
 
     private Context context;
     private int[] task_id;
-    private int[] task_finished;
     private String[] task_title;
     private String[] task_day;
     private String[] task_month;
@@ -39,20 +42,19 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.calendar_item, parent,false));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-        final TextView taskFinished = holder.taskFinished;
         final TextView taskTitle = holder.taskTitle;
         final TextView taskDate = holder.taskDate;
         final TextView taskMonth = holder.taskMonth;
-        //if (task_finished[position] == 0){
-            //taskFinished.setBackground(null);
-        //}
+        final ConstraintLayout calendarItem = holder.calendarItem;
+
         taskTitle.setText(task_title[position]);
         taskDate.setText(task_day[position]);
         taskMonth.setText(task_month[position]);
 
-        holder.taskTitle.setOnClickListener(new View.OnClickListener() {
+        calendarItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, RecordingViewActivity.class);
@@ -70,7 +72,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
     public void setInfo(JSONArray taskDataArr, int length){
         this.length = length;
         task_id = new int[length];
-        task_finished = new int[length];
         task_title = new String[length];
         task_day = new String[length];
         task_month = new String[length];
@@ -78,7 +79,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
             try {
                 JSONObject taskData = taskDataArr.getJSONObject(i);
                 task_id[i] = taskData.getInt("id");
-                task_finished[i] = taskData.getInt("finished");
                 Spanned spanned = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                     spanned = Html.fromHtml(taskData.getString("title"), FROM_HTML_MODE_COMPACT);
@@ -97,17 +97,17 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView taskFinished;
         TextView taskTitle;
         TextView taskDate;
         TextView taskMonth;
+        ConstraintLayout calendarItem;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            taskFinished = itemView.findViewById(R.id.task_finished);
             taskTitle = itemView.findViewById(R.id.task_title);
             taskDate = itemView.findViewById(R.id.task_date);
             taskMonth = itemView.findViewById(R.id.task_month);
+            calendarItem = itemView.findViewById(R.id.calendar_item);
         }
     }
 

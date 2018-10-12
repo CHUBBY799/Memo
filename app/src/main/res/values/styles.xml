@@ -28,5 +28,8 @@
         <item name="android:windowEnterAnimation">@anim/push_popupwindow_in</item>
         <item name="android:windowExitAnimation">@anim/push_popupwindow_out</item>
     </style>
-
+    <style name="dialog_anim" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@null</item>
+        <item name="android:windowExitAnimation">@anim/dialog_out</item>
+    </style>
 </resources>
