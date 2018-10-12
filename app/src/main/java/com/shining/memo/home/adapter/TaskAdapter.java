@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shining.memo.R;
+import com.shining.memo.view.RecordingEditActivity;
 import com.shining.memo.view.RecordingViewActivity;
 
 import org.json.JSONObject;
@@ -75,7 +76,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
                 try{
                     int id=task.getInt("taskId");
                     Log.d("helo", "onClick: "+id);
-                    Intent intent=new Intent(viewGroup.getContext(), RecordingViewActivity.class);
+                    Intent intent=new Intent(viewGroup.getContext(), RecordingEditActivity.class);
                     intent.putExtra("taskId",id);
                     viewGroup.getContext().startActivity(intent);
                 }catch (Exception e){

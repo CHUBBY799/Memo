@@ -16,7 +16,7 @@
         <ImageView
             android:layout_width="22dp"
             android:layout_height="22dp"
-            android:src="@drawable/audio_recording_icon"
+            android:src="@drawable/voice_recording_icon"
             android:layout_marginTop="20dp"
             android:layout_marginStart="18dp"/>
 

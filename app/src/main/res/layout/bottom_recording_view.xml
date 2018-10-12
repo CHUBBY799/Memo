@@ -30,16 +30,16 @@
             android:layout_height="22dp"
             android:layout_marginRight="20dp"
             android:background="@drawable/share_icon"
-            android:layout_toLeftOf="@+id/bottom_alarm"/>
+            android:layout_toLeftOf="@+id/bottom_view_alarm"/>
         <Button
-            android:id="@+id/bottom_alarm"
+            android:id="@+id/bottom_view_alarm"
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:layout_marginRight="20dp"
             android:background="@drawable/alarm_clock_icon"
-            android:layout_toLeftOf="@+id/bottom_urgent"/>
+            android:layout_toLeftOf="@+id/bottom_view_urgent"/>
         <Switch
-            android:id="@+id/bottom_urgent"
+            android:id="@+id/bottom_view_urgent"
             android:layout_width="44dp"
             android:layout_height="22dp"
             android:checked="true"

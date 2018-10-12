@@ -14,6 +14,7 @@ import com.shining.memo.model.Alarm;
 import com.shining.memo.model.AlarmImpl;
 import com.shining.memo.model.AlarmModel;
 import com.shining.memo.model.MemoDatabaseHelper;
+import com.shining.memo.model.Task;
 import com.shining.memo.model.TaskImpl;
 import com.shining.memo.model.TaskModel;
 
@@ -121,11 +122,11 @@ public class AlarmPresenter {
     public void setAlarmNotice(int taskId){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Alarm alarmObject = null;
-        String title = "";
+        Task task = null;
         db.beginTransaction();
         try{
             alarmObject = alarmModel.getAlarm(taskId,db);
-            title = taskModel.getTitle(taskId,db);
+            task = taskModel.getTask(taskId,db);
             db.setTransactionSuccessful();
         }catch (Exception e){
             e.printStackTrace();
@@ -140,7 +141,8 @@ public class AlarmPresenter {
                 intent.putExtra("ringtone",alarmObject.getRingtone());
                 intent.putExtra("pop",alarmObject.getPop());
                 intent.putExtra("taskId",taskId);
-                intent.putExtra("title",title);
+                intent.putExtra("title",task.getTitle());
+                intent.putExtra("urgent",task.getUrgent());
                 intent.putExtra("time",alarmObject.getTime());
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context,taskId,intent,PendingIntent.FLAG_UPDATE_CURRENT);
                 SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm");

@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.shining.memo.R;
 import com.shining.memo.view.CalendarActivity;
+import com.shining.memo.view.RecordingEditActivity;
 import com.shining.memo.view.RecordingViewActivity;
 
 import org.json.JSONArray;
@@ -65,7 +66,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         calendarItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, RecordingViewActivity.class);
+                Intent intent = new Intent(context, RecordingEditActivity.class);
                 intent.putExtra("taskId", task_id[holder.getAdapterPosition()]);
                 context.startActivity(intent);
                 calendarActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

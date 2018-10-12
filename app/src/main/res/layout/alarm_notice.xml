@@ -27,6 +27,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
         <ImageView
+            android:id="@+id/alarmclock_urgent"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:src="@drawable/alarmclock"

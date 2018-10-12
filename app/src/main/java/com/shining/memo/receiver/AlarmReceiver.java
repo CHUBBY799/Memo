@@ -100,6 +100,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 alarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 alarmIntent.putExtra("time",time);
                 alarmIntent.putExtra("title",title);
+                alarmIntent.putExtra("urgent",intent.getIntExtra("urgent",0));
                 context.startActivity(alarmIntent);
             }
             if(ringtone ==1 || pop == 1){

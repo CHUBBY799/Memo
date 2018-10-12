@@ -84,6 +84,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
+        <include android:id="@+id/bottom_recording_view"
+            layout="@layout/bottom_recording_view"
+            android:visibility="gone"/>
         <include android:id="@+id/bottom_recording_edit"
             layout="@layout/bottom_recording_edit"
             android:visibility="visible"/>
@@ -99,6 +102,7 @@
         <include android:id="@+id/bottom_recording_colorpick"
             layout="@layout/bottom_recording_colorpick"
             android:visibility="gone"/>
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
