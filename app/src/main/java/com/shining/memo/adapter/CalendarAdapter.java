@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.shining.memo.R;
+import com.shining.memo.view.CalendarActivity;
 import com.shining.memo.view.RecordingViewActivity;
 
 import org.json.JSONArray;
@@ -27,14 +28,16 @@ import static android.support.v4.text.HtmlCompat.FROM_HTML_MODE_COMPACT;
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyViewHolder> {
 
     private Context context;
+    private CalendarActivity calendarActivity;
     private int[] task_id;
     private String[] task_title;
     private String[] task_day;
     private String[] task_month;
     private int length;
 
-    public CalendarAdapter(Context context) {
+    public CalendarAdapter(Context context, CalendarActivity calendarActivity) {
         this.context = context;
+        this.calendarActivity = calendarActivity;
     }
 
     @Override
@@ -60,6 +63,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                 Intent intent = new Intent(context, RecordingViewActivity.class);
                 intent.putExtra("taskId", task_id[holder.getAdapterPosition()]);
                 context.startActivity(intent);
+                calendarActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
     }

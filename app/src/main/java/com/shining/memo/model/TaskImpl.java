@@ -4,6 +4,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskImpl implements TaskModel {
+    private static final String TAG = "TaskImpl";
     private  MemoDatabaseHelper dbHelper;
     private Context mContext;
     public TaskImpl(Context context){
@@ -219,8 +221,9 @@ public class TaskImpl implements TaskModel {
 
     @Override
     public void finishTaskById(int id) {
+        Log.d(TAG, "finishTaskById: "+ id);
         SQLiteDatabase db=dbHelper.getWritableDatabase();
-        db.execSQL("update task set finished = 1 and alarm = 0 " +
-                "and date = date(?,'localtime') and time = time(?,'localtime') where id = ?",new Object[]{"now","now",id});
+        db.execSQL("update task set finished = 1,alarm = 0 " +
+                ",date = date(?,'localtime'),time = time(?,'localtime') where id = ?",new Object[]{"now","now",id});
     }
 }

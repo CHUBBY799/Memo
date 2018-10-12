@@ -3,6 +3,7 @@ package com.shining.memo.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import static android.view.Gravity.CENTER;
 public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>{
 
     private Context context;
+    private FragmentActivity listFragment;
     private int length;
     private int id[];
     private int selected[];
@@ -32,8 +34,9 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
     private Boolean[][] itemState;
     private String[][] itemContent;
 
-    public ListContent(Context context) {
+    public ListContent(Context context, FragmentActivity listFragment) {
         this.context = context;
+        this.listFragment = listFragment;
     }
 
     @Override
@@ -55,17 +58,17 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             layout.setPadding(0,20,0,0);
 
             final TextView content = new TextView(context);
-            content.setPadding(32,0,0,0);
+            content.setPadding(30,0,0,0);
             content.setTextColor(context.getColor(R.color.recording_title));
-            content.setTextSize(20);
+            content.setTextSize(18);
             content.setGravity(CENTER);
             content.setText(itemContent[position][i]);
 
             final TextView state = new TextView(context);
             layout.addView(state);
             LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)state.getLayoutParams();
-            lp.width = 65;
-            lp.height= 65;
+            lp.width = 44;
+            lp.height= 44;
             state.setLayoutParams(lp);
             state.setTextColor(context.getColor(R.color.calendar_select));
             state.setGravity(CENTER);
@@ -117,6 +120,7 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
                 }
                 intent.putExtra("itemArr", itemArr.toString());
                 context.startActivity(intent);
+                listFragment.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
 
