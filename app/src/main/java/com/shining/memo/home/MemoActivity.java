@@ -148,4 +148,6 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
         textView.setTextSize(24);
         currentClickText=textView;
     }
+
+
 }

@@ -73,83 +73,17 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     private HashMap<Integer,shelterSize> shelter = new HashMap<>();
     private int CurrentIndex = -1,btnIndex = -1;
     private String CurrentType = "";
-    private boolean isView = false,isViewEdit = false;
+    private boolean isView,isViewEdit = false;
     public static int currentColor,colorPos,pos;
     public static boolean typeChanged = false;
     public FontType fontType;
 
-    private ViewChange viewChange;
     public List<String> deletePath;
-
-    public RecordingAdapter(HashMap<Integer,RecordingContent> map,Context context,ViewChange viewChange) {
-        this.map = map;
-        this.context = context;
-        presenter = new AudioPlayPresenter(context,this);
-        isView = true;
-        this.viewChange = viewChange;
-        textChanged = new TextChanged() {
-            @Override
-            public void TextChanged(Spanned text, int index) {
-
-            }
-
-            @Override
-            public Context getContext() {
-                return null;
-            }
-
-            @Override
-            public int getCurrentFirstIndex() {
-                return 0;
-            }
-
-            @Override
-            public int getCurrentLastIndex() {
-                return 0;
-            }
-
-            @Override
-            public HashMap<Integer, RecordingContent> getMap() {
-                return null;
-            }
-
-            @Override
-            public void deleteEditText(HashMap<Integer, RecordingContent> map, int index, int position, String type) {
-
-            }
-
-            @Override
-            public void updateAdapter(int index) {
-
-            }
-
-            @Override
-            public void recyclerViewFocusable() {
-
-            }
-
-            @Override
-            public void recyclerViewClearFocusable() {
-
-            }
-
-            @Override
-            public RecyclerView getRecyclerView() {
-                return null;
-            }
-
-            @Override
-            public void updateRecyclerView(int position) {
-
-            }
-        };
-    }
 
     public RecordingAdapter(HashMap<Integer,RecordingContent> map,Context context,TextChanged textChanged) {
         this.map = map;
         this.context = context;
         presenter = new AudioPlayPresenter(context,this);
-        isView = false;
         this.textChanged =textChanged;
         currentColor = context.getColor(R.color.textcolor_black);
         colorPos = 0;
@@ -236,7 +170,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                     try {
                         FileInputStream in = new FileInputStream(map.get(i).getContent());
                         BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inSampleSize = 8;       //图片的长宽都是原来的1/8
+                        options.inSampleSize = 2;       //图片的长宽都是原来的1/8
                         BufferedInputStream bis = new BufferedInputStream(in);
                         Bitmap bm = BitmapFactory.decodeStream(bis, null, options);
                         photoViewHolder.imageView.setImageBitmap(bm);
@@ -244,15 +178,14 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                         e.printStackTrace();
                         photoViewHolder.imageView.setImageResource(R.drawable.alarm_clock_btn_48x48px);
                     }
-//                    if(shelter.containsKey(i)){
-//                        photoViewHolder.imageView.setVisibility(View.GONE);
-//                        photoViewHolder.relativeLayout.getLayoutParams().width = shelter.get(i).width;
-//                        photoViewHolder.relativeLayout.getLayoutParams().height = shelter.get(i).height;
-//                        photoViewHolder.relativeLayout.setVisibility(View.VISIBLE);
-//                    }else {
-//                        photoViewHolder.imageView.setVisibility(View.VISIBLE);
-//                        photoViewHolder.relativeLayout.setVisibility(View.GONE);
-//                    }
+                    if(shelter.containsKey(i)){
+                        ((MaskImageView)photoViewHolder.imageView).setIsShowMaskOnClick(true);
+                        photoViewHolder.delete.setVisibility(View.VISIBLE);
+
+                    }else {
+                        ((MaskImageView)photoViewHolder.imageView).setIsShowMaskOnClick(false);
+                        photoViewHolder.delete.setVisibility(View.GONE);
+                    }
                 break;
         }
         if(i ==  requestFocusableIndex){
@@ -310,6 +243,10 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         Log.d(TAG, "onStopPlay: btnIndex"+btnIndex);
     }
 
+    public void setView(boolean view) {
+        isView = view;
+    }
+
     public class TextViewHolder extends RecyclerView.ViewHolder implements OnFocusChangeListener,TextWatcher, View.OnKeyListener,TextView.OnEditorActionListener{
 
         public EditText editText;
@@ -331,8 +268,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         public void onFocusChange(View v, boolean hasFocus) {
             if(hasFocus){
                 if(isView){
-                    viewChange.changedView();
-                    isView = false;
+                    textChanged.viewToEdit();
                     return;
                 }
                 CurrentIndex = (int)itemView.getTag();
@@ -374,7 +310,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 editText.setText(mSpanned);
                 editText.setSelection(index);
                 editText.addTextChangedListener(this);
-                fontType.disconnectSpan(mSpanned);
+//                fontType.disconnectSpan(mSpanned);
 
             }
         }
@@ -487,8 +423,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         @Override
         public void onClick(View view) {
             if(isView){
-                viewChange.changedView();
-                isView = false;
+                textChanged.viewToEdit();
                 return;
             }
             itemView.requestFocus();
@@ -509,8 +444,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         public void onFocusChange(View v, boolean hasFocus) {
             if(hasFocus){
                 if(isView){
-                    viewChange.changedView();
-                    isView = false;
+                    textChanged.viewToEdit();
                     return;
                 }
                 CurrentIndex = (int)itemView.getTag();
@@ -616,7 +550,6 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
 
     public class PhotoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
-        private RelativeLayout relativeLayout;
         private Button delete;
         private ImageView imageView;
         public View itemView;
@@ -624,28 +557,18 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             super(itemView);
             this.itemView = itemView;
             imageView = (ImageView)itemView.findViewById(R.id.item_imageView);
-            relativeLayout = (RelativeLayout)itemView.findViewById(R.id.photo_shelter);
             delete = (Button)itemView.findViewById(R.id.photo_delete);
             imageView.setOnClickListener(this);
             delete.setOnClickListener(this);
-            relativeLayout.setOnClickListener(this);
+
         }
 
         @Override
         public void onClick(View view) {
             switch (view.getId()){
-                case R.id.photo_shelter:
-                    if(isView){
-                        viewChange.changedView();
-                        isView = false;
-                        return;
-                    }
-                    photoImageShelterRemove(relativeLayout,imageView,itemView);
-                    break;
                 case R.id.item_imageView:
                     if(isView){
-                        viewChange.changedView();
-                        isView = false;
+                        textChanged.viewToEdit();
                         return;
                     }
                     photoImageShelter(delete,imageView,itemView);
@@ -665,8 +588,6 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                         map.put(i, map.get(i + 1));
                     map.remove(map.size() - 1);
                     textChanged.deleteEditText(map, index, 0, "end");
-                    imageView.setVisibility(View.VISIBLE);
-                    relativeLayout.setVisibility(View.GONE);
                     shelter.remove(index);
                     break;
             }
@@ -681,67 +602,21 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             imm.hideSoftInputFromWindow( v.getApplicationWindowToken( ) , 0 );
         }
         textChanged.recyclerViewClearFocusable();
-
         if(textChanged.getRecyclerView() != null)
             (textChanged.getRecyclerView()).scrollToPosition((int)itemView.getTag());
-
-//        AlphaAnimation appearAnimation = new AlphaAnimation(0, 1);
-//        appearAnimation.setDuration(500);
-//        AlphaAnimation disappearAnimation = new AlphaAnimation(1, 0);
-//        disappearAnimation.setDuration(500);
-//        imageView.startAnimation(disappearAnimation);
-//        disappearAnimation.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//            }
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//                imageView.setVisibility(View.GONE);
-//            }
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//            }
-//        });
-//        relativeLayout.startAnimation(appearAnimation);
-        ((MaskImageView)imageView).setIsShowMaskOnClick(true);
-        btnDelete.setVisibility(View.VISIBLE);
-
-        shelterSize size = new shelterSize();
-        size.width = imageView.getWidth();
-        size.height = imageView.getHeight();
-        shelter.put((int)itemView.getTag(),size);
-    }
-
-    public void photoImageShelterRemove(final RelativeLayout relativeLayout, ImageView imageView, View itemView){
-        Log.d("photoImageShelterRemove","photoImageShelterRemove");
-        View v = (textChanged.getRecyclerView()).getFocusedChild();
-        if(v != null){
-            InputMethodManager imm = (InputMethodManager)context.getSystemService( Context.INPUT_METHOD_SERVICE );
-            imm.hideSoftInputFromWindow( v.getApplicationWindowToken( ) , 0 );
+        if(!((MaskImageView)imageView).isIsShowMaskOnClick()){
+            ((MaskImageView)imageView).setIsShowMaskOnClick(true);
+            btnDelete.setVisibility(View.VISIBLE);
+            shelterSize size = new shelterSize();
+            size.width = imageView.getWidth();
+            size.height = imageView.getHeight();
+            shelter.put((int)itemView.getTag(),size);
+        }else {
+            ((MaskImageView)imageView).setIsShowMaskOnClick(false);
+            btnDelete.setVisibility(View.GONE);
+            shelter.remove((int)itemView.getTag());
         }
-        textChanged.recyclerViewClearFocusable();
-        if(textChanged.getRecyclerView() != null)
-            (textChanged.getRecyclerView()).scrollToPosition((int)itemView.getTag());
-        AlphaAnimation appearAnimation = new AlphaAnimation(0.5f, 1);
-        appearAnimation.setDuration(500);
-        AlphaAnimation disappearAnimation = new AlphaAnimation(1, 0.5f);
-        disappearAnimation.setDuration(500);
-        relativeLayout.startAnimation(disappearAnimation);
-        disappearAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                relativeLayout.setVisibility(View.GONE);
-            }
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-        imageView.startAnimation(appearAnimation);
-        imageView.setVisibility(View.VISIBLE);
-        shelter.remove((int)itemView.getTag());
+
     }
 
 
@@ -1080,10 +955,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         void recyclerViewClearFocusable();
         RecyclerView getRecyclerView();
         void updateRecyclerView(int position);
-    }
-
-    public interface ViewChange{
-         void changedView();
+        void viewToEdit();
     }
 
     class shelterSize{

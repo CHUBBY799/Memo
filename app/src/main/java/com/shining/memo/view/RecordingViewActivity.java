@@ -31,7 +31,7 @@ import java.util.HashMap;
 
 import static android.text.Html.FROM_HTML_MODE_COMPACT;
 
-public class RecordingViewActivity extends Activity implements View.OnClickListener,CompoundButton.OnCheckedChangeListener,RecordingAdapter.ViewChange,View.OnFocusChangeListener {
+public class RecordingViewActivity extends Activity implements View.OnClickListener,CompoundButton.OnCheckedChangeListener,View.OnFocusChangeListener {
     private static final String TAG = RecordingViewActivity.class.getSimpleName();
     private static final int REQUEST_ALARM = 0xa11;
     private static final int REQUEST_EDIT = 0xa12;
@@ -71,8 +71,8 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
         mBtnBack = (Button) view.findViewById(R.id.bottom_back);
         mBtnDelete = (Button) view.findViewById(R.id.bottom_delete);
         mBtnShare = (Button) view.findViewById(R.id.bottom_share);
-        mBtnAlarm = (Button) view.findViewById(R.id.bottom_alarm);
-        mBtnUrgent = (Switch)view.findViewById(R.id.bottom_urgent);
+        mBtnAlarm = (Button) view.findViewById(R.id.bottom_view_alarm);
+        mBtnUrgent = (Switch)view.findViewById(R.id.bottom_view_urgent);
         mEditTitle = (EditText)findViewById(R.id.recording_title);
         mRecyclerView = (RecyclerView)findViewById(R.id.recording_recyclerView);
 
@@ -121,7 +121,7 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
             case R.id.bottom_share:
                 ToastUtils.showShort(this,"TBD");
                 break;
-            case R.id.bottom_alarm:
+            case R.id.bottom_view_alarm:
                 clickAlarm();
                 break;
         }
@@ -187,25 +187,16 @@ public class RecordingViewActivity extends Activity implements View.OnClickListe
         if(urgent == 0)
             mBtnUrgent.setChecked(false);
         mMap = task_recording.getRecording().getRecordingMap();
-        RecordingAdapter adapter = new RecordingAdapter(mMap,this,this);
+        RecordingAdapter adapter = null;// new RecordingAdapter(mMap,this,this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
-    @Override
-    public void changedView(){
-        Intent intent = new Intent();
-        intent.setClass(this, RecordingEditActivity.class);
-        intent.putExtra("taskId",taskId);
-        startActivityForResult(intent,REQUEST_EDIT);
-        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
-    }
 
     @Override
     public void onFocusChange(View view, boolean b) {
         if(b){
-            changedView();
             Log.d("TAG",view.getId()+"");
         }
     }

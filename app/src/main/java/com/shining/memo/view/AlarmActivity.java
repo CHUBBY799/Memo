@@ -125,16 +125,6 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         minute = formatTimeUnit(calendar.get(Calendar.MINUTE));
     }
 
-    private void alarmDelete(){
-        Intent textIntent = new Intent();
-        textIntent.putExtra("alarm",0);
-        if(taskId != -1 && alarm == 1){
-            alarmPresenter.deleteAlarm(taskId);
-        }
-        setResult(RESULT_OK,textIntent);
-        finish();
-    }
-
     private void alarmCancel(){
         setResult(RESULT_CANCELED);
         finish();
@@ -160,12 +150,11 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
                 alarmPresenter.addAlarm(alarmObject);
                 alarmPresenter.setAlarmNotice(taskId);
             }
-        }else {
-            textIntent.putExtra("date",date);
-            textIntent.putExtra("time",time);
-            textIntent.putExtra("ringtone", ringtone);
-            textIntent.putExtra("pop", pop);
         }
+        textIntent.putExtra("date",date);
+        textIntent.putExtra("time",time);
+        textIntent.putExtra("ringtone", ringtone);
+        textIntent.putExtra("pop", pop);
         setResult(RESULT_OK, textIntent);
         finish();
     }

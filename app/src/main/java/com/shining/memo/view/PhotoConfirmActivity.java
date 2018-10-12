@@ -36,7 +36,7 @@ public class PhotoConfirmActivity extends Activity implements View.OnClickListen
         try {
             FileInputStream in = new FileInputStream(photoPath);
             BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 8;//图片的长宽都是原来的1/8
+            options.inSampleSize = 2;//图片的长宽都是原来的1/8
             BufferedInputStream bis = new BufferedInputStream(in);
             Bitmap bm = BitmapFactory.decodeStream(bis, null, options);
             mImageView.setImageBitmap(bm);

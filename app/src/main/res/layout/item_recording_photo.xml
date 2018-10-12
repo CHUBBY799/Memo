@@ -19,11 +19,19 @@
         tools:ignore="MissingConstraints">
 
         <RelativeLayout
-            android:id="@+id/photo_shelter"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/photo_shelter"
-            android:visibility="gone">
+            android:layout_height="wrap_content">
+            <com.shining.memo.widget.MaskImageView
+                app:mask_color="#88000000"
+                app:mask_level="foreground"
+                app:is_ignore_alpha="false"
+                app:is_show_mask_on_click="false"
+                android:id="@+id/item_imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/audio_rerecording_shape"
+                android:scaleType="fitCenter" />
             <Button
                 android:id="@+id/photo_delete"
                 android:layout_width="45dp"
@@ -34,16 +42,5 @@
                 android:visibility="gone"/>
         </RelativeLayout>
 
-        <com.shining.memo.widget.MaskImageView
-            app:mask_color="#88000000"
-            app:mask_level="foreground"
-            app:is_ignore_alpha="false"
-            app:is_show_mask_on_click="true"
-            android:id="@+id/item_imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/audio_rerecording_shape"
-            android:scaleType="fitCenter" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

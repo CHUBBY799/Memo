@@ -49,6 +49,7 @@ import android.widget.Toast;
 
 import com.shining.memo.R;
 import com.shining.memo.adapter.RecordingAdapter;
+import com.shining.memo.home.MemoActivity;
 import com.shining.memo.model.Alarm;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.model.Task;
@@ -79,17 +80,20 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private Button mBtnCancel,mBtnConfirm,mBtnAlarm,mBtnEdit,mBtnRecord,mBtnPhoto,mBtnAudioCancel,mBtnFinish,mBtnGallery,mBtnCamera;
     private Button mBtnBold,mBtnUnderLine,mBtnDeleteLine,mBtnColor,mBtnTextBack;
     private Button mBtnColBack,mBtnColRed,mBtnColOrange,mBtnColBlue,mBtnColPurple,mBtnColGray,mBtnColBlack;
+    private Button mBtnViewBack,mBtnViewDelete,mBtnViewShare,mBtnViewAlarm;
     private ConstraintLayout layout;
-    private Switch mSwitchUrgent;
+    private Switch mSwitchUrgent,mBtnViewUrgent;
     private TextView mTvTime,dialogTv;
     private EditText editTitle;
     private AlertDialog dialog;
     private PopupWindow volumePopWindow;
     private ImageView volumeImage;
     private RecyclerView mRecyclerView;
-    private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false ,titleOnFocus = false,noBackKey = false;
+    private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false ,titleOnFocus = false,noBackKey = false,isView = false;
     private String photoPath="";
     private int urgent = 0,alarm = 0,taskId = -1;
+    private boolean isNotification;
+    private OonClickView onClickView;
     private Alarm alarmObject;
     private RecordingAdapter adapter;
     private HashMap<Integer,RecordingContent> mMap;
@@ -120,7 +124,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 volumePopWindow.dismiss();
                 volumeImage = null;
             }
-            animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
+            animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit));
             isRecording = false;
         }
     }
@@ -140,7 +144,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         Log.d(TAG, "onBackPressed: ");
         if(isPhotoChoosing){
             isPhotoChoosing = false;
-            animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit),500);
+            animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit));
         }else if(isRecording){
             presenter.cancelRecord();
             mTvTime.setText("00:00:00");
@@ -150,16 +154,17 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             }
             handler.removeMessages(MSG_RECORDING);
             isRecording = false;
-            animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
+            animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit));
         }else if(isColorPick){
             isColorPick = false;
-            animationTranslate(findViewById(R.id.bottom_recording_colorpick),findViewById(R.id.bottom_recording_textedit),500);
+            animationTranslate(findViewById(R.id.bottom_recording_colorpick),findViewById(R.id.bottom_recording_textedit));
         }else if(isTextEdit){
             isTextEdit = false;
-            animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit),500);
-        }else if(taskId != -1){
-            finish();
-            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+            animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit));
+        }else if(taskId != -1 && !isView){
+            isView = true;
+            initData();
+            animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
         }else {
             finish();
             overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
@@ -228,10 +233,25 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         photoPresenter = new PhotoPresenter(this);
         recordingPresenter = new RecordingPresenter(this);
         alarmPresenter = new AlarmPresenter(this);
-        taskId = getIntent().getIntExtra("taskId",-1);
-        SpannableString ss = new SpannableString(editTitle.getHint());
-        ss.setSpan(new StyleSpan(Typeface.BOLD),0,ss.length(),Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-        editTitle.setHint(ss);
+        taskId = getIntent().getIntExtra("taskId",1);
+        isNotification = getIntent().getBooleanExtra("isNotification",false);
+        if(taskId != -1){
+            isView = true;
+            View v = findViewById(R.id.bottom_recording_view);
+            v.setVisibility(View.VISIBLE);
+            findViewById(R.id.bottom_recording_edit).setVisibility(View.GONE);
+            mBtnViewBack = (Button)v.findViewById(R.id.bottom_back);
+            mBtnViewDelete = (Button)v.findViewById(R.id.bottom_delete);
+            mBtnViewShare = (Button)v.findViewById(R.id.bottom_share);
+            mBtnViewAlarm = (Button)v.findViewById(R.id.bottom_view_alarm);
+            mBtnViewUrgent = (Switch)v.findViewById(R.id.bottom_view_urgent);
+            onClickView = new OonClickView();
+            mBtnViewBack.setOnClickListener(onClickView);
+            mBtnViewDelete.setOnClickListener(onClickView);
+            mBtnViewShare.setOnClickListener(onClickView);
+            mBtnViewAlarm.setOnClickListener(onClickView);
+            mBtnViewUrgent.setOnCheckedChangeListener(this);
+        }
     }
 
     private void initData(){
@@ -260,12 +280,16 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             }
             urgent = task_recording.getTask().getUrgent();
             if(urgent == 0)
-                mSwitchUrgent.setChecked(false);
+                mBtnViewUrgent.setChecked(false);
+            else
+                mBtnViewUrgent.setChecked(true);
             mMap = task_recording.getRecording().getRecordingMap();
         }
         adapter = new RecordingAdapter(mMap,this,this);
-        if(taskId != -1)
+        if(taskId != -1){
+            adapter.setView(true);
             adapter.setViewEdit(true);
+        }
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -304,29 +328,30 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             View v = findViewById(R.id.linearLayout);
             if (!isShouldHideInput(v, ev) && (isPhotoChoosing)) {
                 isPhotoChoosing = false;
-                animationTranslate(findViewById(R.id.bottom_recording_photo), findViewById(R.id.bottom_recording_edit), 500);
+                animationTranslate(findViewById(R.id.bottom_recording_photo), findViewById(R.id.bottom_recording_edit));
                 return true;
-            }
-            else if (isShouldHideInput(mRecyclerView, ev)) {
+            }else if (isShouldHideInput(mRecyclerView, ev)) {
                 try {
                     v = mRecyclerView.getChildAt(getCurrentLastIndex());
                     int[] leftTop = { 0, 0 };
-                    v.getLocationInWindow(leftTop);
-                    int left = leftTop[0], top = leftTop[1], bottom = top + v.getHeight(), right = left
-                            + v.getWidth();
-                    if (ev.getX() > left && ev.getX() < right &&  ev.getY() < bottom){
-                        return super.dispatchTouchEvent(ev);
-                    }else {
-                        RecordingAdapter.TextViewHolder holder = adapter.getTextViewHolder(mRecyclerView);
-                        holder.editText.requestFocus();
-                        holder.editText.setSelection(holder.editText.getText().length());
-                        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                        imm.showSoftInput(holder.editText, 0);
-                        return true;
+                    if(v != null){
+                        v.getLocationInWindow(leftTop);
+                        int left = leftTop[0], top = leftTop[1], bottom = top + v.getHeight(), right = left
+                                + v.getWidth();
+                        if (ev.getX() > left && ev.getX() < right &&  ev.getY() < bottom){
+                            return super.dispatchTouchEvent(ev);
+                        }else {
+                            RecordingAdapter.TextViewHolder holder = adapter.getTextViewHolder(mRecyclerView);
+                            holder.editText.requestFocus();
+                            holder.editText.setSelection(holder.editText.getText().length());
+                            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                            imm.showSoftInput(holder.editText, 0);
+                            return true;
+                        }
                     }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
             }
         }
         return super.dispatchTouchEvent(ev);
@@ -367,7 +392,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 break;
             case R.id.bottom_textedit_back:
                 isTextEdit = false;
-                animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit),500);
+                animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit));
                 layout.requestFocus();
                 break;
             case R.id.bottom_bold:
@@ -381,7 +406,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 break;
             case R.id.bottom_color:
                 isColorPick = true;
-                animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_colorpick),500);
+                animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_colorpick));
                 break;
             case R.id.bottom_colorpick_back:
                 clickColorBcak();
@@ -423,9 +448,9 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             finish();
             overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         }else {
-            setResult(RESULT_CANCELED);
-            finish();
-            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+            animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
+            isView = true;
+            initData();
         }
     }
     private void clickConfirm(){
@@ -452,6 +477,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             }
         }else {
             task.setId(taskId);
+            if(alarmObject != null)
+                alarmObject.setTaskId(taskId);
             if(recordingPresenter.modifyRecording(task,mMap,alarmObject)){
                 Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
                 alarmPresenter.setAlarmNotice(taskId);
@@ -462,9 +489,11 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                             file.delete();
                     }
                 }
-                setResult(RESULT_OK);
-                finish();
-                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
+                isView = true;
+//                adapter.setView(true);
+//                mRecyclerView.clearFocus();
+                initData();
             }else{
                 Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
             }
@@ -474,17 +503,24 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         isTextEdit = true;
         if(layout == null)
             layout = (ConstraintLayout)findViewById(R.id.recroding_edit_root);
-        animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_textedit),500);
+        animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_textedit));
     }
     private void clickAlarm(){
         Log.d(TAG, "clickAlarm: ");
         Intent alarmIntent = new Intent(this, AlarmActivity.class);
-        if(alarm == 1){
-            alarmIntent.putExtra("date",alarmObject.getDate());
-            alarmIntent.putExtra("time",alarmObject.getTime());
-            alarmIntent.putExtra("pop",alarmObject.getPop());
-            alarmIntent.putExtra("ringtone",alarmObject.getRingtone());
-            alarmIntent.putExtra("alarm",1);
+        if(isView){
+            Log.d(TAG,"alarm"+alarm + "taskId" +taskId);
+            Log.d(TAG,alarmObject.toString());
+            alarmIntent.putExtra("taskId",taskId);
+            alarmIntent.putExtra("alarm",alarm);
+        } else {
+            if(alarm == 1){
+                alarmIntent.putExtra("date",alarmObject.getDate());
+                alarmIntent.putExtra("time",alarmObject.getTime());
+                alarmIntent.putExtra("pop",alarmObject.getPop());
+                alarmIntent.putExtra("ringtone",alarmObject.getRingtone());
+                alarmIntent.putExtra("alarm",1);
+            }
         }
         startActivityForResult(alarmIntent, REQUEST_ALARM);
     }
@@ -505,7 +541,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 break;
             case REQUEST_CAMERA:
                 isPhotoChoosing = false;
-                animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit),500);
+                animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit));
                 if(resultCode == RESULT_OK && !photoPath.equals("")){
                     Log.d("uri", photoPath.toString());
                     onStop(photoPath,"photo");
@@ -515,7 +551,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 break;
             case REQUEST_GALLERY:
                 isPhotoChoosing = false;
-                animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit),500);
+                animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit));
                 if(resultCode == RESULT_OK){
                     Uri uri = data.getData();
                     if(uri != null){
@@ -558,6 +594,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         }else {
             urgent = 0;
         }
+        if(isView)
+            recordingPresenter.modifyUrgent(taskId,urgent);
     }
 
     private void clickRerecording(){
@@ -573,8 +611,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             } else {
                 isRecording = true;
-                animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio),500);
-                handler.sendEmptyMessageDelayed(MSG_RECORDING,1000);
+                animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio));
+                handler.sendEmptyMessageDelayed(MSG_RECORDING,600);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -650,7 +688,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             volumePopWindow.dismiss();
             volumeImage = null;
         }
-        animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
+        animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit));
     }
 
     private void clickFinish(){
@@ -658,13 +696,19 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         presenter.stopRecord();
         isRecording = false;
         mTvTime.setText("00:00:00");
+        if(volumePopWindow != null){
+            noBackKey = true;
+            volumePopWindow.dismiss();
+            volumeImage = null;
+        }
         handler.removeMessages(MSG_RECORDING);
-        animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit),500);
+        animationTranslate(findViewById(R.id.bottom_recording_audio),findViewById(R.id.bottom_recording_edit));
     }
 
 
-    public void animationTranslate(final View oldView, final View newView, final int duration){
+    public void animationTranslate(final View oldView, final View newView){
         Log.d(TAG, "animationTranslate: ");
+        final int duration = 500;
         Animator animator = ViewAnimationUtils.createCircularReveal(oldView,0,oldView.getHeight()/2,oldView.getWidth(),0);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         animator.setDuration(duration);
@@ -697,7 +741,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             }
             requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE},1);
         }else {
-            animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_photo),500);
+            animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_photo));
             isPhotoChoosing = true;
         }
     }
@@ -886,6 +930,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         }else {
             titleOnFocus = false;
         }
+        if(isView)
+            viewToEdit();
     }
 
     private void clickBold(){
@@ -912,7 +958,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
 
     private void clickColorBcak(){
         isColorPick = false;
-        animationTranslate(findViewById(R.id.bottom_recording_colorpick),findViewById(R.id.bottom_recording_textedit),500);
+        animationTranslate(findViewById(R.id.bottom_recording_colorpick),findViewById(R.id.bottom_recording_textedit));
     }
 
     private void clickColorChanged(int pos){
@@ -994,6 +1040,52 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 mBtnColGray.setBackground(getResources().getDrawable(R.drawable.color_ring_gray,null));
                 break;
         }
+    }
+
+    class OonClickView implements View.OnClickListener{
+
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()){
+                case R.id.bottom_back:
+                    returnHomePage();
+                    break;
+                case R.id.bottom_delete:
+                    recordingPresenter.modifyDeleted(taskId,1);
+                    returnHomePage();
+                    break;
+                case R.id.bottom_share:
+                    ToastUtils.showShort(RecordingEditActivity.this,"TBD");
+                    break;
+                case R.id.bottom_view_alarm:
+                    clickAlarm();
+                    break;
+            }
+        }
+    }
+
+    private void returnHomePage(){
+        finish();
+        if(isNotification){
+            Intent intent = new Intent();
+            intent.setClass(this,MemoActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        }else {
+            finish();
+            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        }
+    }
+
+    @Override
+    public void viewToEdit(){
+        animationTranslate(findViewById(R.id.bottom_recording_view),findViewById(R.id.bottom_recording_edit));
+        isView = false;
+        adapter.setView(false);
+        if(urgent == 1)
+            mSwitchUrgent.setChecked(true);
+        else
+            mSwitchUrgent.setChecked(false);
     }
 
 }
