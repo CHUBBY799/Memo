@@ -84,7 +84,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
                         itemArr.remove(contentIndex);
                         setInfo(itemArr, itemArr.length());
                         notifyItemRemoved(contentIndex);
-                        if (contentIndex != length - 1){
+                        if (contentIndex != length - 1 || contentIndex == 0){
                             notifyItemRangeChanged(contentIndex,length - contentIndex);
                         }
                     }else {
