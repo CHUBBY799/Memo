@@ -138,6 +138,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     private void alarmCancel(){
         setResult(RESULT_CANCELED);
         finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     private void alarmSave(){
@@ -168,6 +169,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         }
         setResult(RESULT_OK, textIntent);
         finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     public void setSelectedTime() {
@@ -342,4 +344,15 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
 }

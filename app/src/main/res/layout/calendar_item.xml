@@ -6,12 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/gray_rectangle_background"
-    android:layout_marginTop="8dp">
+    android:layout_marginTop="3dp">
 
     <TextView
         android:id="@+id/task_finished"
-        android:layout_width="15dp"
-        android:layout_height="14dp"
+        android:layout_width="14dp"
+        android:layout_height="11dp"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="16dp"
         android:background="@drawable/finish_icon"
@@ -24,7 +24,7 @@
         android:id="@+id/task_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="10dp"
         android:textSize="18sp"
         android:textColor="@color/recording_title"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -38,7 +38,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="3dp"
         android:textColor="@color/recording_title"
-        android:textSize="30sp"
+        android:textSize="26sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

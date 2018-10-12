@@ -118,9 +118,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         }catch (JSONException e){
             e.printStackTrace();
         }
-        addItem.setFocusable(true);
-        addItem.setFocusableInTouchMode(true);
-        addItem.requestFocus();
+        listTitle.setFocusable(true);
+        listTitle.setFocusableInTouchMode(true);
+        listTitle.requestFocus();
     }
 
     /**

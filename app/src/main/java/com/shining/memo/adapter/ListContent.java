@@ -58,7 +58,7 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             layout.setPadding(0,20,0,0);
 
             final TextView content = new TextView(context);
-            content.setPadding(32,0,0,0);
+            content.setPadding(30,0,0,0);
             content.setTextColor(context.getColor(R.color.recording_title));
             content.setTextSize(18);
             content.setGravity(CENTER);
@@ -67,8 +67,8 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             final TextView state = new TextView(context);
             layout.addView(state);
             LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)state.getLayoutParams();
-            lp.width = 65;
-            lp.height= 65;
+            lp.width = 44;
+            lp.height= 44;
             state.setLayoutParams(lp);
             state.setTextColor(context.getColor(R.color.calendar_select));
             state.setGravity(CENTER);

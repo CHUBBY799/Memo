@@ -11,24 +11,24 @@
         android:layout_height="130dp"
         android:background="@color/white">
 
-        <TextView
-            xmlns:tools="http://schemas.android.com/tools"
-            tools:ignore="all"
+        <TextView xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/calendar_month"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="50dp"
+            android:textStyle="bold"
             android:textColor="@color/calendar_select"
-            android:textSize="30sp" />
+            android:textSize="24sp"
+            tools:ignore="all" />
 
         <Button
             android:id="@+id/calendar_close"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginTop="52dp"
+            android:layout_marginTop="55dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="20dp"
             android:background="@drawable/close_icon"
             android:gravity="center"
             android:minHeight="0dp"
