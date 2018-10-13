@@ -20,6 +20,7 @@ import com.shining.memo.presenter.MemoContract;
 import com.shining.memo.presenter.TaskPresenter;
 import com.shining.memo.view.CalendarActivity;
 
+import com.shining.memo.view.NoteActivity;
 import com.shining.memo.view.RecordingEditActivity;
 
 import com.shining.memo.view.ListActivity;
@@ -30,6 +31,7 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
     private Fragment currentFragment;
     private TaskFragment taskFragment;
     private ListFragment listFragment;
+    private NoteFragment noteFragment;
 
     private TextView task,list,note,addText,currentClickText;
     private ImageButton calendar;
@@ -115,6 +117,11 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
                 break;
             case R.id.main_titlebar_note:
                 onClickTitle((TextView)v);
+                if(noteFragment == null){
+                    noteFragment = new NoteFragment();
+                }
+                switchFragment(noteFragment).commit();
+                addText.setText(getResources().getString(R.string.main_add_note));
                 break;
             case R.id.main_titlebar_add:
                 onClickAdd(v);
@@ -131,8 +138,8 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
             Intent calendarIntent = new Intent(this, RecordingEditActivity.class);
             startActivity(calendarIntent);
         }else if(currentFragment instanceof NoteFragment){
-            //添加add note跳转
-            Log.d(TAG, "onClickAdd: ");
+            Intent calendarIntent = new Intent(this, NoteActivity.class);
+            startActivity(calendarIntent);
         }else {
             Intent listActivity = new Intent(this, ListActivity.class);
             startActivity(listActivity);

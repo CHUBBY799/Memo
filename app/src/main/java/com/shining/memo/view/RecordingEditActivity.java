@@ -169,9 +169,11 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         }else if(taskId != -1 && !isView){
             isView = true;
             initData();
+            adapter.presenter.onStop();
             animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
         }else {
             finish();
+            adapter.presenter.onStop();
             overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         }
     }
@@ -183,6 +185,9 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         mBtnConfirm = (Button)view.findViewById(R.id.bottom_confirm);
         mBtnAlarm = (Button)view.findViewById(R.id.bottom_alarm);
         mBtnEdit = (Button)view.findViewById(R.id.bottom_textedit);
+        mSwitchUrgent = (Switch)view.findViewById(R.id.bottom_urgent);
+        mBtnRecord = (Button)view.findViewById(R.id.bottom_audio);
+        mBtnPhoto = (Button)view.findViewById(R.id.bottom_photo);
         view =  (View)findViewById(R.id.bottom_recording_audio);
         mBtnAudioCancel = (Button)view.findViewById(R.id.audio_cancel);
         mBtnFinish = (Button)view.findViewById(R.id.audio_finish);
@@ -205,9 +210,6 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         mBtnColPurple = (Button)view.findViewById(R.id.colorpick_purple);
         mBtnColGray = (Button)view.findViewById(R.id.colorpick_gray);
 
-        mSwitchUrgent = (Switch)findViewById(R.id.bottom_urgent);
-        mBtnRecord = (Button)findViewById(R.id.bottom_audio);
-        mBtnPhoto = (Button)findViewById(R.id.bottom_photo);
         mRecyclerView = (RecyclerView)findViewById(R.id.recording_recyclerView);
         editTitle = (EditText)findViewById(R.id.recording_title);
         editTitle.setOnFocusChangeListener(this);
@@ -446,6 +448,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
 
     private void clickCancel(){
         Log.d(TAG, "clickCancel: ");
+        adapter.presenter.onStop();
         if(taskId == -1){
             for(int i = 0; i < mMap.size(); i++){
                 if((mMap.get(i).getType().equals("audio"))||(mMap.get(i).getType().equals("photo")
@@ -466,10 +469,12 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     }
     private void clickConfirm(){
         Log.d(TAG, "clickConfirm: ");
+        adapter.presenter.onStop();
         Task task = new Task();
         task.setType(taskType());
         task.setUrgent(urgent);
         task.setAlarm(alarm);
+        task.setCategory("task");
         String html = Html.toHtml(new SpannedString(editTitle.getText()));
         if(html.length() > 0)
             html = html.substring(0,html.length() -1);

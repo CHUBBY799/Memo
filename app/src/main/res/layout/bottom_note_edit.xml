@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="MissingConstraints">
+
+        <Button
+            android:id="@+id/bottom_cancel"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:background="@drawable/cancel_icon" />
+
+        <Button
+            android:id="@+id/bottom_photo"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/import_images_icon"
+            android:layout_toLeftOf="@+id/bottom_audio"/>
+
+        <Button
+            android:id="@+id/bottom_audio"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/audio_recording_icon"
+            android:layout_toLeftOf="@+id/bottom_textedit"/>
+
+        <Button
+            android:id="@+id/bottom_textedit"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/text_edit_icon"
+            android:layout_toLeftOf="@+id/bottom_confirm"/>
+
+        <Button
+            android:id="@+id/bottom_confirm"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:background="@drawable/save_icon"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

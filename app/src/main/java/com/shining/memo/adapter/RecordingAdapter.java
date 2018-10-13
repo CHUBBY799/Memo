@@ -40,6 +40,7 @@ import com.shining.memo.R;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.presenter.AudioPlayPresenter;
 import com.shining.memo.widget.MaskImageView;
+import com.shining.memo.widget.SelectEditText;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -63,7 +64,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     private String TAG ="RecordingAdapter";
     private HashMap<Integer,RecordingContent> map;
     private Context context;
-    private AudioPlayPresenter presenter;
+    public AudioPlayPresenter presenter;
     private TextChanged textChanged;
     public int requestFocusableIndex = -1,position = 0;
     private String type = "";
@@ -260,9 +261,10 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
 
     public class TextViewHolder extends RecyclerView.ViewHolder implements OnFocusChangeListener,TextWatcher, View.OnKeyListener,TextView.OnEditorActionListener{
 
-        public EditText editText;
+        public SelectEditText editText;
         private View itemView;
         private SpannableString mSpanned;
+        private SelectEditText.EditTextSelectChange editTextSelectChange;
 
         public TextViewHolder(View itemView) {
             super(itemView);
@@ -273,6 +275,13 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             editText.setOnFocusChangeListener(this);
             editText.addTextChangedListener(this);
             editText.setOnKeyListener(this);
+            editTextSelectChange = new SelectEditText.EditTextSelectChange() {
+                @Override
+                public void change(int lastPos, int curPos) {
+                    Log.d(TAG, "change: ");
+                }
+            };
+            editText.setEditTextSelectChange(editTextSelectChange);
         }
 
         @Override

@@ -8,6 +8,7 @@ import android.util.Log;
 public class MemoDatabaseHelper extends SQLiteOpenHelper{
     public static final String CREATE_TASK="create table task("
             +"id integer primary key autoincrement, "
+            +"category text, "
             +"type text, "
             +"date text, "
             +"time text, "

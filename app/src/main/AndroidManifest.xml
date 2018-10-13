@@ -44,6 +44,8 @@
             android:theme="@style/OrangeTheme" />
         <activity android:name=".view.AlarmClockActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog"/>
+        <activity android:name=".view.NoteActivity"
+            android:theme="@style/OrangeTheme"/>
 
         <receiver
             android:name=".receiver.AlarmReceiver"

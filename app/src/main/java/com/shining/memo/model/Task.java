@@ -4,6 +4,7 @@ import java.sql.Date;
 
 public class Task {
     private long id;
+    private String category; // task or note
     private String type;   // audio or text
     private String date;
     private String time;
@@ -83,6 +84,14 @@ public class Task {
 
     public void setFinished(int finished) {
         this.finished = finished;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     @Override

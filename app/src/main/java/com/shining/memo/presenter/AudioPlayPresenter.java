@@ -106,8 +106,10 @@ public class AudioPlayPresenter {
             mMediaPlayer = null;
             playFilePath = "";
             onStopPlay.onStopPlay(currentButton);
-            mTvTime.setText(timeDuration);
-            seekBar.setProgress(0);
+            if(mTvTime != null)
+                mTvTime.setText(timeDuration);
+            if(seekBar != null)
+                seekBar.setProgress(0);
         }
     }
 
