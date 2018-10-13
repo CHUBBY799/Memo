@@ -36,4 +36,5 @@
         <item name="android:statusBarColor">@color/item_btn_textcolor</item>
     </style>
 
+
 </resources>

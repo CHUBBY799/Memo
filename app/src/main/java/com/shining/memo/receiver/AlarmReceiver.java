@@ -57,15 +57,16 @@ public class AlarmReceiver extends BroadcastReceiver {
                     NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH);
                     notificationManager.createNotificationChannel(mChannel);
                     notification = new Notification.Builder(context,id)
+                            .setStyle(new Notification.BigTextStyle())
                             .setTicker("Memo has new recording notice")
                             .setContentTitle("Memo has new recording notice")
                             .setContentText(title)
-                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setSmallIcon(R.drawable.finish_icon)
                             .setPriority(Notification.PRIORITY_HIGH)
                             .setDefaults(Notification.DEFAULT_ALL)
                             .setAutoCancel(true)
                             .setOngoing(false)
-                            .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),R.drawable.import_from_gallery_icon))
+                            .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),R.drawable.app_launch_icon))
                             .setContentIntent(pendingIntent)
                             .setOnlyAlertOnce(true)
                             .setWhen(System.currentTimeMillis())

@@ -33,6 +33,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.shining.memo.R;
@@ -151,17 +152,19 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                     mediaPlayer.reset();
                     mediaPlayer.release();
                     mediaPlayer = null;
-                    audioViewHolder.button.setText(sdf.format(new Date(time)));
+                    audioViewHolder.totalTime = time;
+                    audioViewHolder.tvTime.setText(sdf.format(new Date(time)));
                 } catch (IOException e) {
                     e.printStackTrace();
-                    audioViewHolder.button.setText(sdf.format(new Date(0)));
+                    audioViewHolder.totalTime = 0;
+                    audioViewHolder.tvTime.setText(sdf.format(new Date(0)));
                 }
-                changedBtnDrawable(0,audioViewHolder.button);
+                changedBtnDrawable(0,audioViewHolder.btnPlay);
                 audioViewHolder.editTextEnd.setWidth(2000);
                 audioViewHolder.filePath = map.get(i).getContent();
                 audioViewHolder.itemView.setTag(i);
                 if(btnIndex == i && isPlaying == true)
-                    changedBtnDrawable(1,audioViewHolder.button);
+                    changedBtnDrawable(1,audioViewHolder.btnPlay);
                 break;
             case "photo":
                     photoViewHolder = ((PhotoViewHolder)viewHolder);
@@ -247,8 +250,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 drawable = context.getDrawable(R.drawable.play_audio_icon);
             else
                 drawable = context.getDrawable(R.drawable.back_icon);
-            drawable.setBounds(0,0,35,35);
-            button.setCompoundDrawables(drawable,null,null,null);
+            button.setBackground(drawable);
         }
     }
 
@@ -403,21 +405,28 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     }
 
     private static boolean isChanged = true;
-    public class AudioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,OnFocusChangeListener, View.OnKeyListener,TextWatcher,TextView.OnEditorActionListener
+    public class AudioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,OnFocusChangeListener, View.OnKeyListener,TextWatcher,TextView.OnEditorActionListener, SeekBar.OnSeekBarChangeListener
     {
-        public Button button;
+        public Button btnPlay,btnDelete;
         public EditText editTextStart,editTextEnd;
+        public TextView tvTime;
+        public SeekBar seekBar;
+        private long totalTime;
         private String filePath;
         private View itemView;
         private int textChangedId;
 
         public AudioViewHolder(View itemView) {
             super(itemView);
-            button = itemView.findViewById(R.id.item_btn);
+            btnPlay = itemView.findViewById(R.id.item_btn_play);
+            btnDelete = itemView.findViewById(R.id.item_btn_delete);
+            tvTime = itemView.findViewById(R.id.audio_time);
+            seekBar = itemView.findViewById(R.id.audio_seekbar);
             editTextStart = itemView.findViewById(R.id.btn_edit_strat);
             editTextEnd = itemView.findViewById(R.id.btn_edit);
             this.itemView =itemView;
-            button.setOnClickListener(this);
+            btnPlay.setOnClickListener(this);
+            btnDelete.setOnClickListener(this);
             editTextStart.setOnFocusChangeListener(this);
             editTextStart.setOnKeyListener(this);
             editTextStart.addTextChangedListener(this);
@@ -426,6 +435,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             editTextEnd.setOnKeyListener(this);
             editTextEnd.addTextChangedListener(this);
             editTextEnd.setOnEditorActionListener(this);
+            seekBar.setOnSeekBarChangeListener(this);
         }
         @Override
         public void onClick(View view) {
@@ -433,30 +443,51 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 textChanged.viewToEdit();
                 return;
             }
-            textChanged.recyclerViewClearFocusable();
-            if(btnIndex == (int)itemView.getTag()){
-                if(isPlaying){
-                    presenter.onPausePlay();
-                    changedBtnDrawable(0,button);
-                    isPlaying = false;
-                }
-                else{
-                    presenter.setPlayFilePath(filePath);
-                    presenter.doPlay();
-                    changedBtnDrawable(1,button);
-                    isPlaying = true;
-                }
-            }else {
-                if(btnIndex != -1){
-                    presenter.onStop();
-                    changedBtnDrawable(0, presenter.currentButton);
-                }
-                presenter.currentButton = button;
-                presenter.setPlayFilePath(filePath);
-                presenter.doPlay();
-                isPlaying = true;
-                btnIndex = (int)itemView.getTag();
-                changedBtnDrawable(1,button);
+            switch (view.getId()){
+              case R.id.item_btn_delete:
+                  int index = (int)itemView.getTag();
+                  HashMap<Integer, RecordingContent> map = textChanged.getMap();
+                  String filepath = map.get(index).getContent();
+                  if(isViewEdit)
+                      deletePath.add(filepath);
+                  else{
+                      File file = new File(filepath);
+                      if (file.exists())
+                          file.delete();
+                  };
+                  for (int i = index; i < map.size() - 1; i++)
+                      map.put(i, map.get(i + 1));
+                  map.remove(map.size() - 1);
+                  textChanged.deleteEditText(map, index, 0, "end");
+                    break;
+              case R.id.item_btn_play:
+                  textChanged.recyclerViewClearFocusable();
+                  if(btnIndex == (int)itemView.getTag()){
+                      if(isPlaying){
+                          presenter.onPausePlay();
+                          changedBtnDrawable(0,btnPlay);
+                          isPlaying = false;
+                      }
+                      else{
+                          presenter.doPlay();
+                          changedBtnDrawable(1,btnPlay);
+                          isPlaying = true;
+                      }
+                  }else {
+                      if(btnIndex != -1){
+                          presenter.onStop();
+                      }
+                      presenter.timeDuration = tvTime.getText().toString();
+                      presenter.currentButton = btnPlay;
+                      presenter.mTvTime = tvTime;
+                      presenter.seekBar = seekBar;
+                      presenter.setPlayFilePath(filePath);
+                      presenter.doPlay();
+                      isPlaying = true;
+                      btnIndex = (int)itemView.getTag();
+                      changedBtnDrawable(1,btnPlay);
+                  }
+                break;
             }
         }
         @Override
@@ -564,6 +595,47 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 textChanged.updateAdapter(index);
             }
             return false;
+        }
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if(btnIndex == (int)itemView.getTag() && isPlaying){
+                presenter.removeHandler();
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            tvTime.setText(sdf.format(new Date((int)(totalTime - progress*1.0f/100*totalTime))));
+        }
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) { }
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            textChanged.recyclerViewClearFocusable();
+            if(btnIndex == (int)itemView.getTag()){
+                if(isPlaying){
+                    presenter.seekTo(seekBar.getProgress());
+                }
+                else{
+                    presenter.doPlay();
+                    changedBtnDrawable(1,btnPlay);
+                    isPlaying = true;
+                    presenter.seekTo(seekBar.getProgress());
+                }
+            }else {
+                if(btnIndex != -1){
+                    presenter.onStop();
+                }
+                presenter.timeDuration = tvTime.getText().toString();
+                presenter.currentButton = btnPlay;
+                presenter.mTvTime = tvTime;
+                presenter.seekBar = seekBar;
+                presenter.setPlayFilePath(filePath);
+                presenter.doPlay();
+                isPlaying = true;
+                btnIndex = (int)itemView.getTag();
+                changedBtnDrawable(1,btnPlay);
+                presenter.seekTo(seekBar.getProgress());
+            }
         }
     }
 
@@ -981,6 +1053,8 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         int width;
         int height;
     }
+
+
 
 }
 

@@ -95,7 +95,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false ,titleOnFocus = false,noBackKey = false,isView = false;
     private String photoPath="";
     private int urgent = 0,alarm = 0,taskId = -1;
-    private boolean isNotification,requestPermission;
+    private boolean isNotification,requestPermission,alarmChanged;
     private OonClickView onClickView;
     private Alarm alarmObject;
     private RecordingAdapter adapter;
@@ -478,7 +478,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         if(taskId == -1){
             long id = 0;
             if( (id = recordingPresenter.saveRecording(task,mMap,alarmObject)) != -1){
-                alarmPresenter.setAlarmNotice((int)id);
+                if(alarmChanged)
+                    alarmPresenter.setAlarmNotice((int)id);
                 Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
                 setResult(RESULT_OK);
                 finish();
@@ -492,7 +493,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 alarmObject.setTaskId(taskId);
             if(recordingPresenter.modifyRecording(task,mMap,alarmObject)){
                 Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
-                alarmPresenter.setAlarmNotice(taskId);
+                if(alarmChanged)
+                    alarmPresenter.setAlarmNotice(taskId);
                 if(adapter.deletePath != null && adapter.deletePath.size() > 0){
                     for(int i=0; i < adapter.deletePath.size(); i++){
                         File file = new File(adapter.deletePath.get(i));
@@ -547,6 +549,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                     alarmObject.setPop(data.getIntExtra("pop",0));
                     alarmObject.setRingtone(data.getIntExtra("ringtone",0));
                     alarm =  data.getIntExtra("alarm",1);
+                    alarmChanged = true;
                 }
                 break;
             case REQUEST_CAMERA:

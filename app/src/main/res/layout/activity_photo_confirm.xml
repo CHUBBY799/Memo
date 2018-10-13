@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#000000">
-    <com.shining.memo.widget.ResizableImageView
+    <com.shining.memo.widget.MaskImageView
+        app:is_show_mask_on_click="false"
+        app:is_ignore_alpha="false"
         android:id="@+id/photo_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="MissingConstraints" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="#E0000000">
+        android:background="#E0000000"
+        tools:ignore="MissingConstraints">
         <Button
             android:id="@+id/photo_cancel"
             android:layout_width="wrap_content"
