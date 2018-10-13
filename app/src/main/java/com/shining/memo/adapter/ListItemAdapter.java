@@ -23,7 +23,6 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
     private JSONArray itemArr;
     private boolean[] state;
     private String[] content;
-    private int addNum;
 
     public ListItemAdapter(Context context) {
         this.context = context;
@@ -132,12 +131,6 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
     }
 
     public void addInfo(JSONObject item){
-        if (++addNum == 1 && length == 1 && content[0].equals("")){
-            itemArr.remove(0);
-            setInfo(itemArr, itemArr.length());
-            notifyItemRemoved(0);
-            notifyItemChanged(0);
-        }
         itemArr.put(item);
         setInfo(itemArr, itemArr.length());
         addItem = true;

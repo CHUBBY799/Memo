@@ -49,6 +49,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             }catch (JSONException e){
                 e.printStackTrace();
             }
+        }else {
+            title = "";
+            itemArr = new JSONArray();
         }
 
         initView();
@@ -176,19 +179,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      * 初始化数据
      */
     private void initData(){
-        if(id == -1){
-            itemArr = new JSONArray();
-            JSONObject itemInfo = new JSONObject();
-            try{
-                itemInfo.put("state", false);
-                itemInfo.put("content", "");
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-            itemArr.put(itemInfo);
-        }else {
-            listTitle.setText(title);
-        }
+        listTitle.setText(title);
         listItemAdapter.setInfo(itemArr, itemArr.length());
         listContent.setAdapter(listItemAdapter);
     }

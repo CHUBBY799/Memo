@@ -3,11 +3,6 @@
     android:shape="rectangle">
     <!-- corners设置圆角，只适用于rectangle -->
     <corners android:radius="5dp" />
-    <!-- stroke设置描边 -->
-    <stroke
-        android:width="1dp"
-        android:color="@android:color/darker_gray"
-        />
     <!--背景颜色，具体颜色自行在color文件设置-->
     <solid android:color="@color/colorWhite"/>
 </shape>
