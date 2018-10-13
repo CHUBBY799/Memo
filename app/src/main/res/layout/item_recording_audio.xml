@@ -1,56 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints">
-        <EditText
-            android:id="@+id/btn_edit_strat"
-            android:layout_width="17dp"
-            android:layout_height="match_parent"
-            android:background="@null"
-            android:gravity="right|center_vertical"
-            android:paddingBottom="5dp"
-            android:paddingTop="10dp"
-            android:singleLine="true"
-            android:textCursorDrawable="@drawable/cursor"
-            android:textColor="@color/alarm_background"
-            android:textSize="25dp" />
-        <Button
-            android:id="@+id/item_btn"
-            android:layout_width="139.5dp"
+
+    <EditText
+        android:id="@+id/btn_edit_strat"
+        android:layout_width="17dp"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:gravity="right|center_vertical"
+        android:paddingTop="10dp"
+        android:paddingBottom="5dp"
+        android:singleLine="true"
+        android:textColor="@color/recording_title"
+        android:textCursorDrawable="@drawable/cursor"
+        android:textSize="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
+
+        <RelativeLayout
+            android:layout_width="300dp"
             android:layout_height="35dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="5dp"
             android:background="@drawable/audio_rerecording_shape"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
-            android:textColor="@color/item_btn_textcolor"
-            android:textSize="16dp"
-            android:textStyle="bold"
-            android:paddingLeft="22dp"
-            android:drawablePadding="15dp"
-            style="?android:attr/borderlessButtonStyle"
-            />
-        <EditText
-            android:id="@+id/btn_edit"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@null"
-            android:gravity="left|center_vertical"
-            android:paddingBottom="5dp"
-            android:paddingTop="10dp"
-            android:singleLine="true"
-            android:imeOptions="actionNext"
-            android:textCursorDrawable="@drawable/cursor"
-            android:textColor="@color/alarm_background"
-            android:textSize="25dp" />
-    </LinearLayout>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_edit"
+            app:layout_constraintStart_toEndOf="@id/btn_edit_strat"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <Button
+                android:id="@+id/item_btn_play"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="17.5dp"
+                android:layout_height="17.5dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="15dp"
+                android:background="@drawable/play_audio_icon"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"/>
+
+            <TextView
+                android:id="@+id/start_divider"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_toRightOf="@id/item_btn_play"
+                android:background="@color/half_transparent_orange" />
+
+            <SeekBar
+                android:id="@+id/audio_seekbar"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@id/audio_time"
+                android:layout_toRightOf="@id/start_divider"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:splitTrack="false"
+                android:thumbOffset="0dp"
+                android:progress="0"
+                android:thumb="@drawable/seekbar_thumb"
+                android:progressDrawable="@drawable/seekbar_progress" />
+
+            <TextView
+                android:id="@+id/audio_time"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="5dp"
+                android:textColor="@color/item_btn_textcolor"
+                android:textSize="16dp"
+                android:text="00:00:00"
+                android:gravity="center"
+                android:layout_toLeftOf="@id/end_divider" />
+
+            <TextView
+                android:id="@+id/end_divider"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@id/item_btn_delete"
+                android:background="@color/half_transparent_orange" />
+            <Button
+                android:id="@+id/item_btn_delete"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="17.5dp"
+                android:layout_height="17.5dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/delete_icon"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+
+    <EditText
+        android:id="@+id/btn_edit"
+        android:layout_width="17dp"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:gravity="left|center_vertical"
+        android:imeOptions="actionNext"
+        android:paddingTop="10dp"
+        android:paddingBottom="5dp"
+        android:singleLine="true"
+        android:textColor="@color/recording_title"
+        android:textCursorDrawable="@drawable/cursor"
+        android:textSize="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="MissingConstraints" />
+
 </android.support.constraint.ConstraintLayout>
