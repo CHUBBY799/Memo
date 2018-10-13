@@ -7,6 +7,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -26,6 +27,7 @@ import java.util.logging.LogRecord;
 import static android.support.v4.text.HtmlCompat.FROM_HTML_MODE_COMPACT;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
+    private static final String TAG = "TaskAdapter";
 //    private List<Task> tasks;
 //    private List<Boolean> hasAudio;
 //    private List<String> alarms;
@@ -84,35 +86,80 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
                 }
             }
         });
-        holder.complete.setOnClickListener(new View.OnClickListener() {
+//        holder.complete.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!click) {
+//                    click=true;
+//                    final int position = holder.getLayoutPosition();
+//                    final JSONObject task = tasks.get(position);
+//                    try {
+//                        final int id = task.getInt("taskId");
+//                        Log.d("hh", "onClick: "+id);
+//                        holder.confirm.setVisibility(View.VISIBLE);
+//                        callback.finishTaskById(id);
+//                        holder.complete.setClickable(false);
+//                        holder.mView.setClickable(false);
+//                        tasks.remove(position);
+//                        android.os.Handler handler = new android.os.Handler();
+//                        handler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                notifyItemRemoved(position);
+//                                notifyItemRangeRemoved(position,tasks.size());
+//                                click=false;
+//                            }
+//                        }, 1000);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                }
+//            }
+//        });
+        holder.complete.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                if (!click) {
-                    click=true;
-                    final int position = holder.getLayoutPosition();
-                    final JSONObject task = tasks.get(position);
-                    try {
-                        final int id = task.getInt("taskId");
-                        Log.d("hh", "onClick: "+id);
-                        holder.confirm.setVisibility(View.VISIBLE);
-                        callback.finishTaskById(id);
-                        holder.complete.setClickable(false);
-                        holder.mView.setClickable(false);
-                        tasks.remove(position);
-                        android.os.Handler handler = new android.os.Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                notifyItemRemoved(position);
-                                notifyItemRangeRemoved(position,tasks.size());
-                                click=false;
+            public boolean onTouch(View v, MotionEvent event) {
+                int action=event.getAction();
+                switch (action){
+                    case MotionEvent.ACTION_DOWN:
+                        holder.complete.setBackgroundResource(R.color.main_confirm_focus);
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        holder.complete.setBackgroundResource(R.color.colorWhite);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        Log.d(TAG, "onTouch: up");
+                        holder.complete.setBackgroundResource(R.color.colorWhite);
+                        if (!click) {
+                            click=true;
+                            final int position = holder.getLayoutPosition();
+                            final JSONObject task = tasks.get(position);
+                            try {
+                                final int id = task.getInt("taskId");
+                                Log.d("hh", "onClick: "+id);
+                                holder.confirm.setVisibility(View.VISIBLE);
+                                callback.finishTaskById(id);
+                                holder.complete.setClickable(false);
+                                holder.mView.setClickable(false);
+                                tasks.remove(position);
+                                android.os.Handler handler = new android.os.Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        notifyItemRemoved(position);
+                                        notifyItemRangeRemoved(position,tasks.size());
+                                        click=false;
+                                    }
+                                }, 1000);
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        }, 1000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
 
+                        }
+                        break;
                 }
+                return true;
             }
         });
         return holder;
@@ -120,6 +167,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.complete.setBackgroundResource(R.color.colorWhite);
         holder.complete.setClickable(true);
         holder.mView.setClickable(true);
         int p=holder.getLayoutPosition();
