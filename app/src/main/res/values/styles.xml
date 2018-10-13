@@ -32,4 +32,8 @@
         <item name="android:windowEnterAnimation">@null</item>
         <item name="android:windowExitAnimation">@anim/dialog_out</item>
     </style>
+    <style name="OrangeTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/item_btn_textcolor</item>
+    </style>
+
 </resources>

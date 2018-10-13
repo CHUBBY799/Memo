@@ -11,7 +11,8 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        tools:ignore="MissingConstraints">
 
         <ImageView
             android:id="@+id/bottom_audio_image"
@@ -49,7 +50,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/audio_finish"
             app:layout_constraintTop_toTopOf="parent" />
-
         <Button
             android:id="@+id/audio_finish"
             android:layout_width="60dp"

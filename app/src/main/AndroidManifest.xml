@@ -24,22 +24,22 @@
         tools:replace="android:allowBackup">
         <activity
             android:name=".view.AlarmActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/OrangeTheme" />
         <activity
             android:name=".view.CalendarActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/OrangeTheme" />
         <activity
             android:name=".view.ListActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/OrangeTheme" />
         <activity
             android:name=".view.RecordingEditActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/OrangeTheme" />
           <!--android:windowSoftInputMode="stateVisible|adjustPan|stateHidden|stateAlwaysHidden"-->
         <activity
             android:name=".view.PhotoConfirmActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/OrangeTheme" />
         <activity android:name=".view.RecordingViewActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/OrangeTheme" />
         <activity android:name=".view.AlarmClockActivity"
             android:theme="@style/Theme.AppCompat.Light.Dialog"/>
         <receiver
@@ -51,7 +51,7 @@
             </intent-filter>
         </receiver>
         <activity android:name=".home.MemoActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/OrangeTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

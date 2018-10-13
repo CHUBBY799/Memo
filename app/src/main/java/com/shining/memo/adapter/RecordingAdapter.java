@@ -156,12 +156,12 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                     e.printStackTrace();
                     audioViewHolder.button.setText(sdf.format(new Date(0)));
                 }
-                changedBtnDrawable(context.getDrawable(R.drawable.play_audio_icon),audioViewHolder.button);
+                changedBtnDrawable(0,audioViewHolder.button);
                 audioViewHolder.editTextEnd.setWidth(2000);
                 audioViewHolder.filePath = map.get(i).getContent();
                 audioViewHolder.itemView.setTag(i);
                 if(btnIndex == i && isPlaying == true)
-                    changedBtnDrawable(context.getDrawable(R.drawable.delete_btn_48x48px),audioViewHolder.button);
+                    changedBtnDrawable(1,audioViewHolder.button);
                 break;
             case "photo":
                     photoViewHolder = ((PhotoViewHolder)viewHolder);
@@ -236,12 +236,17 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     public void onStopPlay(Button button) {
         btnIndex = -1;
         isPlaying = false;
-        changedBtnDrawable(context.getDrawable(R.drawable.play_audio_icon),button);
+        changedBtnDrawable(0,button);
         Log.d(TAG, "onStopPlay: btnIndex"+btnIndex);
     }
 
-    public void changedBtnDrawable(Drawable drawable,Button button){
+    public void changedBtnDrawable(int type,Button button){
+        Drawable drawable = null;
         if(button != null){
+            if(type == 0)
+                drawable = context.getDrawable(R.drawable.play_audio_icon);
+            else
+                drawable = context.getDrawable(R.drawable.back_icon);
             drawable.setBounds(0,0,35,35);
             button.setCompoundDrawables(drawable,null,null,null);
         }
@@ -432,26 +437,26 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             if(btnIndex == (int)itemView.getTag()){
                 if(isPlaying){
                     presenter.onPausePlay();
-                    changedBtnDrawable(context.getDrawable(R.drawable.play_audio_icon),button);
+                    changedBtnDrawable(0,button);
                     isPlaying = false;
                 }
                 else{
                     presenter.setPlayFilePath(filePath);
                     presenter.doPlay();
-                    changedBtnDrawable(context.getDrawable(R.drawable.delete_btn_48x48px),button);
+                    changedBtnDrawable(1,button);
                     isPlaying = true;
                 }
             }else {
                 if(btnIndex != -1){
                     presenter.onStop();
-                    changedBtnDrawable(context.getDrawable(R.drawable.play_audio_icon), presenter.currentButton);
+                    changedBtnDrawable(0, presenter.currentButton);
                 }
                 presenter.currentButton = button;
                 presenter.setPlayFilePath(filePath);
                 presenter.doPlay();
                 isPlaying = true;
                 btnIndex = (int)itemView.getTag();
-                changedBtnDrawable(context.getDrawable(R.drawable.delete_btn_48x48px),button);
+                changedBtnDrawable(1,button);
             }
         }
         @Override
