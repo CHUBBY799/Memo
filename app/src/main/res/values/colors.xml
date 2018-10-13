@@ -63,4 +63,14 @@
     <color name="main_task_completecolor">#FFCCCCCC</color>
     <color name="main_task_clickcolor">#FFFF8833</color>
     <color name="main_task_noclickcolor">#FFCCCCCC</color>
+    <color name="main_confirm_focus">#f5f5f5</color>
+    <color name="main_add_item">#FFAAAAAA</color>
+
+    <!-- guide color -->
+    <color name="guide_title">#666666</color>
+    <color name="guide_content">#AAAAAA</color>
+    <color name="guide_button">#FF8833</color>
+    <color name="guide_dot_1">#E5E5E5</color>
+    <color name="guide_dot_2">#FF8833</color>
+
 </resources>
