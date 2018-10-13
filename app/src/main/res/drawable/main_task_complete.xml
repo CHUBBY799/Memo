@@ -6,4 +6,7 @@
         android:topRightRadius="7.5dp"
         android:bottomLeftRadius="7.5dp"
         android:bottomRightRadius="7.5dp"/>
+    <size android:width="24dp"
+        android:height="24dp"/>
+    <solid android:color="@color/colorWhite"/>
 </shape>
