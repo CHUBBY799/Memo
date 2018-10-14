@@ -1014,4 +1014,9 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         adapter.setView(false);
     }
 
+    @Override
+    public void updateEditIcon(List<Integer> status) {
+
+    }
+
 }

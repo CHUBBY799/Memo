@@ -8,8 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.PowerManager;
 import android.support.annotation.RequiresApi;
@@ -19,7 +17,7 @@ import android.util.Log;
 
 import com.shining.memo.R;
 import com.shining.memo.view.AlarmClockActivity;
-import com.shining.memo.view.RecordingViewActivity;
+import com.shining.memo.view.RecordingEditActivity;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -49,7 +47,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 String name="my_channel_name4";
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
                 Notification notification = null;
-                Intent contentIntent = new Intent(context, RecordingViewActivity.class);
+                Intent contentIntent = new Intent(context, RecordingEditActivity.class);
                 contentIntent.putExtra("taskId",taskId);
                 contentIntent.putExtra("isNotification",true);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, taskId, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);

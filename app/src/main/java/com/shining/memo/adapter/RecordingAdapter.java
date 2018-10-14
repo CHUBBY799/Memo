@@ -39,6 +39,7 @@ import android.widget.TextView;
 import com.shining.memo.R;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.presenter.AudioPlayPresenter;
+import com.shining.memo.view.RecordingEditActivity;
 import com.shining.memo.widget.MaskImageView;
 import com.shining.memo.widget.SelectEditText;
 
@@ -70,12 +71,13 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     private String type = "";
     private HashMap<Integer,shelterSize> shelter = new HashMap<>();
     private int CurrentIndex = -1,btnIndex = -1;
-    private String CurrentType = "";
+    private static String CurrentType = "";
     private boolean isView,isViewEdit = false,isPlaying;
-    public static int currentColor,colorPos,pos;
+    public static int currentColor,colorPos;
     public static boolean typeChanged = false;
 
     public List<String> deletePath;
+    private List<Integer> status;
 
     public RecordingAdapter(HashMap<Integer,RecordingContent> map,Context context,TextChanged textChanged) {
         this.map = map;
@@ -85,6 +87,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         currentColor = context.getColor(R.color.textcolor_black);
         colorPos = 0;
         typeChanged = false;
+        status = new ArrayList<>();
     }
 
     public int getRequestFocusableIndex() {
@@ -266,7 +269,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         private SpannableString mSpanned;
         private SelectEditText.EditTextSelectChange editTextSelectChange;
 
-        public TextViewHolder(View itemView) {
+        public TextViewHolder(final View itemView) {
             super(itemView);
             editText = itemView.findViewById(R.id.item_editText);
             editText.setHorizontallyScrolling(false);
@@ -275,25 +278,35 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             editText.setOnFocusChangeListener(this);
             editText.addTextChangedListener(this);
             editText.setOnKeyListener(this);
-            editTextSelectChange = new SelectEditText.EditTextSelectChange() {
-                @Override
-                public void change(int lastPos, int curPos) {
-                    Log.d(TAG, "change: ");
-                }
-            };
+//            editTextSelectChange = new SelectEditText.EditTextSelectChange() {
+//                @Override
+//                public void change(int start, int end) {
+//                    CurrentIndex = (int)itemView.getTag();
+////                    Log.d(TAG, "change: start"+start+"----end"+end + editText.getText()+"---"+getCurrentIndex());
+////                    if(start != end && RecordingEditActivity.isTextEdit ){
+////                        if(!typeChanged) {
+////                          //  getSelectionStatus(new SpannableString(editText.getText()),start,end);
+////                            for(int i=0; status.size()< 4; i++)
+////                                status.add(0);
+////                            status.set(1,1);
+////                            textChanged.updateEditIcon(status);
+////                        }else
+////                            typeChanged = false;
+////                    }
+//                }
+//            };
             editText.setEditTextSelectChange(editTextSelectChange);
         }
 
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if(hasFocus){
-                if(isView){
-                    textChanged.viewToEdit();
-                    return;
-                }
                 CurrentIndex = (int)itemView.getTag();
                 CurrentType = "text";
-                Log.d(TAG, "onFocusChange: " + CurrentIndex);
+                Log.d(TAG, "onFocusChange: " + CurrentIndex + CurrentType);
+                if(isView){
+                    textChanged.viewToEdit();
+                }
             }
             else {
                 CurrentIndex = -1;
@@ -503,8 +516,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         public void onFocusChange(View v, boolean hasFocus) {
             if(hasFocus){
                 if(isView){
-                    textChanged.viewToEdit();
-                    return;
+                textChanged.viewToEdit();
                 }
                 CurrentIndex = (int)itemView.getTag();
                 if(v.getId() == R.id.btn_edit_strat)
@@ -619,6 +631,11 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         public void onStartTrackingTouch(SeekBar seekBar) { }
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
+            if(isView){
+                seekBar.setProgress(0);
+                textChanged.viewToEdit();
+                return;
+            }
             textChanged.recyclerViewClearFocusable();
             if(btnIndex == (int)itemView.getTag()){
                 if(isPlaying){
@@ -786,17 +803,17 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
 
     public void photoSetFocusable(int index){
         HashMap<Integer,RecordingContent> map = textChanged.getMap();
-        for(int i = index + 1; i < map.size(); i++)
-            if(!map.get(i).getType().equals("photo")){
+        int i = 0;
+        for( i= index + 1; i < map.size(); i++)
+            if(map.get(i).getType().equals("text")){
                 requestFocusableIndex = i;
                 break;
             }
-        if(map.get(requestFocusableIndex).getType().equals("text")){
+        if(i < map.size()){
             type = "first";
             position = 0;
         }else {
-            type = "end";
-            position = 0;
+            requestFocusableIndex = -1;
         }
     }
 
@@ -857,6 +874,30 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         return text;
     }
 
+    private void getSelectionStatus(SpannableString spannableString,int start,int end){
+        for(int i=0; i<4; i++)
+            status.add(0);
+        Object[] spans = spannableString.getSpans(0,spannableString.length(), Object.class);
+        for(int i = 0; i < spans.length; i++){
+            if(spannableString.getSpanStart(spans[i]) <= start && spannableString.getSpanEnd(spans[i]) >= end){
+                switch (spans[i].getClass().getSimpleName()){
+                    case "StyleSpan":
+                        status.set(0,1);
+                        break;
+                    case "UnderlineSpan":
+                        status.set(1,1);
+                        break;
+                    case "StrikethroughSpan":
+                        status.set(2,1);
+                        break;
+                    case "ForegroundColorSpan":
+                        status.set(3,((ForegroundColorSpan)spans[i]).getForegroundColor());
+                        break;
+                }
+            }
+        }
+    }
+
     public SpannableString dispatchPositionColor(SpannableString spannableString,int position,int count){
         ForegroundColorSpan[] spans = spannableString.getSpans(0,spannableString.length(), ForegroundColorSpan.class);
         for(int i=0; i < spans.length; i++){
@@ -890,6 +931,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 textViewHolder.editText.setText(spannableString);
                 textViewHolder.editText.setSelection(startIndex,endIndex);
                 textChanged.TextChanged(spannableString,index);
+                typeChanged = false;
             }
         }else if(editText != null){
             int startIndex = editText.getSelectionStart(),endIndex = editText.getSelectionEnd();
@@ -897,6 +939,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             spannableString = updateTextColor(spannableString,startIndex,endIndex,color);
             editText.setText(spannableString);
             editText.setSelection(startIndex,endIndex);
+            typeChanged = false;
         }
     }
     private SpannableString updateTextColor(SpannableString spannableString,int start,int end,int insertColor){
@@ -933,6 +976,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             textViewHolder.editText.setText(spannableString);
             textViewHolder.editText.setSelection(startIndex,endIndex);
             textChanged.TextChanged(spannableString,index);
+            typeChanged = false;
         }else if(editText != null){
             int startIndex = editText.getSelectionStart(),endIndex = editText.getSelectionEnd();
             SpannableString spannableString = new SpannableString(editText.getText());
@@ -942,11 +986,13 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 spannableString = updateText(spannableString,startIndex,endIndex,new StrikethroughSpan());
             editText.setText(spannableString);
             editText.setSelection(startIndex,endIndex);
+            typeChanged = false;
         }
     }
 
 
     public void setTextBold(int index,RecyclerView recyclerView,EditText editText){
+        Log.d(TAG, "setTextBold: change"+ index);
         if(index != -1 && (index - textChanged.getCurrentFirstIndex() >= 0)){
             TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(index - textChanged.getCurrentFirstIndex()));
             int startIndex = textViewHolder.editText.getSelectionStart(),endIndex = textViewHolder.editText.getSelectionEnd();
@@ -955,12 +1001,14 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             textViewHolder.editText.setText(spannableString);
             textViewHolder.editText.setSelection(startIndex,endIndex);
             textChanged.TextChanged(spannableString,index);
+            typeChanged = false;
         }else if(editText != null){
             int startIndex = editText.getSelectionStart(),endIndex = editText.getSelectionEnd();
             SpannableString spannableString = new SpannableString(editText.getText());
             spannableString = updateText(spannableString,startIndex,endIndex,new StyleSpan(Typeface.BOLD));
             editText.setText(spannableString);
             editText.setSelection(startIndex,endIndex);
+            typeChanged = false;
         }
     }
 
@@ -1056,6 +1104,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         RecyclerView getRecyclerView();
         void updateRecyclerView(int position);
         void viewToEdit();
+        public void updateEditIcon(List<Integer> status);
     }
 
     class shelterSize{

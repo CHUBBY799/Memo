@@ -5,8 +5,6 @@ import android.util.AttributeSet;
 
 
 public class SelectEditText extends android.support.v7.widget.AppCompatEditText {
-    private int mLastPos = 0;
-    private int mCurPos = 0;
 
     private EditTextSelectChange editTextSelectChange;
 
@@ -30,9 +28,7 @@ public class SelectEditText extends android.support.v7.widget.AppCompatEditText 
     protected void onSelectionChanged(int selStart, int selEnd) {
         super.onSelectionChanged(selStart, selEnd);
         if (this.editTextSelectChange != null) {
-            mCurPos = selEnd;
-            editTextSelectChange.change(mLastPos,mCurPos);
-            mLastPos = mCurPos;
+            editTextSelectChange.change(selStart,selEnd);
         }
     }
 
@@ -40,7 +36,7 @@ public class SelectEditText extends android.support.v7.widget.AppCompatEditText 
      * 编辑框光标改变监听接口
      */
     public interface EditTextSelectChange {
-        void change(int lastPos, int curPos);
+        void change(int start, int end);
     }
 }
 

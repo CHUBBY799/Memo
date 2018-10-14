@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,10 +24,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import android.text.Html;
-import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.SpannedString;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -60,6 +57,7 @@ import com.shining.memo.presenter.AudioRecordPresenter;
 import com.shining.memo.presenter.PhotoPresenter;
 import com.shining.memo.presenter.RecordingPresenter;
 import com.shining.memo.utils.ToastUtils;
+import com.shining.memo.widget.WrapContentLinearLayoutManager;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -92,7 +90,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private PopupWindow volumePopWindow;
     private ImageView volumeImage;
     private RecyclerView mRecyclerView;
-    private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false ,titleOnFocus = false,noBackKey = false,isView = false;
+    public static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false ,titleOnFocus = false,noBackKey = false,isView = false;
     private String photoPath="";
     private int urgent = 0,alarm = 0,taskId = -1;
     private boolean isNotification,requestPermission,alarmChanged;
@@ -109,7 +107,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recording_edit);
+        setContentView(R.layout.activity_task);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         builder.detectFileUriExposure();
@@ -297,7 +295,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             adapter.setView(true);
             adapter.setViewEdit(true);
         }
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        WrapContentLinearLayoutManager linearLayoutManager = new WrapContentLinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.post(new Runnable() {
@@ -425,22 +424,22 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 clickColorBcak();
                 break;
             case R.id.colorpick_red:
-                clickColorChanged(1);
+                clickColorChanged(getColor(R.color.textcolor_red));
                 break;
             case R.id.colorpick_orange:
-                clickColorChanged(2);
+                clickColorChanged(getColor(R.color.textcolor_orange));
                 break;
             case R.id.colorpick_blue:
-                clickColorChanged(3);
+                clickColorChanged(getColor(R.color.textcolor_blue));
                 break;
             case R.id.colorpick_purple:
-                clickColorChanged(4);
+                clickColorChanged(getColor(R.color.textcolor_purple));
                 break;
             case R.id.colorpick_gray:
-                clickColorChanged(5);
+                clickColorChanged(getColor(R.color.textcolor_gray));
                 break;
             case R.id.colorpick_black:
-                clickColorChanged(0);
+                clickColorChanged(getColor(R.color.textcolor_black));
                 break;
         }
     }
@@ -796,7 +795,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
 
     @Override
     public void onStop(String filePath, String type){
-        Log.d(TAG, "onStop: ");
+        Log.d(TAG, "onStop: " + adapter.getCurrentIndex()+ "--"+adapter.getCurrentType());
         int index = adapter.getCurrentIndex();
         String currentType = adapter.getCurrentType();
         if( index != -1){
@@ -810,14 +809,11 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             }
             mMap.clear();
             mMap.putAll(map);
+            Log.d(TAG, "onStop: map"+ map.toString());
             checkDefaultEditTex();
-            if(type.equals("photo")){
+            if(!type.equals("text")){
                 adapter.photoSetFocusable(RecordingPresenter.insertIndex);
-            }else {
-                adapter.setRequestFocusableArgs(RecordingPresenter.insertIndex,0,"end");
             }
-            Log.d("requestFocusableIndex",RecordingPresenter.insertIndex+"");
-            Log.d("requestFocusableIndex",adapter.getRequestFocusableIndex()+"");
             adapter.notifyItemRangeChanged(index,mMap.size() - index);
             mRecyclerView.post(new Runnable() {
                 @Override
@@ -854,7 +850,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private void checkDefaultEditTex(){
         Log.d(TAG, "checkDefaultEditTex: ");
         if(mMap.size() -1 >= 0){
-            if(mMap.get(mMap.size() - 1).getType() != "text"){
+            Log.d(TAG, "checkDefaultEditTex: "+ mMap.get(mMap.size() - 1));
+            if(!mMap.get(mMap.size() - 1).getType().equals("text")){
                 RecordingContent content = new RecordingContent();
                 content.setType("text");
                 content.setColor(mMap.get(mMap.size() - 1).getColor());
@@ -994,84 +991,52 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         animationTranslate(findViewById(R.id.bottom_recording_colorpick),findViewById(R.id.bottom_recording_textedit));
     }
 
-    private void clickColorChanged(int pos){
-        int color = 0;
-        switch (pos){
-            case 0:
-                color = getResources().getColor(R.color.textcolor_black,null);
-                break;
-            case 1:
-                color = getResources().getColor(R.color.textcolor_red,null);
-                break;
-            case 2:
-                color = getResources().getColor(R.color.textcolor_orange,null);
-                break;
-            case 3:
-                color = getResources().getColor(R.color.textcolor_blue,null);
-                break;
-            case 4:
-                color = getResources().getColor(R.color.textcolor_purple,null);
-                break;
-            case 5:
-                color = getResources().getColor(R.color.textcolor_gray,null);
-                break;
+    private void clickColorChanged(int color){
+        resetColorBackground();
+        RecordingAdapter.currentColor = color;
+        if(color == getColor(R.color.textcolor_black)){
+            mBtnColBlack.setBackground(getDrawable(R.drawable.color_oval_black));
+        }
+        else if(color == getColor(R.color.textcolor_red)){
+            mBtnColRed.setBackground(getDrawable(R.drawable.color_oval_red));
+        }
+        else if(color == getColor(R.color.textcolor_orange)){
+            mBtnColOrange.setBackground(getDrawable(R.drawable.color_oval_orange));
+        }
+        else if(color == getColor(R.color.textcolor_blue)){
+            mBtnColBlue.setBackground(getDrawable(R.drawable.color_oval_blue));
+        }
+        else if(color == getColor(R.color.textcolor_purple)){
+            mBtnColPurple.setBackground(getDrawable(R.drawable.color_oval_purple));
+        }
+        else if(color == getColor(R.color.textcolor_gray)){
+            mBtnColGray.setBackground(getDrawable(R.drawable.color_oval_gray));
         }
         if(titleOnFocus){
             adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color,editTitle);
         }else if(adapter.getCurrentIndex() != -1){
             adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color,null);
         }
-            resetColorBackground();
-            RecordingAdapter.currentColor = color;
-            switch (pos){
-                case 0:
-                    mBtnColBlack.setBackground(getResources().getDrawable(R.drawable.color_oval_black,null));
-                    RecordingAdapter.colorPos = 0;
-                    break;
-                case 1:
-                    mBtnColRed.setBackground(getResources().getDrawable(R.drawable.color_oval_red,null));
-                    RecordingAdapter.colorPos = 1;
-                    break;
-                case 2:
-                    mBtnColOrange.setBackground(getResources().getDrawable(R.drawable.color_oval_orange,null));
-                    RecordingAdapter.colorPos = 2;
-                    break;
-                case 3:
-                    mBtnColBlue.setBackground(getResources().getDrawable(R.drawable.color_oval_blue,null));
-                    RecordingAdapter.colorPos = 3;
-                    break;
-                case 4:
-                    mBtnColPurple.setBackground(getResources().getDrawable(R.drawable.color_oval_purple,null));
-                    RecordingAdapter.colorPos = 4;
-                    break;
-                case 5:
-                    mBtnColGray.setBackground(getResources().getDrawable(R.drawable.color_oval_gray,null));
-                    RecordingAdapter.colorPos = 5;
-                    break;
-            }
-
     }
 
     private void resetColorBackground(){
-        switch (RecordingAdapter.colorPos){
-            case 0:
-                mBtnColBlack.setBackground(getResources().getDrawable(R.drawable.color_ring_black,null));
-                break;
-            case 1:
-                mBtnColRed.setBackground(getResources().getDrawable(R.drawable.color_ring_red,null));
-                break;
-            case 2:
-                mBtnColOrange.setBackground(getResources().getDrawable(R.drawable.color_ring_orange,null));
-                break;
-            case 3:
-                mBtnColBlue.setBackground(getResources().getDrawable(R.drawable.color_ring_blue,null));
-                break;
-            case 4:
-                mBtnColPurple.setBackground(getResources().getDrawable(R.drawable.color_ring_purple,null));
-                break;
-            case 5:
-                mBtnColGray.setBackground(getResources().getDrawable(R.drawable.color_ring_gray,null));
-                break;
+        if(RecordingAdapter.currentColor == getColor(R.color.textcolor_black)){
+            mBtnColBlack.setBackground(getDrawable(R.drawable.color_ring_black));
+        }
+        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_red)){
+            mBtnColRed.setBackground(getDrawable(R.drawable.color_ring_red));
+        }
+        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_orange)){
+            mBtnColOrange.setBackground(getDrawable(R.drawable.color_ring_orange));
+        }
+        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_blue)){
+            mBtnColBlue.setBackground(getDrawable(R.drawable.color_ring_blue));
+        }
+        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_purple)){
+            mBtnColPurple.setBackground(getDrawable(R.drawable.color_ring_purple));
+        }
+        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_gray)){
+            mBtnColGray.setBackground(getDrawable(R.drawable.color_ring_gray));
         }
     }
 
@@ -1119,6 +1084,31 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             mSwitchUrgent.setChecked(true);
         else
             mSwitchUrgent.setChecked(false);
+    }
+
+    @Override
+    public void updateEditIcon(List<Integer> status){
+        Log.d(TAG, "updateEditIcon: change"+status.toString());
+//        if(status.get(0) == 1){
+//            mBtnBold.setBackground(getDrawable(R.drawable.deleteline_text_icon));
+//        }else{
+//            mBtnBold.setBackground(getDrawable(R.drawable.bold_text_icon));
+//        }
+//        if(status.get(1) == 1){
+//            mBtnUnderLine.setBackground(getDrawable(R.drawable.bold_text_icon));
+//        }else{
+//            mBtnUnderLine.setBackground(getDrawable(R.drawable.underline_text_icon));
+//        }
+//        if(status.get(2) == 1){
+//            mBtnDeleteLine.setBackground(getDrawable(R.drawable.underline_text_icon));
+//        }else{
+//            mBtnDeleteLine.setBackground(getDrawable(R.drawable.deleteline_text_icon));
+//        }
+//        if(status.get(3) != 0){
+//            clickColorChanged(status.get(3));
+//        }else {
+//            clickColorChanged(getColor(R.color.textcolor_black));
+//        }
     }
 
 }

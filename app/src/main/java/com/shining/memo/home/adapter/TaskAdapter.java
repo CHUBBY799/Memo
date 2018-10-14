@@ -16,13 +16,10 @@ import android.widget.TextView;
 
 import com.shining.memo.R;
 import com.shining.memo.view.RecordingEditActivity;
-import com.shining.memo.view.RecordingViewActivity;
 
 import org.json.JSONObject;
 
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 import static android.support.v4.text.HtmlCompat.FROM_HTML_MODE_COMPACT;
 

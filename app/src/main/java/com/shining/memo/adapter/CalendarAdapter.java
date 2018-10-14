@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.shining.memo.R;
 import com.shining.memo.view.CalendarActivity;
 import com.shining.memo.view.RecordingEditActivity;
-import com.shining.memo.view.RecordingViewActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
