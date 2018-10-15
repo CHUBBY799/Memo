@@ -6,11 +6,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.v4.content.ContextCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import com.shining.calendar.R;
 import com.shining.calendar.listener.OnClickMonthViewListener;
 import com.shining.calendar.utils.Attrs;
 import com.shining.calendar.utils.Utils;

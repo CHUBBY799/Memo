@@ -23,15 +23,36 @@
         android:logo="@drawable/app_launch_icon"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
+
+        <activity android:name=".home.WelcomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".home.GuideActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen"/>
+
+        <activity android:name=".home.MemoActivity"
+            android:theme="@style/OrangeTheme" />
+
         <activity
             android:name=".view.AlarmActivity"
             android:theme="@style/OrangeTheme" />
+
         <activity
             android:name=".view.CalendarActivity"
             android:theme="@style/OrangeTheme" />
+
         <activity
             android:name=".view.ListActivity"
             android:theme="@style/OrangeTheme" />
+
         <activity
             android:name=".view.RecordingEditActivity"
 
@@ -42,11 +63,13 @@
             android:theme="@style/OrangeTheme" />
 
         <activity android:name=".view.AlarmClockActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog"/>
+            android:theme="@style/OrangeTheme"/>
+
         <activity android:name=".view.NoteActivity"
             android:theme="@style/OrangeTheme"/>
 
         <receiver
+            tools:ignore="ExportedReceiver"
             android:name=".receiver.AlarmReceiver"
             android:enabled="true"
             android:exported="true">
@@ -55,23 +78,5 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".home.MemoActivity"
-            android:theme="@style/OrangeTheme" />
-        <activity
-            android:name=".home.GuideActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/FullScreen"/>
-
-        <activity android:name=".home.WelcomeActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/FullScreen">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-        </activity>
     </application>
-
 </manifest>
