@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +27,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.SpannedString;
+import android.text.style.StrikethroughSpan;
+import android.text.style.StyleSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -61,6 +65,7 @@ import com.shining.memo.widget.WrapContentLinearLayoutManager;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -90,7 +95,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     private PopupWindow volumePopWindow;
     private ImageView volumeImage;
     private RecyclerView mRecyclerView;
-    public static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false ,titleOnFocus = false,noBackKey = false,isView = false;
+    public static boolean isRecording,isPhotoChoosing,isTextEdit,isColorPick,noBackKey,isView,isTitleFocus;
     private String photoPath="";
     private int urgent = 0,alarm = 0,taskId = -1;
     private boolean isNotification,requestPermission,alarmChanged;
@@ -271,14 +276,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
             }
         }else{
             Task_Recording task_recording = recordingPresenter.getTaskRecording(taskId);
-            Spanned spanned = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                spanned = Html.fromHtml(task_recording.getTask().getTitle(),FROM_HTML_MODE_COMPACT);
-            }
-            if(spanned != null && spanned.length() > 0)
-                editTitle.setText(spanned.subSequence(0,spanned.length() -1));
-            else
-                editTitle.setText(spanned);
+            editTitle.setText(task_recording.getTask().getTitle());
             alarm = task_recording.getTask().getAlarm();
             if(alarm == 1){
                 alarmObject = alarmPresenter.getAlarm(taskId);
@@ -424,22 +422,22 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
                 clickColorBcak();
                 break;
             case R.id.colorpick_red:
-                clickColorChanged(getColor(R.color.textcolor_red));
+                clickColorChanged(getColor(R.color.textcolor_red),true);
                 break;
             case R.id.colorpick_orange:
-                clickColorChanged(getColor(R.color.textcolor_orange));
+                clickColorChanged(getColor(R.color.textcolor_orange),true);
                 break;
             case R.id.colorpick_blue:
-                clickColorChanged(getColor(R.color.textcolor_blue));
+                clickColorChanged(getColor(R.color.textcolor_blue),true);
                 break;
             case R.id.colorpick_purple:
-                clickColorChanged(getColor(R.color.textcolor_purple));
+                clickColorChanged(getColor(R.color.textcolor_purple),true);
                 break;
             case R.id.colorpick_gray:
-                clickColorChanged(getColor(R.color.textcolor_gray));
+                clickColorChanged(getColor(R.color.textcolor_gray),true);
                 break;
             case R.id.colorpick_black:
-                clickColorChanged(getColor(R.color.textcolor_black));
+                clickColorChanged(getColor(R.color.textcolor_black),true);
                 break;
         }
     }
@@ -474,11 +472,7 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         task.setUrgent(urgent);
         task.setAlarm(alarm);
         task.setCategory("task");
-        String html = Html.toHtml(new SpannedString(editTitle.getText()));
-        if(html.length() > 0)
-            html = html.substring(0,html.length() -1);
-        String title = adapter.parseUnicodeToStr(html);
-        task.setTitle(title);
+        task.setTitle(editTitle.getText().toString());
         if(taskId == -1){
             long id = 0;
             if( (id = recordingPresenter.saveRecording(task,mMap,alarmObject)) != -1){
@@ -956,34 +950,30 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     @Override
     public void onFocusChange(View view, boolean b) {
         if(b){
-            titleOnFocus = true;
-        }else {
-            titleOnFocus = false;
+            isTitleFocus = true;
+            List<Integer> list = new ArrayList<>();
+            for(int i = 0; i < 4; i++)
+                list.add(0);
+            updateEditIcon(list);
         }
+        else
+            isTitleFocus = false;
         if(isView)
             viewToEdit();
     }
 
     private void clickBold(){
-        if(titleOnFocus){
-            adapter.setTextBold(adapter.getCurrentIndex(),mRecyclerView,editTitle);
-        }else{
-            adapter.setTextBold(adapter.getCurrentIndex(),mRecyclerView,null);
-        }
+        if(!isTitleFocus)
+            adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StyleSpan(Typeface.BOLD));
     }
     private void clickUnderLine(){
-        if(titleOnFocus){
-            adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,1,editTitle);
-        }else{
-            adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,1,null);
-        }
+        if(!isTitleFocus)
+            adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new UnderlineSpan());
+
     }
     private void clickDeleteLine(){
-        if(titleOnFocus){
-            adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,0,editTitle);
-        }else{
-            adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,0,null);
-        }
+        if(!isTitleFocus)
+            adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StrikethroughSpan());
     }
 
     private void clickColorBcak(){
@@ -991,7 +981,10 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         animationTranslate(findViewById(R.id.bottom_recording_colorpick),findViewById(R.id.bottom_recording_textedit));
     }
 
-    private void clickColorChanged(int color){
+    private void clickColorChanged(int color,boolean insert){
+        if(isTitleFocus){
+            return;
+        }
         resetColorBackground();
         RecordingAdapter.currentColor = color;
         if(color == getColor(R.color.textcolor_black)){
@@ -1012,10 +1005,8 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
         else if(color == getColor(R.color.textcolor_gray)){
             mBtnColGray.setBackground(getDrawable(R.drawable.color_oval_gray));
         }
-        if(titleOnFocus){
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color,editTitle);
-        }else if(adapter.getCurrentIndex() != -1){
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color,null);
+        if(insert){
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color);
         }
     }
 
@@ -1089,26 +1080,26 @@ public class RecordingEditActivity extends Activity implements View.OnClickListe
     @Override
     public void updateEditIcon(List<Integer> status){
         Log.d(TAG, "updateEditIcon: change"+status.toString());
-//        if(status.get(0) == 1){
-//            mBtnBold.setBackground(getDrawable(R.drawable.deleteline_text_icon));
-//        }else{
-//            mBtnBold.setBackground(getDrawable(R.drawable.bold_text_icon));
-//        }
-//        if(status.get(1) == 1){
-//            mBtnUnderLine.setBackground(getDrawable(R.drawable.bold_text_icon));
-//        }else{
-//            mBtnUnderLine.setBackground(getDrawable(R.drawable.underline_text_icon));
-//        }
-//        if(status.get(2) == 1){
-//            mBtnDeleteLine.setBackground(getDrawable(R.drawable.underline_text_icon));
-//        }else{
-//            mBtnDeleteLine.setBackground(getDrawable(R.drawable.deleteline_text_icon));
-//        }
-//        if(status.get(3) != 0){
-//            clickColorChanged(status.get(3));
-//        }else {
-//            clickColorChanged(getColor(R.color.textcolor_black));
-//        }
+        if(status.get(0) == 1){
+            mBtnBold.setBackground(getDrawable(R.drawable.deleteline_text_icon));
+        }else{
+            mBtnBold.setBackground(getDrawable(R.drawable.bold_text_icon));
+        }
+        if(status.get(1) == 1){
+            mBtnUnderLine.setBackground(getDrawable(R.drawable.bold_text_icon));
+        }else{
+            mBtnUnderLine.setBackground(getDrawable(R.drawable.underline_text_icon));
+        }
+        if(status.get(2) == 1){
+            mBtnDeleteLine.setBackground(getDrawable(R.drawable.underline_text_icon));
+        }else{
+            mBtnDeleteLine.setBackground(getDrawable(R.drawable.deleteline_text_icon));
+        }
+        if(status.get(3) != 0){
+            clickColorChanged(status.get(3),false);
+        }else {
+            clickColorChanged(getColor(R.color.textcolor_black),false);
+        }
     }
 
 }

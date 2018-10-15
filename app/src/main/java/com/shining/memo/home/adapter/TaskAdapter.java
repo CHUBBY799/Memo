@@ -181,15 +181,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
                 holder.audioTitle1.setVisibility(View.INVISIBLE);
                 holder.audioTitle2.setVisibility(View.INVISIBLE);
                 holder.type.setImageResource(R.drawable.text_type_icon);
-                String title=task.getString("title");
-                Spanned spanned = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                    spanned = Html.fromHtml(title,FROM_HTML_MODE_COMPACT);
-                }
-                if(spanned != null && spanned.length()>0){
-                    title=spanned.subSequence(0,spanned.length()-1).toString();
-                }
-                holder.title.setText(title);
+                holder.title.setText(task.getString("title"));
             }
             if(task.getInt("urgent")==0){
                 holder.urgent.setVisibility(View.INVISIBLE);

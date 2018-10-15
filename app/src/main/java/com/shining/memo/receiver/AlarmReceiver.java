@@ -15,6 +15,8 @@ import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 
+
+
 import com.shining.memo.R;
 import com.shining.memo.view.AlarmClockActivity;
 import com.shining.memo.view.RecordingEditActivity;
@@ -31,20 +33,15 @@ public class AlarmReceiver extends BroadcastReceiver {
             String title = "";
             try{
                 title = intent.getStringExtra("title");
-                Log.d("AlarmReceiver",title);
-                Spanned spanned = Html.fromHtml(title,Html.FROM_HTML_MODE_COMPACT);
-                if(spanned.length() > 0)
-                    title = spanned.subSequence(0,spanned.length() - 1).toString();
-                else
+                if(title.equals(""))
                     title = "No title!";
             }catch (Exception e){
                 title = "No title!";
                 e.printStackTrace();
             }
-            Log.d("AlarmReceiver", "onReceive: pop"+ pop +"---ringtone"+ ringtone);
             if(pop == 1){
-                String id = "my_channel_04";
-                String name="my_channel_name4";
+                String id = "my_channel";
+                String name="my_channel_name";
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
                 Notification notification = null;
                 Intent contentIntent = new Intent(context, RecordingEditActivity.class);
@@ -91,7 +88,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 String time = "None";
                 try{
                     time = intent.getStringExtra("time");
-                    title = intent.getStringExtra("title");
                 }catch (Exception e){
                     e.printStackTrace();
                 }

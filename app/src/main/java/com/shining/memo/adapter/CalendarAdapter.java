@@ -88,15 +88,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
             try {
                 JSONObject taskData = taskDataArr.getJSONObject(i);
                 task_id[i] = taskData.getInt("id");
-                Spanned spanned = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                    spanned = Html.fromHtml(taskData.getString("title"), FROM_HTML_MODE_COMPACT);
-                }
-                if(spanned != null && spanned.length() > 0)
-                    task_title[i] = (spanned.subSequence(0,spanned.length() -1)).toString();
-                else if(spanned != null){
-                    task_title[i] = spanned.toString();
-                }
+                task_title[i] = taskData.getString("title");
                 task_day[i] = taskData.getString("day");
                 task_month[i] = taskData.getString("month");
             }catch (JSONException e){

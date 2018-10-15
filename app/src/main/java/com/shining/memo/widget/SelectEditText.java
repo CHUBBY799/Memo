@@ -28,7 +28,7 @@ public class SelectEditText extends android.support.v7.widget.AppCompatEditText 
     protected void onSelectionChanged(int selStart, int selEnd) {
         super.onSelectionChanged(selStart, selEnd);
         if (this.editTextSelectChange != null) {
-            editTextSelectChange.change(selStart,selEnd);
+            editTextSelectChange.change();
         }
     }
 
@@ -36,7 +36,7 @@ public class SelectEditText extends android.support.v7.widget.AppCompatEditText 
      * 编辑框光标改变监听接口
      */
     public interface EditTextSelectChange {
-        void change(int start, int end);
+        void change();
     }
 }
 

@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +27,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.SpannedString;
+import android.text.style.StrikethroughSpan;
+import android.text.style.StyleSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -394,22 +398,22 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                 clickColorBcak();
                 break;
             case R.id.colorpick_red:
-                clickColorChanged(1);
+                clickColorChanged(getColor(R.color.textcolor_red),true);
                 break;
             case R.id.colorpick_orange:
-                clickColorChanged(2);
+                clickColorChanged(getColor(R.color.textcolor_orange),true);
                 break;
             case R.id.colorpick_blue:
-                clickColorChanged(3);
+                clickColorChanged(getColor(R.color.textcolor_blue),true);
                 break;
             case R.id.colorpick_purple:
-                clickColorChanged(4);
+                clickColorChanged(getColor(R.color.textcolor_purple),true);
                 break;
             case R.id.colorpick_gray:
-                clickColorChanged(5);
+                clickColorChanged(getColor(R.color.textcolor_gray),true);
                 break;
             case R.id.colorpick_black:
-                clickColorChanged(0);
+                clickColorChanged(getColor(R.color.textcolor_black),true);
                 break;
         }
     }
@@ -774,7 +778,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private void checkDefaultEditTex(){
         Log.d(TAG, "checkDefaultEditTex: ");
         if(mMap.size() -1 >= 0){
-            if(mMap.get(mMap.size() - 1).getType() != "text"){
+            if(!mMap.get(mMap.size() - 1).getType().equals("text")){
                 RecordingContent content = new RecordingContent();
                 content.setType("text");
                 content.setColor(mMap.get(mMap.size() - 1).getColor());
@@ -847,7 +851,6 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     public RecyclerView getRecyclerView() {
-
         Log.d(TAG, "getRecyclerView: ");
         return mRecyclerView;
     }
@@ -883,14 +886,14 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickBold(){
-        adapter.setTextBold(adapter.getCurrentIndex(),mRecyclerView,null);
+        adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StyleSpan(Typeface.BOLD));
     }
     private void clickUnderLine(){
-        adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,1,null);
+        adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new UnderlineSpan());
 
     }
     private void clickDeleteLine(){
-        adapter.setTextLine(adapter.getCurrentIndex(),mRecyclerView,0,null);
+        adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StrikethroughSpan());
     }
 
     private void clickColorBcak(){
@@ -898,80 +901,50 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         animationTranslate(findViewById(R.id.bottom_recording_colorpick),findViewById(R.id.bottom_recording_textedit));
     }
 
-    private void clickColorChanged(int pos){
-        int color = 0;
-        switch (pos){
-            case 0:
-                color = getResources().getColor(R.color.textcolor_black,null);
-                break;
-            case 1:
-                color = getResources().getColor(R.color.textcolor_red,null);
-                break;
-            case 2:
-                color = getResources().getColor(R.color.textcolor_orange,null);
-                break;
-            case 3:
-                color = getResources().getColor(R.color.textcolor_blue,null);
-                break;
-            case 4:
-                color = getResources().getColor(R.color.textcolor_purple,null);
-                break;
-            case 5:
-                color = getResources().getColor(R.color.textcolor_gray,null);
-                break;
-        }
-        adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color,null);
+    private void clickColorChanged(int color,boolean insert){
         resetColorBackground();
         RecordingAdapter.currentColor = color;
-        switch (pos){
-            case 0:
-                mBtnColBlack.setBackground(getResources().getDrawable(R.drawable.color_oval_black,null));
-                RecordingAdapter.colorPos = 0;
-                break;
-            case 1:
-                mBtnColRed.setBackground(getResources().getDrawable(R.drawable.color_oval_red,null));
-                RecordingAdapter.colorPos = 1;
-                break;
-            case 2:
-                mBtnColOrange.setBackground(getResources().getDrawable(R.drawable.color_oval_orange,null));
-                RecordingAdapter.colorPos = 2;
-                break;
-            case 3:
-                mBtnColBlue.setBackground(getResources().getDrawable(R.drawable.color_oval_blue,null));
-                RecordingAdapter.colorPos = 3;
-                break;
-            case 4:
-                mBtnColPurple.setBackground(getResources().getDrawable(R.drawable.color_oval_purple,null));
-                RecordingAdapter.colorPos = 4;
-                break;
-            case 5:
-                mBtnColGray.setBackground(getResources().getDrawable(R.drawable.color_oval_gray,null));
-                RecordingAdapter.colorPos = 5;
-                break;
+        if(color == getColor(R.color.textcolor_black)){
+            mBtnColBlack.setBackground(getDrawable(R.drawable.color_oval_black));
         }
-
+        else if(color == getColor(R.color.textcolor_red)){
+            mBtnColRed.setBackground(getDrawable(R.drawable.color_oval_red));
+        }
+        else if(color == getColor(R.color.textcolor_orange)){
+            mBtnColOrange.setBackground(getDrawable(R.drawable.color_oval_orange));
+        }
+        else if(color == getColor(R.color.textcolor_blue)){
+            mBtnColBlue.setBackground(getDrawable(R.drawable.color_oval_blue));
+        }
+        else if(color == getColor(R.color.textcolor_purple)){
+            mBtnColPurple.setBackground(getDrawable(R.drawable.color_oval_purple));
+        }
+        else if(color == getColor(R.color.textcolor_gray)){
+            mBtnColGray.setBackground(getDrawable(R.drawable.color_oval_gray));
+        }
+        if(insert){
+            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color);
+        }
     }
 
     private void resetColorBackground(){
-        switch (RecordingAdapter.colorPos){
-            case 0:
-                mBtnColBlack.setBackground(getResources().getDrawable(R.drawable.color_ring_black,null));
-                break;
-            case 1:
-                mBtnColRed.setBackground(getResources().getDrawable(R.drawable.color_ring_red,null));
-                break;
-            case 2:
-                mBtnColOrange.setBackground(getResources().getDrawable(R.drawable.color_ring_orange,null));
-                break;
-            case 3:
-                mBtnColBlue.setBackground(getResources().getDrawable(R.drawable.color_ring_blue,null));
-                break;
-            case 4:
-                mBtnColPurple.setBackground(getResources().getDrawable(R.drawable.color_ring_purple,null));
-                break;
-            case 5:
-                mBtnColGray.setBackground(getResources().getDrawable(R.drawable.color_ring_gray,null));
-                break;
+        if(RecordingAdapter.currentColor == getColor(R.color.textcolor_black)){
+            mBtnColBlack.setBackground(getDrawable(R.drawable.color_ring_black));
+        }
+        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_red)){
+            mBtnColRed.setBackground(getDrawable(R.drawable.color_ring_red));
+        }
+        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_orange)){
+            mBtnColOrange.setBackground(getDrawable(R.drawable.color_ring_orange));
+        }
+        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_blue)){
+            mBtnColBlue.setBackground(getDrawable(R.drawable.color_ring_blue));
+        }
+        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_purple)){
+            mBtnColPurple.setBackground(getDrawable(R.drawable.color_ring_purple));
+        }
+        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_gray)){
+            mBtnColGray.setBackground(getDrawable(R.drawable.color_ring_gray));
         }
     }
 
@@ -1015,8 +988,28 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     @Override
-    public void updateEditIcon(List<Integer> status) {
-
+    public void updateEditIcon(List<Integer> status){
+        Log.d(TAG, "updateEditIcon: change"+status.toString());
+        if(status.get(0) == 1){
+            mBtnBold.setBackground(getDrawable(R.drawable.deleteline_text_icon));
+        }else{
+            mBtnBold.setBackground(getDrawable(R.drawable.bold_text_icon));
+        }
+        if(status.get(1) == 1){
+            mBtnUnderLine.setBackground(getDrawable(R.drawable.bold_text_icon));
+        }else{
+            mBtnUnderLine.setBackground(getDrawable(R.drawable.underline_text_icon));
+        }
+        if(status.get(2) == 1){
+            mBtnDeleteLine.setBackground(getDrawable(R.drawable.underline_text_icon));
+        }else{
+            mBtnDeleteLine.setBackground(getDrawable(R.drawable.deleteline_text_icon));
+        }
+        if(status.get(3) != 0){
+            clickColorChanged(status.get(3),false);
+        }else {
+            clickColorChanged(getColor(R.color.textcolor_black),false);
+        }
     }
 
 }
