@@ -33,7 +33,7 @@
             android:name=".view.ListActivity"
             android:theme="@style/OrangeTheme" />
         <activity
-            android:name=".view.RecordingEditActivity"
+            android:name=".view.TaskActivity"
 
             android:theme="@style/OrangeTheme" />
           <!--android:windowSoftInputMode="stateVisible|adjustPan|stateHidden|stateAlwaysHidden"-->
@@ -45,7 +45,6 @@
             android:theme="@style/Theme.AppCompat.Light.Dialog"/>
         <activity android:name=".view.NoteActivity"
             android:theme="@style/OrangeTheme"/>
-
         <receiver
             android:name=".receiver.AlarmReceiver"
             android:enabled="true"

@@ -164,4 +164,12 @@ public class AlarmPresenter {
         }
     }
 
+    public void alarmCancel(int taskId){
+        Intent intent = new Intent();
+        intent.setAction("com.shining.memo.alarmandnotice");
+        intent.setComponent(new ComponentName("com.shining.memo","com.shining.memo.receiver.AlarmReceiver"));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,taskId,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.cancel(pendingIntent);
+    }
+
 }

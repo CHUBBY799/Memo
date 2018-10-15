@@ -42,6 +42,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Switch;
@@ -81,10 +82,11 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private static final int MSG_RECORDING = 0x110;
     private static final int REQUEST_CAMERA=0xa1;
     private static final int REQUEST_GALLERY=0xa3;
-    private Button mBtnCancel,mBtnConfirm,mBtnEdit,mBtnRecord,mBtnPhoto,mBtnAudioCancel,mBtnFinish,mBtnGallery,mBtnCamera;
-    private Button mBtnBold,mBtnUnderLine,mBtnDeleteLine,mBtnColor,mBtnTextBack;
-    private Button mBtnColBack,mBtnColRed,mBtnColOrange,mBtnColBlue,mBtnColPurple,mBtnColGray,mBtnColBlack;
-    private Button mBtnViewBack,mBtnViewDelete,mBtnViewShare,mBtnViewAlarm;
+    private Button mBtnGallery,mBtnCamera,mBtnAudioCancel,mBtnFinish;
+    private ImageButton mBtnCancel,mBtnConfirm,mBtnEdit,mBtnRecord,mBtnPhoto;
+    private ImageButton mBtnBold,mBtnUnderLine,mBtnDeleteLine,mBtnColor,mBtnTextBack;
+    private ImageButton mBtnColBack,mBtnColRed,mBtnColOrange,mBtnColBlue,mBtnColPurple,mBtnColGray,mBtnColBlack;
+    private ImageButton mBtnViewBack,mBtnViewDelete,mBtnViewShare;
     private ConstraintLayout layout;
     private TextView mTvTime,dialogTv;
     private EditText editTitle;
@@ -181,11 +183,11 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private void init(){
         Log.d(TAG, "init: ");
         View view =  (View)findViewById(R.id.bottom_recording_edit);
-        mBtnCancel = (Button)view.findViewById(R.id.bottom_cancel);
-        mBtnConfirm = (Button)view.findViewById(R.id.bottom_confirm);
-        mBtnEdit = (Button)view.findViewById(R.id.bottom_textedit);
-        mBtnRecord = (Button)view.findViewById(R.id.bottom_audio);
-        mBtnPhoto = (Button)view.findViewById(R.id.bottom_photo);
+        mBtnCancel = (ImageButton)view.findViewById(R.id.bottom_cancel);
+        mBtnConfirm = (ImageButton)view.findViewById(R.id.bottom_confirm);
+        mBtnEdit = (ImageButton)view.findViewById(R.id.bottom_textedit);
+        mBtnRecord = (ImageButton)view.findViewById(R.id.bottom_audio);
+        mBtnPhoto = (ImageButton)view.findViewById(R.id.bottom_photo);
         view =  (View)findViewById(R.id.bottom_recording_audio);
         mBtnAudioCancel = (Button)view.findViewById(R.id.audio_cancel);
         mBtnFinish = (Button)view.findViewById(R.id.audio_finish);
@@ -194,19 +196,19 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         mBtnGallery = (Button)view.findViewById(R.id.photo_gallery);
         mBtnCamera = (Button)view.findViewById(R.id.photo_camera);
         view =  (View)findViewById(R.id.bottom_recording_textedit);
-        mBtnTextBack = (Button)view.findViewById(R.id.bottom_textedit_back);
-        mBtnBold = (Button)view.findViewById(R.id.bottom_bold);
-        mBtnUnderLine = (Button)view.findViewById(R.id.bottom_underline);
-        mBtnDeleteLine = (Button)view.findViewById(R.id.bottom_deleteline);
-        mBtnColor = (Button)view.findViewById(R.id.bottom_color);
+        mBtnTextBack = (ImageButton)view.findViewById(R.id.bottom_textedit_back);
+        mBtnBold = (ImageButton)view.findViewById(R.id.bottom_bold);
+        mBtnUnderLine = (ImageButton)view.findViewById(R.id.bottom_underline);
+        mBtnDeleteLine = (ImageButton)view.findViewById(R.id.bottom_deleteline);
+        mBtnColor = (ImageButton)view.findViewById(R.id.bottom_color);
         view =  (View)findViewById(R.id.bottom_recording_colorpick);
-        mBtnColBack = (Button)view.findViewById(R.id.bottom_colorpick_back);
-        mBtnColBlack = (Button)view.findViewById(R.id.colorpick_black);
-        mBtnColRed = (Button)view.findViewById(R.id.colorpick_red);
-        mBtnColOrange = (Button)view.findViewById(R.id.colorpick_orange);
-        mBtnColBlue = (Button)view.findViewById(R.id.colorpick_blue);
-        mBtnColPurple = (Button)view.findViewById(R.id.colorpick_purple);
-        mBtnColGray = (Button)view.findViewById(R.id.colorpick_gray);
+        mBtnColBack = (ImageButton)view.findViewById(R.id.bottom_colorpick_back);
+        mBtnColBlack = (ImageButton)view.findViewById(R.id.colorpick_black);
+        mBtnColRed = (ImageButton)view.findViewById(R.id.colorpick_red);
+        mBtnColOrange = (ImageButton)view.findViewById(R.id.colorpick_orange);
+        mBtnColBlue = (ImageButton)view.findViewById(R.id.colorpick_blue);
+        mBtnColPurple = (ImageButton)view.findViewById(R.id.colorpick_purple);
+        mBtnColGray = (ImageButton)view.findViewById(R.id.colorpick_gray);
         mRecyclerView = (RecyclerView)findViewById(R.id.recording_recyclerView);
         editTitle = (EditText)findViewById(R.id.recording_title);
         editTitle.setOnFocusChangeListener(this);
@@ -242,9 +244,9 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             View v = findViewById(R.id.bottom_recording_view);
             v.setVisibility(View.VISIBLE);
             findViewById(R.id.bottom_recording_edit).setVisibility(View.GONE);
-            mBtnViewBack = (Button)v.findViewById(R.id.bottom_back);
-            mBtnViewDelete = (Button)v.findViewById(R.id.bottom_delete);
-            mBtnViewShare = (Button)v.findViewById(R.id.bottom_share);
+            mBtnViewBack = (ImageButton)v.findViewById(R.id.bottom_back);
+            mBtnViewDelete = (ImageButton)v.findViewById(R.id.bottom_delete);
+            mBtnViewShare = (ImageButton)v.findViewById(R.id.bottom_share);
 
             onClickView = new OonClickView();
             mBtnViewBack.setOnClickListener(onClickView);
@@ -442,42 +444,61 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
     private void clickConfirm(){
         Log.d(TAG, "clickConfirm: ");
-        adapter.presenter.onStop();
-        Task task = new Task();
-        task.setType(taskType());
-        task.setUrgent(0);
-        task.setAlarm(0);
-        task.setCategory("note");
-        task.setTitle(editTitle.getText().toString());
-        if(taskId == -1){
-            if(notePresenter.saveNote(task,mMap)){
-                Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+        if(!(editTitle.getText().toString().equals("") && mMap.size() == 1 && mMap.get(0).getContent().equals(""))){
+            adapter.presenter.onStop();
+            Task task = new Task();
+            task.setType(taskType());
+            task.setUrgent(0);
+            task.setAlarm(0);
+            task.setCategory("note");
+            task.setTitle(editTitle.getText().toString());
+            if(taskId == -1){
+                if(notePresenter.saveNote(task,mMap)){
+                    Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK);
+                    finish();
+                    overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                }else{
+                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                }
+            }else {
+                task.setId(taskId);
+                if(notePresenter.modifyRecording(task,mMap)){
+                    Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+                    if(adapter.deletePath != null && adapter.deletePath.size() > 0){
+                        for(int i=0; i < adapter.deletePath.size(); i++){
+                            File file = new File(adapter.deletePath.get(i));
+                            if(file.exists())
+                                file.delete();
+                        }
+                    }
+                    animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
+                    isView = true;
+                    adapter.setView(true);
+                    mRecyclerView.clearFocus();
+                    initData();
+                }else{
+                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }else {
+            if(taskId == -1){
+                Toast.makeText(this,"save failed for empty text",Toast.LENGTH_SHORT).show();
                 setResult(RESULT_OK);
                 finish();
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
-            }else{
-                Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
-            }
-        }else {
-            task.setId(taskId);
-            if(notePresenter.modifyRecording(task,mMap)){
-                Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
-                if(adapter.deletePath != null && adapter.deletePath.size() > 0){
-                    for(int i=0; i < adapter.deletePath.size(); i++){
-                        File file = new File(adapter.deletePath.get(i));
-                        if(file.exists())
-                            file.delete();
-                    }
+            }else {
+                if(notePresenter.deleteRecording(taskId)){
+                    Toast.makeText(this,"save failed for empty text",Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK);
+                    finish();
+                    overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                }else {
+                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
                 }
-                animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
-                isView = true;
-                adapter.setView(true);
-                mRecyclerView.clearFocus();
-                initData();
-            }else{
-                Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
             }
         }
+
     }
     private void clickEdit(){
         isTextEdit = true;
@@ -905,22 +926,22 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         resetColorBackground();
         RecordingAdapter.currentColor = color;
         if(color == getColor(R.color.textcolor_black)){
-            mBtnColBlack.setBackground(getDrawable(R.drawable.color_oval_black));
+            mBtnColBlack.setImageDrawable(getDrawable(R.drawable.color_oval_black));
         }
         else if(color == getColor(R.color.textcolor_red)){
-            mBtnColRed.setBackground(getDrawable(R.drawable.color_oval_red));
+            mBtnColRed.setImageDrawable(getDrawable(R.drawable.color_oval_red));
         }
         else if(color == getColor(R.color.textcolor_orange)){
-            mBtnColOrange.setBackground(getDrawable(R.drawable.color_oval_orange));
+            mBtnColOrange.setImageDrawable(getDrawable(R.drawable.color_oval_orange));
         }
         else if(color == getColor(R.color.textcolor_blue)){
-            mBtnColBlue.setBackground(getDrawable(R.drawable.color_oval_blue));
+            mBtnColBlue.setImageDrawable(getDrawable(R.drawable.color_oval_blue));
         }
         else if(color == getColor(R.color.textcolor_purple)){
-            mBtnColPurple.setBackground(getDrawable(R.drawable.color_oval_purple));
+            mBtnColPurple.setImageDrawable(getDrawable(R.drawable.color_oval_purple));
         }
         else if(color == getColor(R.color.textcolor_gray)){
-            mBtnColGray.setBackground(getDrawable(R.drawable.color_oval_gray));
+            mBtnColGray.setImageDrawable(getDrawable(R.drawable.color_oval_gray));
         }
         if(insert){
             adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color);
@@ -929,22 +950,22 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
 
     private void resetColorBackground(){
         if(RecordingAdapter.currentColor == getColor(R.color.textcolor_black)){
-            mBtnColBlack.setBackground(getDrawable(R.drawable.color_ring_black));
+            mBtnColBlack.setImageDrawable(getDrawable(R.drawable.color_ring_black));
         }
         else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_red)){
-            mBtnColRed.setBackground(getDrawable(R.drawable.color_ring_red));
+            mBtnColRed.setImageDrawable(getDrawable(R.drawable.color_ring_red));
         }
         else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_orange)){
-            mBtnColOrange.setBackground(getDrawable(R.drawable.color_ring_orange));
+            mBtnColOrange.setImageDrawable(getDrawable(R.drawable.color_ring_orange));
         }
         else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_blue)){
-            mBtnColBlue.setBackground(getDrawable(R.drawable.color_ring_blue));
+            mBtnColBlue.setImageDrawable(getDrawable(R.drawable.color_ring_blue));
         }
         else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_purple)){
-            mBtnColPurple.setBackground(getDrawable(R.drawable.color_ring_purple));
+            mBtnColPurple.setImageDrawable(getDrawable(R.drawable.color_ring_purple));
         }
         else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_gray)){
-            mBtnColGray.setBackground(getDrawable(R.drawable.color_ring_gray));
+            mBtnColGray.setImageDrawable(getDrawable(R.drawable.color_ring_gray));
         }
     }
 
@@ -991,19 +1012,19 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     public void updateEditIcon(List<Integer> status){
         Log.d(TAG, "updateEditIcon: change"+status.toString());
         if(status.get(0) == 1){
-            mBtnBold.setBackground(getDrawable(R.drawable.deleteline_text_icon));
+            mBtnBold.setImageDrawable(getDrawable(R.drawable.bold_text_icon));
         }else{
-            mBtnBold.setBackground(getDrawable(R.drawable.bold_text_icon));
+            mBtnBold.setImageDrawable(getDrawable(R.drawable.no_bold_text_icon));
         }
         if(status.get(1) == 1){
-            mBtnUnderLine.setBackground(getDrawable(R.drawable.bold_text_icon));
+            mBtnUnderLine.setImageDrawable(getDrawable(R.drawable.underline_text_icon));
         }else{
-            mBtnUnderLine.setBackground(getDrawable(R.drawable.underline_text_icon));
+            mBtnUnderLine.setImageDrawable(getDrawable(R.drawable.no_underline_text_icon));
         }
         if(status.get(2) == 1){
-            mBtnDeleteLine.setBackground(getDrawable(R.drawable.underline_text_icon));
+            mBtnDeleteLine.setImageDrawable(getDrawable(R.drawable.deleteline_text_icon));
         }else{
-            mBtnDeleteLine.setBackground(getDrawable(R.drawable.deleteline_text_icon));
+            mBtnDeleteLine.setImageDrawable(getDrawable(R.drawable.no_deleteline_text_icon));
         }
         if(status.get(3) != 0){
             clickColorChanged(status.get(3),false);

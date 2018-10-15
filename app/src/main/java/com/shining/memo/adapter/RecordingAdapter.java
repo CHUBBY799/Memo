@@ -615,11 +615,6 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         public void onStartTrackingTouch(SeekBar seekBar) { }
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-//            if(isView){
-//                seekBar.setProgress(0);
-//                textChanged.viewToEdit();
-//                return;
-//            }
             textChanged.recyclerViewClearFocusable();
             if(btnIndex == (int)itemView.getTag()){
                 if(isPlaying){

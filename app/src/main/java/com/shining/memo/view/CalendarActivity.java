@@ -39,9 +39,6 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
-        WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
-        localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
-
         initView();
 
         calendar_close.setOnClickListener(new View.OnClickListener() {

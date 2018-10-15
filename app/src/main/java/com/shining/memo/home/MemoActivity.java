@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -21,7 +20,7 @@ import com.shining.memo.presenter.TaskPresenter;
 import com.shining.memo.view.CalendarActivity;
 
 import com.shining.memo.view.NoteActivity;
-import com.shining.memo.view.RecordingEditActivity;
+import com.shining.memo.view.TaskActivity;
 
 import com.shining.memo.view.ListActivity;
 
@@ -135,7 +134,7 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
     }
     private void onClickAdd(View v){
         if(currentFragment instanceof TaskFragment){
-            Intent calendarIntent = new Intent(this, RecordingEditActivity.class);
+            Intent calendarIntent = new Intent(this, TaskActivity.class);
             startActivity(calendarIntent);
         }else if(currentFragment instanceof NoteFragment){
             Intent calendarIntent = new Intent(this, NoteActivity.class);

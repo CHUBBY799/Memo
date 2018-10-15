@@ -5,62 +5,95 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent">
+    app:layout_constraintBottom_toBottomOf="parent"
+    android:background="@color/content_background">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
-
-        <Button
+        <ImageButton
             android:id="@+id/bottom_cancel"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:background="@drawable/cancel_icon" />
-
-        <Button
-            android:id="@+id/bottom_alarm"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
             android:layout_marginStart="25dp"
-            android:background="@drawable/alarm_clock_icon" />
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/back_icon"
+            android:layout_alignParentLeft="true"/>
+
+        <ImageButton
+            android:id="@+id/bottom_alarm"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/alarm_clock_icon"
+            android:layout_toRightOf="@+id/bottom_cancel"/>
+
 
         <Switch
             android:id="@+id/bottom_urgent"
             android:layout_width="44dp"
             android:layout_height="22dp"
-            android:layout_marginStart="20dp"
             android:checked="false"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
             android:thumb="@drawable/rectangle_thumb_selector"
-            android:track="@drawable/urgent_track_selector" />
+            android:track="@drawable/urgent_track_selector"
+            android:layout_toRightOf="@+id/bottom_alarm"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/bottom_photo"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginStart="20dp"
-            android:background="@drawable/import_images_icon" />
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/import_images_icon"
+            android:layout_toLeftOf="@+id/bottom_audio"/>
 
-        <Button
+
+        <ImageButton
             android:id="@+id/bottom_audio"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginStart="20dp"
-            android:background="@drawable/audio_recording_icon" />
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/audio_recording_icon"
+            android:layout_toLeftOf="@+id/bottom_textedit"/>
 
-        <Button
+
+
+        <ImageButton
             android:id="@+id/bottom_textedit"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginStart="20dp"
-            android:background="@drawable/text_edit_icon" />
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/text_edit_icon"
+            android:layout_toLeftOf="@+id/bottom_confirm"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/bottom_confirm"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginStart="25dp"
-            android:background="@drawable/save_icon" />
-    </LinearLayout>
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:layout_marginEnd="25dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/save_icon"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

@@ -8,8 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,13 +17,11 @@ import android.widget.TextView;
 
 import com.shining.memo.R;
 import com.shining.memo.view.CalendarActivity;
-import com.shining.memo.view.RecordingEditActivity;
+import com.shining.memo.view.TaskActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static android.support.v4.text.HtmlCompat.FROM_HTML_MODE_COMPACT;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyViewHolder> {
 
@@ -65,7 +61,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         calendarItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, RecordingEditActivity.class);
+                Intent intent = new Intent(context, TaskActivity.class);
                 intent.putExtra("taskId", task_id[holder.getAdapterPosition()]);
                 context.startActivity(intent);
                 calendarActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

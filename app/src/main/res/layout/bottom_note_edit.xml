@@ -15,41 +15,64 @@
         android:orientation="horizontal"
         tools:ignore="MissingConstraints">
 
-        <Button
+        <ImageButton
             android:id="@+id/bottom_cancel"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:background="@drawable/cancel_icon" />
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:layout_marginStart="25dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/back_icon"
+            android:layout_alignParentLeft="true"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/bottom_photo"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/import_images_icon"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/import_images_icon"
             android:layout_toLeftOf="@+id/bottom_audio"/>
 
-        <Button
+
+        <ImageButton
             android:id="@+id/bottom_audio"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/audio_recording_icon"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/audio_recording_icon"
             android:layout_toLeftOf="@+id/bottom_textedit"/>
 
-        <Button
+
+
+        <ImageButton
             android:id="@+id/bottom_textedit"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/text_edit_icon"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/text_edit_icon"
             android:layout_toLeftOf="@+id/bottom_confirm"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/bottom_confirm"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:background="@drawable/save_icon"
-            android:layout_alignParentRight="true"/>
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:layout_marginEnd="25dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/save_icon"
+            android:layout_alignParentEnd="true"/>
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
