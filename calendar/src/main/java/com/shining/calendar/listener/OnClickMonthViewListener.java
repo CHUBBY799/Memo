@@ -8,6 +8,9 @@ public interface OnClickMonthViewListener {
 
     void onClickLastMonth(LocalDate date);
 
+    void onClickLastMonth(LocalDate date, boolean button);
+
     void onClickNextMonth(LocalDate date);
 
+    void onClickNextMonth(LocalDate date, boolean button);
 }
