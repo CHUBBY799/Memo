@@ -67,7 +67,7 @@
         android:layout_height="2dp"
         android:layout_marginEnd="25dp"
         android:layout_marginStart="25dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="3dp"
         android:background="@color/underline_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -79,6 +79,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:animateLayoutChanges="true"
+        android:layout_marginBottom="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">

@@ -45,6 +45,7 @@
             android:theme="@style/Theme.AppCompat.Light.Dialog"/>
         <activity android:name=".view.NoteActivity"
             android:theme="@style/OrangeTheme"/>
+
         <receiver
             android:name=".receiver.AlarmReceiver"
             android:enabled="true"

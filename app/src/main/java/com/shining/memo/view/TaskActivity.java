@@ -94,10 +94,10 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     private PopupWindow volumePopWindow;
     private ImageView volumeImage;
     private RecyclerView mRecyclerView;
-    public static boolean isRecording,isPhotoChoosing,isTextEdit,isColorPick,noBackKey,isView,isTitleFocus;
+    public static boolean isRecording,isPhotoChoosing,isTextEdit,isColorPick,noBackKey,isView;
     private String photoPath="";
     private int urgent = 0,alarm = 0,taskId = -1;
-    private boolean isNotification,requestPermission,alarmChanged;
+    private boolean isNotification,requestPermission,alarmChanged,isTitleFocus;
     private OonClickView onClickView;
     private Alarm alarmObject;
     private RecordingAdapter adapter;
@@ -261,7 +261,21 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             mBtnViewAlarm.setOnClickListener(onClickView);
             mBtnViewUrgent.setOnCheckedChangeListener(this);
         }
+//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                if (!mRecyclerView.canScrollVertically(-1)){
+//                    mRecyclerView.removeOnScrollListener(this);
+//                    editTitle.setVisibility(View.VISIBLE);
+//                    mRecyclerView.addOnScrollListener(this);
+//                }else if(dy > 0){
+//                    editTitle.setVisibility(View.GONE);
+//                }
+//            }
+//        });
     }
+
 
     private void initData(){
         if(taskId == -1){
@@ -826,17 +840,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                 adapter.photoSetFocusable(RecordingPresenter.insertIndex);
             }
             adapter.notifyItemRangeChanged(index,mMap.size() - index);
-            mRecyclerView.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (adapter.requestFocusableIndex < getCurrentFirstIndex() || adapter.requestFocusableIndex > getCurrentLastIndex()) {
-                        updateRecyclerView(adapter.getRequestFocusableIndex());
-                    }else {
-                        adapter.requestFocusable(mRecyclerView);
-                    }
-                }
-            });
-
         }else{
             recordingPresenter.insertRecording(mMap,filePath,type);
             Log.d("TAG", "onStop: "+mMap.toString());
@@ -845,9 +848,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                 adapter.photoSetFocusable(RecordingPresenter.insertIndex);
             }else {
                 adapter.setRequestFocusableArgs(RecordingPresenter.insertIndex,0,"end");
-            }
-            if(adapter.requestFocusableIndex < getCurrentFirstIndex() || adapter.requestFocusableIndex >getCurrentLastIndex()) {
-                updateRecyclerView(adapter.getRequestFocusableIndex());
             }
         }
     }
@@ -912,13 +912,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     public void updateAdapter(int index) {
         Log.d(TAG, "updateAdapter: "+ mMap.toString());
         adapter.notifyItemRangeChanged(index,mMap.size() - index);
-        mRecyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                if(adapter.requestFocusableIndex < getCurrentFirstIndex() || adapter.requestFocusableIndex >getCurrentLastIndex())
-                    updateRecyclerView(adapter.requestFocusableIndex);
-            }
-        });
     }
 
     @Override
@@ -935,7 +928,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     public RecyclerView getRecyclerView() {
-
         Log.d(TAG, "getRecyclerView: ");
         return mRecyclerView;
     }
@@ -967,11 +959,11 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     @Override
     public void onFocusChange(View view, boolean b) {
         if(b){
-            isTitleFocus = true;
             List<Integer> list = new ArrayList<>();
             for(int i = 0; i < 4; i++)
                 list.add(0);
             updateEditIcon(list);
+            isTitleFocus = true;
         }
         else
             isTitleFocus = false;
@@ -1002,28 +994,31 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         if(isTitleFocus){
             return;
         }
-        resetColorBackground();
-        RecordingAdapter.currentColor = color;
-        if(color == getColor(R.color.textcolor_black)){
-            mBtnColBlack.setImageDrawable(getDrawable(R.drawable.color_oval_black));
-        }
-        else if(color == getColor(R.color.textcolor_red)){
-            mBtnColRed.setImageDrawable(getDrawable(R.drawable.color_oval_red));
-        }
-        else if(color == getColor(R.color.textcolor_orange)){
-            mBtnColOrange.setImageDrawable(getDrawable(R.drawable.color_oval_orange));
-        }
-        else if(color == getColor(R.color.textcolor_blue)){
-            mBtnColBlue.setImageDrawable(getDrawable(R.drawable.color_oval_blue));
-        }
-        else if(color == getColor(R.color.textcolor_purple)){
-            mBtnColPurple.setImageDrawable(getDrawable(R.drawable.color_oval_purple));
-        }
-        else if(color == getColor(R.color.textcolor_gray)){
-            mBtnColGray.setImageDrawable(getDrawable(R.drawable.color_oval_gray));
-        }
+        boolean changed = false;
         if(insert){
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color);
+            changed = adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color);
+        }
+        if((insert && changed) || !insert){
+            resetColorBackground();
+            RecordingAdapter.currentColor = color;
+            if(color == getColor(R.color.textcolor_black)){
+                mBtnColBlack.setImageDrawable(getDrawable(R.drawable.color_oval_black));
+            }
+            else if(color == getColor(R.color.textcolor_red)){
+                mBtnColRed.setImageDrawable(getDrawable(R.drawable.color_oval_red));
+            }
+            else if(color == getColor(R.color.textcolor_orange)){
+                mBtnColOrange.setImageDrawable(getDrawable(R.drawable.color_oval_orange));
+            }
+            else if(color == getColor(R.color.textcolor_blue)){
+                mBtnColBlue.setImageDrawable(getDrawable(R.drawable.color_oval_blue));
+            }
+            else if(color == getColor(R.color.textcolor_purple)){
+                mBtnColPurple.setImageDrawable(getDrawable(R.drawable.color_oval_purple));
+            }
+            else if(color == getColor(R.color.textcolor_gray)){
+                mBtnColGray.setImageDrawable(getDrawable(R.drawable.color_oval_gray));
+            }
         }
     }
 
