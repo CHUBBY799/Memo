@@ -22,6 +22,7 @@ public class MonthCalendar extends CalendarPager implements OnClickMonthViewList
 
     private OnMonthCalendarChangedListener onMonthCalendarChangedListener;
     private int lastPosition = -1;
+    private boolean button;
 
     public MonthCalendar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -143,8 +144,22 @@ public class MonthCalendar extends CalendarPager implements OnClickMonthViewList
     }
 
     @Override
+    public void onClickLastMonth(LocalDate date, boolean button){
+        int currentItem = getCurrentItem() - 1;
+        this.button = button;
+        dealClickEvent(date, currentItem);
+    }
+
+    @Override
     public void onClickNextMonth(LocalDate date) {
         int currentItem = getCurrentItem() + 1;
+        dealClickEvent(date, currentItem);
+    }
+
+    @Override
+    public void onClickNextMonth(LocalDate date, boolean button) {
+        int currentItem = getCurrentItem() + 1;
+        this.button = button;
         dealClickEvent(date, currentItem);
     }
 
@@ -160,10 +175,13 @@ public class MonthCalendar extends CalendarPager implements OnClickMonthViewList
         nMonthView.setDateAndPoint(date, mSelectDateList, pointList);
         mSelectDate = date;
         lastSelectDate = date;
-        if (mSelectDateList.contains(mSelectDate)){
-            mSelectDateList.remove(mSelectDate);
-        }else {
-            mSelectDateList.add(mSelectDate);
+        if (!button){
+            if (mSelectDateList.contains(mSelectDate)){
+                mSelectDateList.remove(mSelectDate);
+            }else {
+                mSelectDateList.add(mSelectDate);
+            }
+            button = false;
         }
 
         isPagerChanged = true;

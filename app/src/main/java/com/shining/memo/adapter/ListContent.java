@@ -59,14 +59,17 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             layout.setOrientation(LinearLayout.HORIZONTAL);
             layout.setPadding(0,20,0,0);
 
+            final TextView state = new TextView(context);
             final TextView content = new TextView(context);
+            layout.addView(state);
+            layout.addView(content);
+            listItem.addView(layout);
+
             content.setPadding(30,0,0,0);
             content.setTextSize(16);
             content.setGravity(CENTER);
             content.setText(itemContent[position][i]);
 
-            final TextView state = new TextView(context);
-            layout.addView(state);
             LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)state.getLayoutParams();
             lp.width = 36;
             lp.height= 36;
@@ -80,7 +83,8 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
                 state.setBackground(context.getDrawable(R.drawable.group_2));
                 content.setTextColor(context.getColor(R.color.recording_title));
             }
-            state.setOnClickListener(new View.OnClickListener() {
+
+            layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (itemState[holder.getAdapterPosition()][index]){
@@ -94,10 +98,6 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
                     }
                 }
             });
-
-            //layout.addView(state);
-            layout.addView(content);
-            listItem.addView(layout);
         }
 
 
@@ -128,16 +128,25 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
         });
 
         final TranslateAnimation showAnim = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 0.0f,
                 Animation.RELATIVE_TO_SELF, 1.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f,
                 Animation.RELATIVE_TO_SELF, 0.0f);
         showAnim.setDuration(500);
+
+        final TranslateAnimation hideAnim = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 1.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f);
+        hideAnim.setDuration(500);
+
 
         expandIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(expandState[holder.getAdapterPosition()]){
+                    listItem.startAnimation(hideAnim);
                     listItem.setVisibility(View.GONE);
                     expandIcon.setBackground(context.getDrawable(R.drawable.fold_icon));
                     expandState[holder.getAdapterPosition()] = false;

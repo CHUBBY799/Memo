@@ -92,15 +92,6 @@ public abstract class CalendarView extends View {
         return mInitialDate;
     }
 
-    /*public LocalDate getSelectDate() {
-        return mSelectDate;
-    }*/
-
-    /*public void setSelectDate(LocalDate date) {
-        this.mSelectDate = date;
-        invalidate();
-    }*/
-
     public void setDateAndPoint(LocalDate date, List<LocalDate> datesList, List<String> pointList) {
         this.mSelectDate = date;
         this.mSelectDateList = datesList;

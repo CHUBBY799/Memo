@@ -19,7 +19,7 @@ import java.util.TimerTask;
 
 public class DatePickerView extends View {
 
-    public static final float MARGIN_ALPHA = 2.8f;
+    public static final float MARGIN_ALPHA = 3.2f;
     public static final float SPEED = 10;
 
     private Context context;
@@ -80,10 +80,14 @@ public class DatePickerView extends View {
         void onSelect(String text);
     }
 
+    /**
+     * 设置View显示的数据
+     * @param dataList 传递过来的数据
+     */
     public void setData(List<String> dataList) {
         mDataList = dataList;
         mCurrentSelected = mDataList.size() / 4;
-        invalidate();
+        invalidate(); //刷新View的显示
     }
 
     @SuppressWarnings("all")
@@ -219,6 +223,9 @@ public class DatePickerView extends View {
         nPaint.setColor(ContextCompat.getColor(context, R.color.alarm_unselected));
     }
 
+    /**
+     * 得到容器的宽高并保存
+     */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -242,6 +249,11 @@ public class DatePickerView extends View {
         }
     }
 
+
+    /**
+     * 绘画View视图
+     * @param canvas 画布
+     */
     private void drawData(Canvas canvas) {
         // 先绘制选中的text再往上往下绘制其余的text
         float scale = parabola(mViewHeight / 4.0f, mMoveLen);
@@ -249,10 +261,10 @@ public class DatePickerView extends View {
         mPaint.setTextSize(size);
         mPaint.setAlpha((int) ((mMaxTextAlpha - mMinTextAlpha) * scale + mMinTextAlpha));
         // text居中绘制，注意baseline的计算才能达到居中，y值是text中心坐标
-        float x = (float) (mViewWidth / 2.0);
+        float x = (float) (mViewWidth / 2.0); //横坐标
         float y = (float) (mViewHeight / 2.0 + mMoveLen);
         Paint.FontMetricsInt fmi = mPaint.getFontMetricsInt();
-        float baseline = (float) (y - (fmi.bottom / 2.0 + fmi.top / 2.0));
+        float baseline = (float) (y - (fmi.bottom / 2.0 + fmi.top / 2.0));  //字体基线
 
         canvas.drawText(mDataList.get(mCurrentSelected), x, baseline, mPaint);
         // 绘制上方data
@@ -267,8 +279,8 @@ public class DatePickerView extends View {
 
     private void drawOtherText(Canvas canvas, int position, int type) {
         float d = MARGIN_ALPHA * mMinTextSize * position + type * mMoveLen;
-        float scale = parabola(mViewHeight / 10.0f, d);
-        float size = (mMaxTextSize - mMinTextSize) * scale + mMinTextSize - 3;
+        float scale = parabola(mViewHeight / 4.0f, d);
+        float size = (mMaxTextSize - mMinTextSize) * scale + mMinTextSize;
         nPaint.setTextSize(size);
         nPaint.setAlpha((int) ((mMaxTextAlpha - mMinTextAlpha) * scale + mMinTextAlpha));
         float y = (float) (mViewHeight / 2.0 + type * d);
