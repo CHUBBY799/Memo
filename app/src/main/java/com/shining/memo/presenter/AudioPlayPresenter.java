@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -21,7 +22,7 @@ public class AudioPlayPresenter {
     private static MediaPlayer mMediaPlayer;
     private Context context;
     private onStopPlay onStopPlay;
-    public Button currentButton;
+    public ImageButton currentButton;
     public TextView mTvTime;
     public SeekBar seekBar;
     public String timeDuration;
@@ -120,7 +121,7 @@ public class AudioPlayPresenter {
 
 
     public interface onStopPlay{
-        void onStopPlay(Button btn);
+        void onStopPlay(ImageButton btn);
     }
 
     private int progress,totalTime;

@@ -65,4 +65,22 @@ public class NotePresenter {
         }
         return true;
     }
+
+    public boolean deleteRecording(int taskId){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try{
+            recordingModel.deleteRecording(taskId,db);
+            taskModel.deleteTask(taskId,db);
+            AlarmPresenter presenter = new AlarmPresenter(context);
+            presenter.alarmCancel(taskId);
+            db.setTransactionSuccessful();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }finally {
+            db.endTransaction();
+        }
+        return true;
+    }
 }

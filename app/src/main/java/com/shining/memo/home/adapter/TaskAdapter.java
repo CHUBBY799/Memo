@@ -3,8 +3,6 @@ package com.shining.memo.home.adapter;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,13 +13,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shining.memo.R;
-import com.shining.memo.view.RecordingEditActivity;
+import com.shining.memo.view.TaskActivity;
 
 import org.json.JSONObject;
 
 import java.util.List;
-
-import static android.support.v4.text.HtmlCompat.FROM_HTML_MODE_COMPACT;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
     private static final String TAG = "TaskAdapter";
@@ -75,7 +71,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
                 try{
                     int id=task.getInt("taskId");
                     Log.d("helo", "onClick: "+id);
-                    Intent intent=new Intent(viewGroup.getContext(), RecordingEditActivity.class);
+                    Intent intent=new Intent(viewGroup.getContext(), TaskActivity.class);
                     intent.putExtra("taskId",id);
                     viewGroup.getContext().startActivity(intent);
                 }catch (Exception e){
@@ -181,15 +177,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
                 holder.audioTitle1.setVisibility(View.INVISIBLE);
                 holder.audioTitle2.setVisibility(View.INVISIBLE);
                 holder.type.setImageResource(R.drawable.text_type_icon);
-                String title=task.getString("title");
-                Spanned spanned = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                    spanned = Html.fromHtml(title,FROM_HTML_MODE_COMPACT);
-                }
-                if(spanned != null && spanned.length()>0){
-                    title=spanned.subSequence(0,spanned.length()-1).toString();
-                }
-                holder.title.setText(title);
+                holder.title.setText(task.getString("title"));
             }
             if(task.getInt("urgent")==0){
                 holder.urgent.setVisibility(View.INVISIBLE);

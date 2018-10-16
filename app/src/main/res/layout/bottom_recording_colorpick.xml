@@ -7,58 +7,102 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical">
-        <Button
+        <ImageButton
             android:id="@+id/bottom_colorpick_back"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:background="@drawable/back_icon"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:layout_marginStart="25dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/back_icon"
             android:layout_alignParentLeft="true"/>
-        <Button
+        <ImageButton
             style="?android:attr/borderlessButtonStyle"
             android:id="@+id/colorpick_gray"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/color_ring_gray"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:paddingStart="9dp"
+            android:paddingEnd="9dp"
+            android:layout_marginStart="25dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/color_ring_gray"
             android:layout_toLeftOf="@+id/colorpick_purple"/>
-        <Button
+
+        <ImageButton
             style="?android:attr/borderlessButtonStyle"
             android:id="@+id/colorpick_purple"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/color_ring_purple"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:paddingStart="9dp"
+            android:paddingEnd="9dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/color_ring_purple"
             android:layout_toLeftOf="@+id/colorpick_blue"/>
-        <Button
+
+        <ImageButton
             style="?android:attr/borderlessButtonStyle"
             android:id="@+id/colorpick_blue"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/color_ring_blue"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:paddingStart="9dp"
+            android:paddingEnd="9dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/color_ring_blue"
             android:layout_toLeftOf="@+id/colorpick_orange"/>
-        <Button
+
+        <ImageButton
             style="?android:attr/borderlessButtonStyle"
             android:id="@+id/colorpick_orange"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/color_ring_orange"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:paddingStart="9dp"
+            android:paddingEnd="9dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/color_ring_orange"
             android:layout_toLeftOf="@+id/colorpick_red"/>
-        <Button
+
+        <ImageButton
             style="?android:attr/borderlessButtonStyle"
             android:id="@+id/colorpick_red"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/color_ring_red"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:paddingStart="9dp"
+            android:paddingEnd="9dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/color_ring_red"
             android:layout_toLeftOf="@+id/colorpick_black"/>
-        <Button
+
+        <ImageButton
             style="?android:attr/borderlessButtonStyle"
             android:id="@+id/colorpick_black"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/color_oval_black" />
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:paddingStart="9dp"
+            android:paddingEnd="9dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/color_oval_black"
+            android:layout_marginEnd="25dp"
+            android:layout_alignParentRight="true"/>
+
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

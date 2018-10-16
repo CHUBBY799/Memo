@@ -3,11 +3,5 @@
     android:shape="rectangle">
     <solid
         android:color="@color/item_btn_textcolor"/>
-    <!-- padding设置内容区域离边界的间距 -->
-    <!--<padding-->
-        <!--android:bottom="2dp"-->
-
-        <!--android:top="2dp" />-->
-    <!-- corners设置圆角，只适用于rectangle -->
-    <corners android:radius="200dp"/>
+    <corners android:radius="4dp"/>
 </shape>

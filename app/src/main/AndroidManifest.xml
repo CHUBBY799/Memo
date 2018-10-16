@@ -54,7 +54,7 @@
             android:theme="@style/OrangeTheme" />
 
         <activity
-            android:name=".view.RecordingEditActivity"
+            android:name=".view.TaskActivity"
 
             android:theme="@style/OrangeTheme" />
           <!--android:windowSoftInputMode="stateVisible|adjustPan|stateHidden|stateAlwaysHidden"-->
@@ -67,7 +67,6 @@
 
         <activity android:name=".view.NoteActivity"
             android:theme="@style/OrangeTheme"/>
-
         <receiver
             tools:ignore="ExportedReceiver"
             android:name=".receiver.AlarmReceiver"

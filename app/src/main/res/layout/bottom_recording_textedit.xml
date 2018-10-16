@@ -6,45 +6,64 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent">
+    app:layout_constraintBottom_toBottomOf="parent"
+    android:background="@color/content_background">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical">
-        <Button
+        <ImageButton
             android:id="@+id/bottom_textedit_back"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:background="@drawable/back_icon"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:layout_marginStart="25dp"
+            android:background="@drawable/button_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/back_icon"
             android:layout_alignParentLeft="true"/>
-
-        <Button
+        <ImageButton
             android:id="@+id/bottom_bold"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/bold_text_icon"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:scaleType="centerInside"
+            android:background="@drawable/button_ripple"
+            android:src="@drawable/no_bold_text_icon"
             android:layout_toLeftOf="@+id/bottom_underline"/>
-        <Button
+        <ImageButton
             android:id="@+id/bottom_underline"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/underline_text_icon"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:scaleType="centerInside"
+            android:background="@drawable/button_ripple"
+            android:src="@drawable/no_underline_text_icon"
             android:layout_toLeftOf="@+id/bottom_deleteline"/>
-        <Button
+        <ImageButton
             android:id="@+id/bottom_deleteline"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/deleteline_text_icon"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:scaleType="centerInside"
+            android:background="@drawable/button_ripple"
+            android:src="@drawable/no_underline_text_icon"
             android:layout_toLeftOf="@+id/bottom_color"/>
-        <Button
+        <ImageButton
             android:id="@+id/bottom_color"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:scaleType="centerInside"
+            android:background="@drawable/button_ripple"
+            android:layout_marginEnd="25dp"
             android:layout_alignParentRight="true"
-            android:background="@drawable/text_color_icon" />
+            android:src="@drawable/text_color_icon" />
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
