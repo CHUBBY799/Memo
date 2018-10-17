@@ -267,29 +267,29 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         mRecyclerView.addOnScrollListener(new OnScrollListener() {
             final OnScrollListener context = this;
             int state = 0;
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-               if(state == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-                    Log.d(TAG,"onScrollStateChanged");
-                    if(mRecyclerView.computeVerticalScrollOffset() <= editTitle.getHeight()){
-                        editTitle.setVisibility(View.VISIBLE);
-                    }
-                }
-                if(isTitleFocus)
-                    editTitle.clearFocus();
-                state = newState;
-            }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if(mRecyclerView.computeVerticalScrollOffset() > editTitle.getHeight()){
-                    editTitle.setVisibility(View.GONE);
-                }
-                else if(!mRecyclerView.canScrollVertically(-1)&&state != AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-                    editTitle.setVisibility(View.VISIBLE);
-                }
-            }
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//               if(state == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+//                    Log.d(TAG,"onScrollStateChanged");
+//                    if(mRecyclerView.computeVerticalScrollOffset() <= editTitle.getHeight()){
+//                        editTitle.setVisibility(View.VISIBLE);
+//                    }
+//                }
+//                if(isTitleFocus)
+//                    editTitle.clearFocus();
+//                state = newState;
+//            }
+//
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                if(mRecyclerView.computeVerticalScrollOffset() > editTitle.getHeight()){
+//                    editTitle.setVisibility(View.GONE);
+//                }
+//                else if(!mRecyclerView.canScrollVertically(-1)&&state != AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+//                    editTitle.setVisibility(View.VISIBLE);
+//                }
+//            }
         });
     }
 
