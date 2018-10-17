@@ -55,7 +55,7 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             final int index = i;
             LinearLayout layout = new LinearLayout(context);
             layout.setOrientation(LinearLayout.HORIZONTAL);
-            layout.setPadding(0,20,0,0);
+            layout.setPadding(0,25,0,0);
 
             final TextView state = new TextView(context);
             final TextView content = new TextView(context);
@@ -63,15 +63,15 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             layout.addView(content);
             listItem.addView(layout);
 
-            content.setPadding(30,0,0,0);
-            content.setTextSize(16);
+            content.setPadding(40,0,0,0);
+            content.setTextSize(17);
             content.setGravity(CENTER);
             content.setText(itemContent[position][i]);
 
             LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)state.getLayoutParams();
-            lp.width = 36;
-            lp.height= 36;
-            lp.topMargin = 10;
+            lp.width = 40;
+            lp.height= 40;
+            lp.topMargin = 8;
             state.setLayoutParams(lp);
             state.setGravity(CENTER);
             if (itemState[holder.getAdapterPosition()][index]){
