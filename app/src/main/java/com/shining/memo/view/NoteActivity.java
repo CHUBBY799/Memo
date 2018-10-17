@@ -66,6 +66,7 @@ import com.shining.memo.utils.ToastUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +98,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false,noBackKey = false,isView = false;
     private String photoPath="";
     private int taskId = -1;
-    private boolean isNotification,requestPermission;
+    private boolean isNotification,requestPermission,isTitleFocus;
     private OonClickView onClickView;
 
     private RecordingAdapter adapter;
@@ -902,18 +903,30 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     public void onFocusChange(View view, boolean b) {
+        if(b){
+            List<Integer> list = new ArrayList<>();
+            for(int i = 0; i < 4; i++)
+                list.add(0);
+            updateEditIcon(list);
+            isTitleFocus = true;
+        }
+        else
+            isTitleFocus = false;
         if(isView)
             viewToEdit();
     }
 
     private void clickBold(){
-        adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StyleSpan(Typeface.BOLD));
+        if(!isTitleFocus)
+            adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StyleSpan(Typeface.BOLD));
     }
     private void clickUnderLine(){
+        if(!isTitleFocus)
         adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new UnderlineSpan());
 
     }
     private void clickDeleteLine(){
+        if(!isTitleFocus)
         adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StrikethroughSpan());
     }
 
@@ -923,28 +936,33 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickColorChanged(int color,boolean insert){
-        resetColorBackground();
-        RecordingAdapter.currentColor = color;
-        if(color == getColor(R.color.textcolor_black)){
-            mBtnColBlack.setImageDrawable(getDrawable(R.drawable.color_oval_black));
-        }
-        else if(color == getColor(R.color.textcolor_red)){
-            mBtnColRed.setImageDrawable(getDrawable(R.drawable.color_oval_red));
-        }
-        else if(color == getColor(R.color.textcolor_orange)){
-            mBtnColOrange.setImageDrawable(getDrawable(R.drawable.color_oval_orange));
-        }
-        else if(color == getColor(R.color.textcolor_blue)){
-            mBtnColBlue.setImageDrawable(getDrawable(R.drawable.color_oval_blue));
-        }
-        else if(color == getColor(R.color.textcolor_purple)){
-            mBtnColPurple.setImageDrawable(getDrawable(R.drawable.color_oval_purple));
-        }
-        else if(color == getColor(R.color.textcolor_gray)){
-            mBtnColGray.setImageDrawable(getDrawable(R.drawable.color_oval_gray));
-        }
+        if(isTitleFocus)
+            return;
+        boolean changed = false;
         if(insert){
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color);
+            changed = adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color);
+        }
+        if((insert && changed) || !insert){
+            resetColorBackground();
+            RecordingAdapter.currentColor = color;
+            if(color == getColor(R.color.textcolor_black)){
+                mBtnColBlack.setImageDrawable(getDrawable(R.drawable.color_oval_black));
+            }
+            else if(color == getColor(R.color.textcolor_red)){
+                mBtnColRed.setImageDrawable(getDrawable(R.drawable.color_oval_red));
+            }
+            else if(color == getColor(R.color.textcolor_orange)){
+                mBtnColOrange.setImageDrawable(getDrawable(R.drawable.color_oval_orange));
+            }
+            else if(color == getColor(R.color.textcolor_blue)){
+                mBtnColBlue.setImageDrawable(getDrawable(R.drawable.color_oval_blue));
+            }
+            else if(color == getColor(R.color.textcolor_purple)){
+                mBtnColPurple.setImageDrawable(getDrawable(R.drawable.color_oval_purple));
+            }
+            else if(color == getColor(R.color.textcolor_gray)){
+                mBtnColGray.setImageDrawable(getDrawable(R.drawable.color_oval_gray));
+            }
         }
     }
 
