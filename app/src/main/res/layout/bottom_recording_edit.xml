@@ -44,7 +44,7 @@
             android:checked="false"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
-            android:thumb="@drawable/rectangle_thumb_selector"
+            android:thumb="@drawable/rect_thumb_selector"
             android:track="@drawable/urgent_track_selector"
             android:layout_toRightOf="@+id/bottom_alarm"/>
 

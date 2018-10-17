@@ -64,15 +64,15 @@
                 android:splitTrack="false"
                 android:thumbOffset="0dp"
                 android:progress="0"
-                android:thumb="@drawable/seekbar_thumb"
-                android:progressDrawable="@drawable/seekbar_progress" />
+                android:thumb="@drawable/seek_bar_thumb"
+                android:progressDrawable="@drawable/seek_bar_progress" />
 
             <TextView
                 android:id="@+id/audio_time"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:layout_marginRight="5dp"
-                android:textColor="@color/item_btn_textcolor"
+                android:textColor="@color/item_btn_text"
                 android:textSize="16dp"
                 android:text="00:00:00"
                 android:gravity="center"

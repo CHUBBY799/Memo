@@ -26,7 +26,6 @@ import android.support.v7.widget.RecyclerView;
 
 import android.text.Html;
 import android.text.Spanned;
-import android.text.SpannedString;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
@@ -40,12 +39,10 @@ import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,11 +50,9 @@ import android.widget.Toast;
 import com.shining.memo.R;
 import com.shining.memo.adapter.RecordingAdapter;
 import com.shining.memo.home.MemoActivity;
-import com.shining.memo.model.Alarm;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.model.Task;
 import com.shining.memo.model.Task_Recording;
-import com.shining.memo.presenter.AlarmPresenter;
 import com.shining.memo.presenter.AudioRecordPresenter;
 import com.shining.memo.presenter.NotePresenter;
 import com.shining.memo.presenter.PhotoPresenter;
@@ -72,8 +67,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import static android.text.Html.FROM_HTML_MODE_COMPACT;
 
 
 public class NoteActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged,OnFocusChangeListener{
@@ -401,22 +394,22 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                 clickColorBcak();
                 break;
             case R.id.colorpick_red:
-                clickColorChanged(getColor(R.color.textcolor_red),true);
+                clickColorChanged(getColor(R.color.text_color_red),true);
                 break;
             case R.id.colorpick_orange:
-                clickColorChanged(getColor(R.color.textcolor_orange),true);
+                clickColorChanged(getColor(R.color.text_color_orange),true);
                 break;
             case R.id.colorpick_blue:
-                clickColorChanged(getColor(R.color.textcolor_blue),true);
+                clickColorChanged(getColor(R.color.text_color_blue),true);
                 break;
             case R.id.colorpick_purple:
-                clickColorChanged(getColor(R.color.textcolor_purple),true);
+                clickColorChanged(getColor(R.color.text_color_purple),true);
                 break;
             case R.id.colorpick_gray:
-                clickColorChanged(getColor(R.color.textcolor_gray),true);
+                clickColorChanged(getColor(R.color.text_color_gray),true);
                 break;
             case R.id.colorpick_black:
-                clickColorChanged(getColor(R.color.textcolor_black),true);
+                clickColorChanged(getColor(R.color.text_color_black),true);
                 break;
         }
     }
@@ -945,45 +938,45 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         if((insert && changed) || !insert){
             resetColorBackground();
             RecordingAdapter.currentColor = color;
-            if(color == getColor(R.color.textcolor_black)){
-                mBtnColBlack.setImageDrawable(getDrawable(R.drawable.color_oval_black));
+            if(color == getColor(R.color.text_color_black)){
+                mBtnColBlack.setImageDrawable(getDrawable(R.drawable.bg_oval_black));
             }
-            else if(color == getColor(R.color.textcolor_red)){
-                mBtnColRed.setImageDrawable(getDrawable(R.drawable.color_oval_red));
+            else if(color == getColor(R.color.text_color_red)){
+                mBtnColRed.setImageDrawable(getDrawable(R.drawable.bg_oval_red));
             }
-            else if(color == getColor(R.color.textcolor_orange)){
-                mBtnColOrange.setImageDrawable(getDrawable(R.drawable.color_oval_orange));
+            else if(color == getColor(R.color.text_color_orange)){
+                mBtnColOrange.setImageDrawable(getDrawable(R.drawable.bg_oval_orange));
             }
-            else if(color == getColor(R.color.textcolor_blue)){
-                mBtnColBlue.setImageDrawable(getDrawable(R.drawable.color_oval_blue));
+            else if(color == getColor(R.color.text_color_blue)){
+                mBtnColBlue.setImageDrawable(getDrawable(R.drawable.bg_oval_blue));
             }
-            else if(color == getColor(R.color.textcolor_purple)){
-                mBtnColPurple.setImageDrawable(getDrawable(R.drawable.color_oval_purple));
+            else if(color == getColor(R.color.text_color_purple)){
+                mBtnColPurple.setImageDrawable(getDrawable(R.drawable.bg_oval_purple));
             }
-            else if(color == getColor(R.color.textcolor_gray)){
-                mBtnColGray.setImageDrawable(getDrawable(R.drawable.color_oval_gray));
+            else if(color == getColor(R.color.text_color_gray)){
+                mBtnColGray.setImageDrawable(getDrawable(R.drawable.bg_oval_gray));
             }
         }
     }
 
     private void resetColorBackground(){
-        if(RecordingAdapter.currentColor == getColor(R.color.textcolor_black)){
-            mBtnColBlack.setImageDrawable(getDrawable(R.drawable.color_ring_black));
+        if(RecordingAdapter.currentColor == getColor(R.color.text_color_black)){
+            mBtnColBlack.setImageDrawable(getDrawable(R.drawable.bg_ring_black));
         }
-        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_red)){
-            mBtnColRed.setImageDrawable(getDrawable(R.drawable.color_ring_red));
+        else if(RecordingAdapter.currentColor == getColor(R.color.text_color_red)){
+            mBtnColRed.setImageDrawable(getDrawable(R.drawable.bg_ring_red));
         }
-        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_orange)){
-            mBtnColOrange.setImageDrawable(getDrawable(R.drawable.color_ring_orange));
+        else if(RecordingAdapter.currentColor == getColor(R.color.text_color_orange)){
+            mBtnColOrange.setImageDrawable(getDrawable(R.drawable.bg_ring_orange));
         }
-        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_blue)){
-            mBtnColBlue.setImageDrawable(getDrawable(R.drawable.color_ring_blue));
+        else if(RecordingAdapter.currentColor == getColor(R.color.text_color_blue)){
+            mBtnColBlue.setImageDrawable(getDrawable(R.drawable.bg_ring_blue));
         }
-        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_purple)){
-            mBtnColPurple.setImageDrawable(getDrawable(R.drawable.color_ring_purple));
+        else if(RecordingAdapter.currentColor == getColor(R.color.text_color_purple)){
+            mBtnColPurple.setImageDrawable(getDrawable(R.drawable.bg_ring_purple));
         }
-        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_gray)){
-            mBtnColGray.setImageDrawable(getDrawable(R.drawable.color_ring_gray));
+        else if(RecordingAdapter.currentColor == getColor(R.color.text_color_gray)){
+            mBtnColGray.setImageDrawable(getDrawable(R.drawable.bg_ring_gray));
         }
     }
 
@@ -1047,7 +1040,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         if(status.get(3) != 0){
             clickColorChanged(status.get(3),false);
         }else {
-            clickColorChanged(getColor(R.color.textcolor_black),false);
+            clickColorChanged(getColor(R.color.text_color_black),false);
         }
     }
 

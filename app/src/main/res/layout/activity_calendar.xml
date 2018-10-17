@@ -18,7 +18,7 @@
             android:layout_height="16dp"
             android:layout_marginStart="18dp"
             android:layout_marginTop="35dp"
-            android:background="@drawable/last_month_icon" />
+            android:background="@drawable/month_change_left_icon" />
 
         <TextView xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/calendar_month"
@@ -39,7 +39,7 @@
             android:layout_toEndOf="@id/calendar_month"
             android:layout_marginStart="10dp"
             android:layout_marginTop="35dp"
-            android:background="@drawable/next_month_icon" />
+            android:background="@drawable/month_change_right_icon" />
 
         <Button
             android:id="@+id/calendar_close"

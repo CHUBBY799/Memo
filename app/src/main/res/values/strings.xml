@@ -1,20 +1,51 @@
 <resources>
+
+    <!-- common string -->
+    <string name="cancer">Cancer</string>
+    <string name="confirm">Confirm</string>
+    <string name="state">state</string>
+    <string name="title">title</string>
+    <string name="item">item</string>
+
+    <!--guide string -->
+    <string name="guide_image">guide image</string>
+    <string name="guide_title_1">强大的任务设置功能</string>
+    <string name="guide_title_2">方便的清单列表</string>
+    <string name="guide_title_3">多种记录方式</string>
+    <string name="guide_content_1">让您应对工作游刃有余</string>
+    <string name="guide_content_2">让您的工作和生活井井有条</string>
+    <string name="guide_content_3">让您可以随心所欲地进行记录</string>
+    <string name="guide_button">立即体验</string>
+
+    <!--main string-->
     <string name="app_name">Memo</string>
-    <string name="add_text">add_text</string>
-    <string name="urgent">urgent</string>
+    <string name="task">Task</string>
+    <string name="note">Note</string>
+    <string name="list">List</string>
+    <string name="main_add_task">Add a new task</string>
+    <string name="main_add_list">Add a new list</string>
+    <string name="main_add_note">Add a new note</string>
+
+    <!-- list string -->
+    <string name="expand_icon">expand icon</string>
+    <string name="start_default">start default</string>
+
+    <!-- task string -->
     <string name="edit_title_hint">Please input title of recording</string>
     <string name="edit_title_hint_zh">请输入标题内容</string>
     <string name="view_title_hint">None title of recording</string>
     <string name="view_title_hint_zh">无标题</string>
     <string name="edit_content_hint">Please input content of recording</string>
     <string name="item_text_hint">请输入正文内容</string>
+
+    <!-- alarm string -->
     <string name="alarm_clock">Alarm Clock</string>
     <string name="set_alarm_clock">set an alarm clock</string>
     <string name="ringtone_reminder">Ringtone reminder</string>
     <string name="pop_ups_reminder">Pop-ups reminder</string>
+    <string name="alarm_confirm">OK</string>
 
-    <string name="memo_addtask">"Add Task"</string>
-
+    <!-- calendar string -->
     <string name="calendar">calendar</string>
     <string name="calendar_year">2018</string>
     <string name="calendar_sunday">Sun</string>
@@ -26,54 +57,20 @@
     <string name="calendar_saturday">Sat</string>
     <string name="title_date">%1$s  %2$dth,%3$d</string>
 
+    <!-- audio string -->
     <string name="audio">audio</string>
     <string name="edit_title_hint_audio">Please input title of audio</string>
     <string name="audio_rerecording">rerecording</string>
     <string name="audio_recording">recording</string>
     <string name="audio_recording_initTime">00:00</string>
     <string name="audio_recording_btnText">press here to record</string>
-    <string name="photo_recording_btnText">photo</string>
-    <string name="task">Task</string>
-    <string name="note">Note</string>
-    <string name="list">List</string>
-    <string name="list_icon">+</string>
-    <string name="list_new">Add a new list</string>
-    <string name="task_new">Add a new task</string>
-    <string name="note_new">Add a new note</string>
-    <string name="item_new">Add a new item</string>
-
-    <string name="list_finish">√</string>
-
-    <string name="hint_list_title">please input title of list</string>
-    <string name="audio_cancel">CALCEL</string>
     <string name="audio_finish">OK</string>
     <string name="audio_time_length">00:00:00</string>
+
+    <!-- photo string -->
     <string name="photo_gallery">GALLERY</string>
     <string name="photo_camera">CAMERA</string>
-    <string name="alarm_comfirm">OK</string>
+    <string name="photo_recording_btnText">photo</string>
     <string name="list_launches_icon">List launches Icon</string>
-    <string name="cancer">Cancer</string>
-    <string name="confirm">Confirm</string>
-    <string name="state">state</string>
-    <string name="title">title</string>
-    <string name="item">item</string>
-
-    <!--main string-->
-    <string name="main_add_task">Add a new task</string>
-    <string name="main_add_list">Add a new list</string>
-    <string name="main_add_note">Add a new note</string>
-
-    <string name="expand_icon">expand icon</string>
-    <string name="start_default">start default</string>
-
-    <!--guide string -->
-    <string name="guide_image">guide image</string>
-    <string name="guide_title_1">强大的任务设置功能</string>
-    <string name="guide_title_2">方便的清单列表</string>
-    <string name="guide_title_3">多种记录方式</string>
-    <string name="guide_content_1">让您应对工作游刃有余</string>
-    <string name="guide_content_2">让您的工作和生活井井有条</string>
-    <string name="guide_content_3">让您可以随心所欲地进行记录</string>
-    <string name="guide_button">立即体验</string>
 
 </resources>

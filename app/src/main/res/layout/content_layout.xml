@@ -8,6 +8,6 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/white_rectangle_background" />
+        android:background="@drawable/bg_rect05_white" />
 
 </android.support.constraint.ConstraintLayout>

@@ -49,25 +49,25 @@ public class GuideActivity extends AppCompatActivity {
                 guideImage.setBackground(getDrawable(R.drawable.guide_page_one_image));
                 guideTitle.setText(getString(R.string.guide_title_1));
                 guideContent.setText(getString(R.string.guide_content_1));
-                guideDot_1.setBackground(getDrawable(R.drawable.orange_dot));
-                guideDot_2.setBackground(getDrawable(R.drawable.white_dot));
-                guideDot_3.setBackground(getDrawable(R.drawable.white_dot));
+                guideDot_1.setBackground(getDrawable(R.drawable.dot_orange));
+                guideDot_2.setBackground(getDrawable(R.drawable.dot_white));
+                guideDot_3.setBackground(getDrawable(R.drawable.dot_white));
                 guideButton.setVisibility(View.GONE);
             }else if(position == 1){
                 guideImage.setBackground(getDrawable(R.drawable.guide_page_two_image));
                 guideTitle.setText(getString(R.string.guide_title_2));
                 guideContent.setText(getString(R.string.guide_content_2));
-                guideDot_1.setBackground(getDrawable(R.drawable.white_dot));
-                guideDot_2.setBackground(getDrawable(R.drawable.orange_dot));
-                guideDot_3.setBackground(getDrawable(R.drawable.white_dot));
+                guideDot_1.setBackground(getDrawable(R.drawable.dot_white));
+                guideDot_2.setBackground(getDrawable(R.drawable.dot_orange));
+                guideDot_3.setBackground(getDrawable(R.drawable.dot_white));
                 guideButton.setVisibility(View.GONE);
             }else {
                 guideImage.setBackground(getDrawable(R.drawable.guide_page_three_image));
                 guideTitle.setText(getString(R.string.guide_title_3));
                 guideContent.setText(getString(R.string.guide_content_3));
-                guideDot_1.setBackground(getDrawable(R.drawable.white_dot));
-                guideDot_2.setBackground(getDrawable(R.drawable.white_dot));
-                guideDot_3.setBackground(getDrawable(R.drawable.orange_dot));
+                guideDot_1.setBackground(getDrawable(R.drawable.dot_white));
+                guideDot_2.setBackground(getDrawable(R.drawable.dot_white));
+                guideDot_3.setBackground(getDrawable(R.drawable.dot_orange));
                 guideButton.setVisibility(View.VISIBLE);
             }
         }
