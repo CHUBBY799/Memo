@@ -3,6 +3,7 @@ package com.shining.memo.view;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -37,7 +38,9 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -261,19 +264,55 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             mBtnViewAlarm.setOnClickListener(onClickView);
             mBtnViewUrgent.setOnCheckedChangeListener(this);
         }
-//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                if (!mRecyclerView.canScrollVertically(-1)){
-//                    mRecyclerView.removeOnScrollListener(this);
-//                    editTitle.setVisibility(View.VISIBLE);
-//                    mRecyclerView.addOnScrollListener(this);
-//                }else if(dy > 0){
-//                    editTitle.setVisibility(View.GONE);
-//                }
-//            }
-//        });
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            final RecyclerView.OnScrollListener context = this;
+            int state = 0;
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if(state == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                    if(getScollYDistance() <= 0){
+                        mRecyclerView.removeOnScrollListener(this);
+                        editTitle.setMaxLines(10);
+                        editTitle.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mRecyclerView.addOnScrollListener(context);
+                            }
+                        });
+                    }
+                }
+                state = newState;
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(getScollYDistance() > 0){
+                    editTitle.setMaxLines(1);
+                }
+                else if(state != AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                    mRecyclerView.removeOnScrollListener(this);
+                    editTitle.setMaxLines(10);
+                    editTitle.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRecyclerView.addOnScrollListener(context);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public int getScollYDistance() {
+        if (mRecyclerView.getLayoutManager() != null && mRecyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+            LinearLayoutManager manager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+            int position = manager.findFirstVisibleItemPosition();
+            View firstVisiableChildView = manager.findViewByPosition(position);
+            int itemHeight = firstVisiableChildView.getHeight();
+            return (position) * itemHeight - firstVisiableChildView.getTop();
+        }
+        return 0;
     }
 
 
