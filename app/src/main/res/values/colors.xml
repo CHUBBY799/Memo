@@ -5,6 +5,7 @@
     <color name="colorAccent">#ff4081</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
+    <color name="ic_memo_bg">#FFFFFF</color>
 
     <color name="alarm_background">#464646</color>
     <color name="alarm_selected">#59B29C</color>

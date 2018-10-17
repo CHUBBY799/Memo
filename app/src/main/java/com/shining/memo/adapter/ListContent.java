@@ -127,31 +127,31 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             }
         });
 
-        final TranslateAnimation showAnim = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 1.0f,
-                Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 0.0f);
-        showAnim.setDuration(500);
+//        final TranslateAnimation showAnim = new TranslateAnimation(
+//                Animation.RELATIVE_TO_SELF, 1.0f,
+//                Animation.RELATIVE_TO_SELF, 0.0f,
+//                Animation.RELATIVE_TO_SELF, 0.0f,
+//                Animation.RELATIVE_TO_SELF, 0.0f);
+//        showAnim.setDuration(500);
 
-        final TranslateAnimation hideAnim = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 1.0f,
-                Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 0.0f);
-        hideAnim.setDuration(500);
+//        final TranslateAnimation hideAnim = new TranslateAnimation(
+//                Animation.RELATIVE_TO_SELF, 0.0f,
+//                Animation.RELATIVE_TO_SELF, 1.0f,
+//                Animation.RELATIVE_TO_SELF, 0.0f,
+//                Animation.RELATIVE_TO_SELF, 0.0f);
+//        hideAnim.setDuration(500);
 
 
         expandIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(expandState[holder.getAdapterPosition()]){
-                    listItem.startAnimation(hideAnim);
+//                    listItem.startAnimation(hideAnim);
                     listItem.setVisibility(View.GONE);
                     expandIcon.setBackground(context.getDrawable(R.drawable.fold_icon));
                     expandState[holder.getAdapterPosition()] = false;
                 }else{
-                    listItem.startAnimation(showAnim);
+//                    listItem.startAnimation(showAnim);
                     listItem.setVisibility(View.VISIBLE);
                     expandIcon.setBackground(context.getDrawable(R.drawable.expand_icon));
                     expandState[holder.getAdapterPosition()] = true;
