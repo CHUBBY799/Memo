@@ -2,6 +2,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid
-        android:color="@color/item_btn_text"/>
+        android:color="@color/pop_reminder"/>
     <corners android:radius="8dp"/>
 </shape>

@@ -38,6 +38,7 @@ import android.view.View.OnFocusChangeListener;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -247,6 +248,34 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             mBtnViewDelete.setOnClickListener(onClickView);
             mBtnViewShare.setOnClickListener(onClickView);
         }
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            final RecyclerView.OnScrollListener context = this;
+            int state = 0;
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if(state == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                    Log.d(TAG,"onScrollStateChanged");
+                    if(!mRecyclerView.canScrollVertically(-1)){
+                        editTitle.setVisibility(View.VISIBLE);
+                    }
+                }
+                if(isTitleFocus)
+                    editTitle.clearFocus();
+                state = newState;
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                Log.d(TAG,"onScrolled");
+                if(!mRecyclerView.canScrollVertically(-1)&&state != AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                    editTitle.setVisibility(View.VISIBLE);
+                }
+                else{
+                    editTitle.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     private void initData(){
@@ -579,7 +608,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
 
 
     private void clickRerecording(){
-        Log.d(TAG, "clickRerecording: ");
+        Log.d(TAG,"clickRerecording"+adapter.getCurrentIndex());
         try {
             if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -750,37 +779,15 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             mMap.clear();
             mMap.putAll(map);
             checkDefaultEditTex();
-            if(type.equals("photo")){
-                adapter.photoSetFocusable(RecordingPresenter.insertIndex);
-            }else {
-                adapter.setRequestFocusableArgs(RecordingPresenter.insertIndex,0,"end");
-            }
-            Log.d("requestFocusableIndex",RecordingPresenter.insertIndex+"");
-            Log.d("requestFocusableIndex",adapter.getRequestFocusableIndex()+"");
+            adapter.photoSetFocusable(RecordingPresenter.insertIndex);
             adapter.notifyItemRangeChanged(index,mMap.size() - index);
-            mRecyclerView.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (adapter.requestFocusableIndex < getCurrentFirstIndex() || adapter.requestFocusableIndex > getCurrentLastIndex()) {
-                        updateRecyclerView(adapter.getRequestFocusableIndex());
-                    }else {
-                        adapter.requestFocusable(mRecyclerView);
-                    }
-                }
-            });
+            updateRecyclerView(adapter.requestFocusableIndex);
 
         }else{
             recordingPresenter.insertRecording(mMap,filePath,type);
-            Log.d("TAG", "onStop: "+mMap.toString());
             adapter.notifyItemRangeChanged(mMap.size() - 1,mMap.size());
-            if(type.equals("photo")){
-                adapter.photoSetFocusable(RecordingPresenter.insertIndex);
-            }else {
-                adapter.setRequestFocusableArgs(RecordingPresenter.insertIndex,0,"end");
-            }
-            if(adapter.requestFocusableIndex < getCurrentFirstIndex() || adapter.requestFocusableIndex >getCurrentLastIndex()) {
-                updateRecyclerView(adapter.getRequestFocusableIndex());
-            }
+            adapter.photoSetFocusable(RecordingPresenter.insertIndex);
+            updateRecyclerView(adapter.requestFocusableIndex);
         }
     }
 
@@ -831,25 +838,20 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         adapter.notifyItemRemoved(index);
         checkDefaultEditTex();
         if (index - 1 >= 0) {
-            adapter.setRequestFocusableArgs(index - 1,position,type);
+            adapter.setRequestFocusableArgs(adapter.getRequestFocusIndex(index - 1),position,type);
             adapter.notifyItemRangeChanged(index - 1, mMap.size());
         } else {
             adapter.setRequestFocusableArgs(index,position,type);
             adapter.notifyItemRangeChanged(0, mMap.size());
         }
+        updateRecyclerView(adapter.requestFocusableIndex);
     }
 
     @Override
     public void updateAdapter(int index) {
         Log.d(TAG, "updateAdapter: "+ mMap.toString());
         adapter.notifyItemRangeChanged(index,mMap.size() - index);
-        mRecyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                if(adapter.requestFocusableIndex < getCurrentFirstIndex() || adapter.requestFocusableIndex >getCurrentLastIndex())
-                    updateRecyclerView(adapter.requestFocusableIndex);
-            }
-        });
+        updateRecyclerView(adapter.requestFocusableIndex);
     }
 
     @Override
@@ -873,7 +875,12 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     @Override
     public void updateRecyclerView(int position) {
         Log.d("updateRecyclerView",adapter.getRequestFocusableIndex()+"");
-        mRecyclerView.scrollToPosition(position);
+        if(position >= 0)
+            mRecyclerView.scrollToPosition(position);
+        else{
+            mRecyclerView.clearFocus();
+            adapter.setCurrentIndex(-1);
+        }
     }
 
     @Override
@@ -902,6 +909,9 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                 list.add(0);
             updateEditIcon(list);
             isTitleFocus = true;
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(editTitle,0);
+            adapter.setCurrentIndex(-1);
         }
         else
             isTitleFocus = false;

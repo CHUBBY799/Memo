@@ -93,6 +93,7 @@ public class AlarmPresenter {
         try{
             alarmModel.deleteAlarm(taskId,db);
             taskModel.modifyTaskAlarm(taskId,0,db);
+            alarmCancel(taskId);
             db.setTransactionSuccessful();
         }catch (Exception e){
             e.printStackTrace();
