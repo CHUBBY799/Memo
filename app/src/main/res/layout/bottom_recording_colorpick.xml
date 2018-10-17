@@ -30,7 +30,7 @@
             android:layout_marginStart="25dp"
             android:background="@drawable/button_ripple"
             android:scaleType="centerInside"
-            android:src="@drawable/color_ring_gray"
+            android:src="@drawable/bg_ring_gray"
             android:layout_toLeftOf="@+id/colorpick_purple"/>
 
         <ImageButton
@@ -44,7 +44,7 @@
             android:paddingEnd="9dp"
             android:background="@drawable/button_ripple"
             android:scaleType="centerInside"
-            android:src="@drawable/color_ring_purple"
+            android:src="@drawable/bg_ring_purple"
             android:layout_toLeftOf="@+id/colorpick_blue"/>
 
         <ImageButton
@@ -58,7 +58,7 @@
             android:paddingEnd="9dp"
             android:background="@drawable/button_ripple"
             android:scaleType="centerInside"
-            android:src="@drawable/color_ring_blue"
+            android:src="@drawable/bg_ring_blue"
             android:layout_toLeftOf="@+id/colorpick_orange"/>
 
         <ImageButton
@@ -72,7 +72,7 @@
             android:paddingEnd="9dp"
             android:background="@drawable/button_ripple"
             android:scaleType="centerInside"
-            android:src="@drawable/color_ring_orange"
+            android:src="@drawable/bg_ring_orange"
             android:layout_toLeftOf="@+id/colorpick_red"/>
 
         <ImageButton
@@ -86,7 +86,7 @@
             android:paddingEnd="9dp"
             android:background="@drawable/button_ripple"
             android:scaleType="centerInside"
-            android:src="@drawable/color_ring_red"
+            android:src="@drawable/bg_ring_red"
             android:layout_toLeftOf="@+id/colorpick_black"/>
 
         <ImageButton
@@ -100,7 +100,7 @@
             android:paddingEnd="9dp"
             android:background="@drawable/button_ripple"
             android:scaleType="centerInside"
-            android:src="@drawable/color_oval_black"
+            android:src="@drawable/bg_oval_black"
             android:layout_marginEnd="25dp"
             android:layout_alignParentRight="true"/>
 

@@ -93,7 +93,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         presenter = new AudioPlayPresenter(context,this);
         imageLoader = new ImageLoader(context);
         this.textChanged =textChanged;
-        currentColor = context.getColor(R.color.textcolor_black);
+        currentColor = context.getColor(R.color.text_color_black);
         status = new ArrayList<>();
         for(int i=0; status.size() < 4; i++)
             status.add(0);

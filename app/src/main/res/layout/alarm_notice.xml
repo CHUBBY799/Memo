@@ -8,7 +8,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="235dp"
         android:layout_height="300dp"
-        android:background="@drawable/alarm_clock_background_shape"
+        android:background="@drawable/bg_rect15_white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -65,8 +65,8 @@
             android:gravity="center_vertical|center_horizontal"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:text="@string/alarm_comfirm"
-            android:background="@drawable/alarm_clock_button"
+            android:text="@string/alarm_confirm"
+            android:background="@drawable/bg_rect10_orange"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>

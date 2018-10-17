@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:text="This is a note title"
         android:textSize="16sp"
-        android:textColor="@color/main_task_titlecolor"
+        android:textColor="@color/main_task_title"
         android:layout_marginLeft="25dp"/>
     <TextView
         android:id="@+id/main_note_time"
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:text="2018-10-08"
         android:textSize="12sp"
-        android:textColor="@color/main_task_alarmcolor"
+        android:textColor="@color/main_task_alarm"
         android:layout_marginLeft="25dp"
         android:layout_marginTop="10dp"/>
 </LinearLayout>

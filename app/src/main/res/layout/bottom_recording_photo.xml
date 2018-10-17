@@ -32,7 +32,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/button_ripple"
                 android:textSize="16dp"
-                android:textColor="@color/item_btn_textcolor"
+                android:textColor="@color/item_btn_text"
                 android:text="@string/photo_gallery"
                 android:gravity="left|center_vertical"
                 android:paddingLeft="60dp"/>
@@ -54,7 +54,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/button_ripple"
                 android:textSize="16dp"
-                android:textColor="@color/item_btn_textcolor"
+                android:textColor="@color/item_btn_text"
                 android:text="@string/photo_camera"
                 android:gravity="left|center_vertical"
                 android:paddingLeft="60dp"/>

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
-    <solid android:color="@color/item_btn_textcolor"/>
-    <size android:width="20dp" android:height="20dp"></size>
-    <stroke android:color="@color/seekbar_transparent_orange" android:width="8dp"></stroke>
-</shape>

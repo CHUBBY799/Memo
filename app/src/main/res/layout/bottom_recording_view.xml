@@ -59,7 +59,7 @@
             android:layout_width="44dp"
             android:layout_height="22dp"
             android:checked="true"
-            android:thumb="@drawable/rectangle_thumb_selector"
+            android:thumb="@drawable/rect_thumb_selector"
             android:track="@drawable/urgent_track_selector"
             android:layout_marginEnd="25dp"
             android:layout_alignParentRight="true"

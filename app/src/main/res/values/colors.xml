@@ -1,70 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- common color -->
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#ff4081</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
+    <color name="ic_memo_bg">#FFFFFF</color>
 
-    <color name="alarm_background">#464646</color>
-    <color name="alarm_selected">#59B29C</color>
-    <color name="alarm_unselected">#333333</color>
-    <color name="line_color">#EEEEEE</color>
-    <color name="ringtone_reminder">#363636</color>
-    <color name="pop_reminder">#d0d0d0</color>
-
+    <!-- main color -->
+    <color name="main_line">#FFEEEEEE</color>
+    <color name="main_task_title">#FF666666</color>
+    <color name="main_task_alarm">#FFAAAAAA</color>
+    <color name="main_task_complete">#FFCCCCCC</color>
+    <color name="main_task_click">#FFFF8833</color>
+    <color name="main_task_not_click">#FFCCCCCC</color>
+    <color name="main_confirm_focus">#f5f5f5</color>
+    <color name="main_add_item">#FFAAAAAA</color>
     <color name="main_memo">#212121</color>
     <color name="deap_memo">#757575</color>
     <color name="shallow_memo">#e0e0e0</color>
     <color name="white_memo">#fafafa</color>
-
-    <!--alarm color-->
-    <color name="alarm_true">#ff4081</color>
-    <color name="alarm_false">#e0e0e0</color>
-
-    <color name="urgent_true">#FF4C4C</color>
-    <color name="recording">#548B54</color>
-
-
-    <color name="recording_title">#666666</color>
-    <color name="content_background">#FAFAFA</color>
-    <color name="underline_background">#EEEEEE</color>
-
-    <color name="add_new">#A9A9A9</color>
-    <color name="list_finish">#f9883c</color>
-
-    <string name="hint_color">#AAAAAA </string>
-    <color name="item_btn_backgroud">#FFF6F0</color>
-    <color name="item_btn_textcolor">#FF8833</color>
-    <color name="half_transparent_orange">#8EFF8833 </color>
-    <color name="seekbar_transparent_orange">#1EFF8833 </color>
-    <color name="photo_divider">#EEEEEE</color>
-
-    <color name="photo_shelter">#80000000</color>
-    <!--calendar color-->
-    <color name="calendar_select">#FF8833</color>
-    <color name="calendar_unselected">#CCCCCC</color>
-    <color name="calendar_line">#DDDDDD</color>
-    <color name="calendar_week">#AAAAAA</color>
-
-    <color name="textcolor_red">#FF0000</color>
-    <color name="textcolor_orange">#FF7F00</color>
-    <color name="textcolor_gray">#AAAAAA</color>
-    <color name="textcolor_black">#666666</color>
-    <color name="textcolor_blue">#4169E1</color>
-    <color name="textcolor_purple">#8B008B</color>
-    <color name="alarm_btn_background">#FF8833</color>
-    <color name="volume_background">#B0FF8833</color>
-
-     <!--main color-->
-    <color name="main_line">#FFEEEEEE</color>
-    <color name="main_task_titlecolor">#FF666666</color>
-    <color name="main_task_alarmcolor">#FFAAAAAA</color>
-    <color name="main_task_completecolor">#FFCCCCCC</color>
-    <color name="main_task_clickcolor">#FFFF8833</color>
-    <color name="main_task_noclickcolor">#FFCCCCCC</color>
-    <color name="main_confirm_focus">#f5f5f5</color>
-    <color name="main_add_item">#FFAAAAAA</color>
 
     <!-- guide color -->
     <color name="guide_title">#666666</color>
@@ -72,5 +29,45 @@
     <color name="guide_button">#FF8833</color>
     <color name="guide_dot_1">#E5E5E5</color>
     <color name="guide_dot_2">#FF8833</color>
+
+    <!-- alarm color -->
+    <color name="alarm_background">#464646</color>
+    <color name="alarm_selected">#59B29C</color>
+    <color name="alarm_unselected">#333333</color>
+    <color name="line_color">#EEEEEE</color>
+    <color name="ringtone_reminder">#363636</color>
+    <color name="pop_reminder">#d0d0d0</color>
+    <color name="alarm_true">#ff4081</color>
+    <color name="alarm_false">#e0e0e0</color>
+    <color name="urgent_true">#FF4C4C</color>
+    <color name="recording">#548B54</color>
+    <color name="alarm_btn_background">#FF8833</color>
+    <color name="volume_background">#B0FF8833</color>
+
+    <!-- task color -->
+    <color name="recording_title">#666666</color>
+    <color name="content_background">#FAFAFA</color>
+    <color name="underline_background">#EEEEEE</color>
+    <string name="hint_color">#AAAAAA </string>
+    <color name="item_btn_background">#FFF6F0</color>
+    <color name="item_btn_text">#FF8833</color>
+    <color name="half_transparent_orange">#8EFF8833 </color>
+    <color name="seek_bar_transparent_orange">#1EFF8833 </color>
+    <color name="photo_divider">#EEEEEE</color>
+    <color name="photo_shelter">#80000000</color>
+
+    <!-- calendar color -->
+    <color name="calendar_select">#FF8833</color>
+    <color name="calendar_unselected">#CCCCCC</color>
+    <color name="calendar_line">#DDDDDD</color>
+    <color name="calendar_week">#AAAAAA</color>
+
+    <!-- text color -->
+    <color name="text_color_red">#FF0000</color>
+    <color name="text_color_orange">#FF7F00</color>
+    <color name="text_color_gray">#AAAAAA</color>
+    <color name="text_color_black">#666666</color>
+    <color name="text_color_blue">#4169E1</color>
+    <color name="text_color_purple">#8B008B</color>
 
 </resources>

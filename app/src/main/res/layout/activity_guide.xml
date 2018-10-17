@@ -91,21 +91,21 @@
             android:id="@+id/guide_dot_1"
             android:layout_width="7dp"
             android:layout_height="7dp"
-            android:background="@drawable/orange_dot"
+            android:background="@drawable/dot_orange"
             android:layout_marginEnd="10dp"/>
 
         <TextView
             android:id="@+id/guide_dot_2"
             android:layout_width="7dp"
             android:layout_height="7dp"
-            android:background="@drawable/white_dot"
+            android:background="@drawable/dot_white"
             android:layout_marginEnd="10dp"/>
 
         <TextView
             android:id="@+id/guide_dot_3"
             android:layout_width="7dp"
             android:layout_height="7dp"
-            android:background="@drawable/white_dot"/>
+            android:background="@drawable/dot_white"/>
 
     </LinearLayout>
 
