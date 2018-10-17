@@ -32,7 +32,7 @@
         android:id="@+id/list_content"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="40dp"
         android:background="@color/white"
         android:descendantFocusability="afterDescendants"
         app:layout_constraintBottom_toTopOf="@+id/list_menu"
@@ -43,8 +43,9 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/list_menu"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:background="@color/white"
+        android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">

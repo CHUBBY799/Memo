@@ -30,7 +30,8 @@ public class WelcomeActivity extends AppCompatActivity implements Runnable{
             } else {
                 Intent intent = new Intent();
                 intent.setClass(WelcomeActivity.this, MemoActivity.class);
-                startActivity(intent); }
+                startActivity(intent);
+            }
             finish();
             //实例化Editor对象
             SharedPreferences.Editor editor = preferences.edit();

@@ -107,6 +107,7 @@ public class GuideActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(GuideActivity.this, MemoActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
