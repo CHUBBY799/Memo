@@ -70,7 +70,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 
-public class NoteActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged,OnFocusChangeListener{
+public class NoteActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged{
     private final static  String TAG = "NoteActivity";
     private static final int REQUEST_AUDIO_PERMISSION = 0xc1;
     private static final int REQUEST_CAMERA_PERMISSION = 0xc2;
@@ -84,7 +84,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private ImageButton mBtnViewBack,mBtnViewDelete,mBtnViewShare;
     private ConstraintLayout layout;
     private TextView mTvTime,dialogTv;
-    private EditText editTitle;
+
     private AlertDialog dialog;
     private PopupWindow volumePopWindow;
     private ImageView volumeImage;
@@ -92,7 +92,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false,noBackKey = false,isView = false;
     private String photoPath="";
     private int taskId = -1;
-    private boolean isNotification,requestPermission,isTitleFocus;
+    private boolean isNotification,requestPermission;
     private OonClickView onClickView;
 
     private RecordingAdapter adapter;
@@ -205,8 +205,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         mBtnColPurple = (ImageButton)view.findViewById(R.id.colorpick_purple);
         mBtnColGray = (ImageButton)view.findViewById(R.id.colorpick_gray);
         mRecyclerView = (RecyclerView)findViewById(R.id.recording_recyclerView);
-        editTitle = (EditText)findViewById(R.id.recording_title);
-        editTitle.setOnFocusChangeListener(this);
+
         mBtnCancel.setOnClickListener(this);
         mBtnConfirm.setOnClickListener(this);
         mBtnEdit.setOnClickListener(this);
@@ -248,34 +247,6 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             mBtnViewDelete.setOnClickListener(onClickView);
             mBtnViewShare.setOnClickListener(onClickView);
         }
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            final RecyclerView.OnScrollListener context = this;
-            int state = 0;
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                if(state == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-//                    Log.d(TAG,"onScrollStateChanged");
-//                    if(!mRecyclerView.canScrollVertically(-1)){
-//                        editTitle.setVisibility(View.VISIBLE);
-//                    }
-//                }
-//                if(isTitleFocus)
-//                    editTitle.clearFocus();
-//                state = newState;
-//            }
-//
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                Log.d(TAG,"onScrolled");
-//                if(!mRecyclerView.canScrollVertically(-1)&&state != AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-//                    editTitle.setVisibility(View.VISIBLE);
-//                }
-//                else{
-//                    editTitle.setVisibility(View.GONE);
-//                }
-//            }
-        });
     }
 
     private void initData(){
@@ -283,6 +254,11 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             if(mMap == null || mMap.isEmpty()){
                 mMap = new HashMap<>();
                 RecordingContent content = new RecordingContent();
+                content.setType("title");
+                content.setColor("#666666");
+                content.setContent("");
+                mMap.put(mMap.size(),content);
+                content = new RecordingContent();
                 content.setType("text");
                 content.setColor("#666666");
                 content.setContent("");
@@ -290,7 +266,6 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             }
         }else{
             Task_Recording task_recording = recordingPresenter.getTaskRecording(taskId);
-            editTitle.setText(task_recording.getTask().getTitle());
             mMap = task_recording.getRecording().getRecordingMap();
         }
         adapter = new RecordingAdapter(mMap,this,this);
@@ -467,14 +442,14 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
     private void clickConfirm(){
         Log.d(TAG, "clickConfirm: ");
-        if(!(editTitle.getText().toString().equals("") && mMap.size() == 1 && mMap.get(0).getContent().equals(""))){
+        if(!(mMap.get(0).getContent().equals("") && mMap.size() == 2 && mMap.get(1).getContent().equals(""))){
             adapter.presenter.onStop();
             Task task = new Task();
             task.setType(taskType());
             task.setUrgent(0);
             task.setAlarm(0);
             task.setCategory("note");
-            task.setTitle(editTitle.getText().toString());
+            task.setTitle(mMap.get(0).getContent());
             if(taskId == -1){
                 if(notePresenter.saveNote(task,mMap)){
                     Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
@@ -799,7 +774,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
 
     private void checkDefaultEditTex(){
         Log.d(TAG, "checkDefaultEditTex: ");
-        if(mMap.size() -1 >= 0){
+        if(mMap.size() -1 >= 1){
             if(!mMap.get(mMap.size() - 1).getType().equals("text")){
                 RecordingContent content = new RecordingContent();
                 content.setType("text");
@@ -837,11 +812,11 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         Log.d(TAG, "deleteEditText: "+ mMap.toString());
         adapter.notifyItemRemoved(index);
         checkDefaultEditTex();
-        if (index - 1 >= 0) {
+        if (index - 1 >= 1) {
             adapter.setRequestFocusableArgs(adapter.getRequestFocusIndex(index - 1),position,type);
             adapter.notifyItemRangeChanged(index - 1, mMap.size());
         } else {
-            adapter.setRequestFocusableArgs(index,position,type);
+            adapter.setRequestFocusableArgs(-1,position,type);
             adapter.notifyItemRangeChanged(0, mMap.size());
         }
         updateRecyclerView(adapter.requestFocusableIndex);
@@ -892,6 +867,12 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         Log.d(TAG, "TextChanged: "+mMap.toString());
     }
 
+    @Override
+    public void titleChanged(String title, int index) {
+        mMap.get(index).setContent(title);
+        Log.d(TAG, "titleChanged: "+mMap.toString());
+    }
+
     private String taskType(){
         Log.d(TAG, "taskType: ");
         for(int i = 0; i < mMap.size(); i++){
@@ -901,36 +882,19 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         return "text";
     }
 
-    @Override
-    public void onFocusChange(View view, boolean b) {
-        if(b){
-            List<Integer> list = new ArrayList<>();
-            for(int i = 0; i < 4; i++)
-                list.add(0);
-            updateEditIcon(list);
-            isTitleFocus = true;
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(editTitle,0);
-            adapter.setCurrentIndex(-1);
-        }
-        else
-            isTitleFocus = false;
-        if(isView)
-            viewToEdit();
-    }
 
     private void clickBold(){
-        if(!isTitleFocus)
+        if(adapter.getCurrentIndex() != 0)
             adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StyleSpan(Typeface.BOLD));
     }
     private void clickUnderLine(){
-        if(!isTitleFocus)
-        adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new UnderlineSpan());
+        if(adapter.getCurrentIndex() != 0)
+            adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new UnderlineSpan());
 
     }
     private void clickDeleteLine(){
-        if(!isTitleFocus)
-        adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StrikethroughSpan());
+        if(adapter.getCurrentIndex() != 0)
+            adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StrikethroughSpan());
     }
 
     private void clickColorBcak(){
@@ -939,8 +903,9 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickColorChanged(int color,boolean insert){
-        if(isTitleFocus)
+        if(adapter.getCurrentIndex() == 0){
             return;
+        }
         boolean changed = false;
         if(insert){
             changed = adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color);

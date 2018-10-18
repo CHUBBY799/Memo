@@ -45,6 +45,8 @@
     <color name="volume_background">#B0FF8833</color>
     <color name="alarm_btn_delete_border">#AAAAAA</color>
     <color name="alarm_btn_no_delete">#E5E5E5</color>
+    <color name="alarm_save_shadow">#77FF8833</color>
+    <color name="alarm_window_shadow">#9AFF8833</color>
 
     <!-- task color -->
     <color name="recording_title">#666666</color>

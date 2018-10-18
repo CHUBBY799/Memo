@@ -76,7 +76,7 @@ import java.util.TimeZone;
 
 
 public class TaskActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged,
-        Switch.OnCheckedChangeListener,OnFocusChangeListener {
+        Switch.OnCheckedChangeListener {
     private final static  String TAG = "TaskActivity";
     private static final int REQUEST_AUDIO_PERMISSION = 0xc1;
     private static final int REQUEST_CAMERA_PERMISSION = 0xc2;
@@ -92,7 +92,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     private ConstraintLayout layout;
     private Switch mSwitchUrgent,mBtnViewUrgent;
     private TextView mTvTime,dialogTv;
-    private EditText editTitle;
     private AlertDialog dialog;
     private PopupWindow volumePopWindow;
     private ImageView volumeImage;
@@ -100,7 +99,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     public static boolean isRecording,isPhotoChoosing,isTextEdit,isColorPick,noBackKey,isView;
     private String photoPath="";
     private int urgent = 0,alarm = 0,taskId = -1;
-    private boolean isNotification,requestPermission,alarmChanged,isTitleFocus;
+    private boolean isNotification,requestPermission,alarmChanged;
     private OonClickView onClickView;
     private Alarm alarmObject;
     private RecordingAdapter adapter;
@@ -216,8 +215,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         mBtnColGray = (ImageButton)view.findViewById(R.id.colorpick_gray);
 
         mRecyclerView = (RecyclerView)findViewById(R.id.recording_recyclerView);
-        editTitle = (EditText)findViewById(R.id.recording_title);
-        editTitle.setOnFocusChangeListener(this);
+
         mBtnCancel.setOnClickListener(this);
         mBtnConfirm.setOnClickListener(this);
         mBtnAlarm.setOnClickListener(this);
@@ -264,42 +262,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             mBtnViewAlarm.setOnClickListener(onClickView);
             mBtnViewUrgent.setOnCheckedChangeListener(this);
         }
-        mRecyclerView.addOnScrollListener(new OnScrollListener() {
-            final OnScrollListener context = this;
-            int state = 0;
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//               if(state == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-//                    Log.d(TAG,"onScrollStateChanged");
-//                    if(mRecyclerView.computeVerticalScrollOffset() <= editTitle.getHeight()){
-//                        editTitle.setVisibility(View.VISIBLE);
-//                    }
-//                }
-//                if(isTitleFocus)
-//                    editTitle.clearFocus();
-//                state = newState;
-//            }
-//
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                if(mRecyclerView.computeVerticalScrollOffset() > editTitle.getHeight()){
-//                    editTitle.setVisibility(View.GONE);
-//                }
-//                else if(!mRecyclerView.canScrollVertically(-1)&&state != AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-//                    editTitle.setVisibility(View.VISIBLE);
-//                }
-//            }
-        });
     }
 
-    public int getScollYDistance() {
-        LinearLayoutManager layoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
-        int position = layoutManager.findFirstVisibleItemPosition();
-        View firstVisiableChildView = layoutManager.findViewByPosition(position);
-        int itemHeight = firstVisiableChildView.getHeight();
-        return (position) * itemHeight - firstVisiableChildView.getTop();
-    }
 
 
     private void initData(){
@@ -307,6 +271,11 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             if(mMap == null || mMap.isEmpty()){
                 mMap = new HashMap<>();
                 RecordingContent content = new RecordingContent();
+                content.setType("title");
+                content.setColor("#666666");
+                content.setContent("");
+                mMap.put(mMap.size(),content);
+                content = new RecordingContent();
                 content.setType("text");
                 content.setColor("#666666");
                 content.setContent("");
@@ -314,7 +283,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             }
         }else{
             Task_Recording task_recording = recordingPresenter.getTaskRecording(taskId);
-            editTitle.setText(task_recording.getTask().getTitle());
             alarm = task_recording.getTask().getAlarm();
             if(alarm == 1){
                 alarmObject = alarmPresenter.getAlarm(taskId);
@@ -331,8 +299,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             adapter.setView(true);
             adapter.setViewEdit(true);
         }
-        WrapContentLinearLayoutManager linearLayoutManager = new WrapContentLinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.post(new Runnable() {
@@ -377,7 +344,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                 isPhotoChoosing = false;
                 animationTranslate(findViewById(R.id.bottom_recording_photo), findViewById(R.id.bottom_recording_edit));
                 return true;
-            }else if (isShouldHideInput(mRecyclerView, ev)) {
+            }
+            else if (isShouldHideInput(mRecyclerView, ev)) {
                 try {
                     v = mRecyclerView.getChildAt(getCurrentLastIndex());
                     int[] leftTop = { 0, 0 };
@@ -503,14 +471,14 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
     private void clickConfirm(){
         Log.d(TAG, "clickConfirm: ");
-        if(!(editTitle.getText().toString().equals("") && mMap.size() == 1 && mMap.get(0).getContent().equals(""))){
+        if(!(mMap.get(0).getContent().equals("") && mMap.size() == 2 && mMap.get(1).getContent().equals(""))){
             adapter.presenter.onStop();
             Task task = new Task();
             task.setType(taskType());
             task.setUrgent(urgent);
             task.setAlarm(alarm);
             task.setCategory("task");
-            task.setTitle(editTitle.getText().toString());
+            task.setTitle(mMap.get(0).getContent());
             if(taskId == -1){
                 long id = 0;
                 if( (id = recordingPresenter.saveRecording(task,mMap,alarmObject)) != -1){
@@ -882,7 +850,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     private void checkDefaultEditTex(){
         Log.d(TAG, "checkDefaultEditTex: ");
-        if(mMap.size() -1 >= 0){
+        if(mMap.size() -1 >= 1){
             Log.d(TAG, "checkDefaultEditTex: "+ mMap.get(mMap.size() - 1));
             if(!mMap.get(mMap.size() - 1).getType().equals("text")){
                 RecordingContent content = new RecordingContent();
@@ -921,7 +889,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         Log.d(TAG, "deleteEditText: index"+index+ mMap.toString());
         adapter.notifyItemRemoved(index);
         checkDefaultEditTex();
-        if (index - 1 >= 0) {
+        if (index - 1 >= 1) {
             adapter.setRequestFocusableArgs(adapter.getRequestFocusIndex(index - 1),position,type);
             adapter.notifyItemRangeChanged(index - 1, mMap.size());
         } else {
@@ -976,6 +944,12 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         Log.d(TAG, "TextChanged: "+mMap.toString());
     }
 
+    @Override
+    public void titleChanged(String title, int index) {
+        mMap.get(index).setContent(title);
+        Log.d(TAG, "titleChanged: "+mMap.toString());
+    }
+
     private String taskType(){
         Log.d(TAG, "taskType: ");
         for(int i = 0; i < mMap.size(); i++){
@@ -985,36 +959,18 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         return "text";
     }
 
-    @Override
-    public void onFocusChange(View view, boolean b) {
-        if(b){
-            List<Integer> list = new ArrayList<>();
-            for(int i = 0; i < 4; i++)
-                list.add(0);
-            updateEditIcon(list);
-            isTitleFocus = true;
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(editTitle,0);
-            adapter.setCurrentIndex(-1);
-        }
-        else{
-            isTitleFocus = false;
-        }
-        if(isView)
-            viewToEdit();
-    }
 
     private void clickBold(){
-        if(!isTitleFocus)
+        if(adapter.getCurrentIndex() != 0)
             adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StyleSpan(Typeface.BOLD));
     }
     private void clickUnderLine(){
-        if(!isTitleFocus)
+        if(adapter.getCurrentIndex() != 0)
             adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new UnderlineSpan());
 
     }
     private void clickDeleteLine(){
-        if(!isTitleFocus)
+        if(adapter.getCurrentIndex() != 0)
             adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StrikethroughSpan());
     }
 
@@ -1024,7 +980,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickColorChanged(int color,boolean insert){
-        if(isTitleFocus){
+        if(adapter.getCurrentIndex() == 0){
             return;
         }
         boolean changed = false;

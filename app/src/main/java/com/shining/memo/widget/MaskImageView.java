@@ -182,7 +182,7 @@ public class MaskImageView extends android.support.v7.widget.AppCompatImageView 
         if(d!=null){
             // ceil not round - avoid thin vertical gaps along the left/right edges
             int width = MeasureSpec.getSize(widthMeasureSpec);
-            if(d.getIntrinsicWidth() * 2 < width){
+            if(d.getIntrinsicWidth() < width){
                 setMeasuredDimension(d.getIntrinsicWidth(), d.getIntrinsicHeight());
             }else{
                 int height = (int) Math.ceil((float) width * (float) d.getIntrinsicHeight() / (float) d.getIntrinsicWidth());

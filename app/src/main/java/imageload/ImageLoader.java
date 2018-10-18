@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.shining.memo.R;
@@ -24,6 +26,7 @@ import java.util.WeakHashMap;
 
 public class ImageLoader {
     // 手机中的缓存
+    private Context context;
     private MemoryCache memoryCache = new MemoryCache();
     private FileCache fileCache;
     private PicturesLoader pictureLoaderThread = new PicturesLoader();
@@ -36,6 +39,7 @@ public class ImageLoader {
         // 设置线程的优先级
         pictureLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);
         fileCache = new FileCache();
+        this.context = context;
     }
     // 在找不到图片时，默认的图片
     final int stub_id = R.drawable.image_null_icon;
@@ -73,6 +77,10 @@ public class ImageLoader {
         Bitmap b = decodeFile(f);
         if (b != null)
             return b;
+        else {
+
+
+        }
         // 否则从网络中获取
         try {
             Bitmap bitmap = null;
@@ -100,22 +108,17 @@ public class ImageLoader {
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
-            // 找到正确的缩放值。这应该是2的幂。
-            final int REQUIRED_SIZE = 70;
-            int width_tmp = o.outWidth, height_tmp = o.outHeight;
+            int width_tmp = o.outWidth;
+            WindowManager windowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+            int width = windowManager.getDefaultDisplay().getWidth();
             int scale = 1;
-            while (true) {
-                if (width_tmp / 2 < REQUIRED_SIZE
-                        || height_tmp / 2 < REQUIRED_SIZE)
-                    break;
-                width_tmp /= 2;
-                height_tmp /= 2;
-                scale *= 2;
+            if(width_tmp <= width){
+                scale = 1;
+            }else {
+                scale = width_tmp / width;
             }
-            // 设置恰当的inSampleSize可以使BitmapFactory分配更少的空间
-            // 用正确恰当的inSampleSize进行decode
             BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = 2;
+            o2.inSampleSize = scale;
             return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
         } catch (FileNotFoundException e) {
         }
