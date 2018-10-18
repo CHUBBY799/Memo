@@ -1,4 +1,4 @@
-package com.shining.memo.adapter;
+package com.shining.memo.home.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +22,7 @@ import org.json.JSONObject;
 
 import static android.view.Gravity.CENTER;
 
-public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>{
+public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
 
     private Context context;
     private FragmentActivity listFragment;
@@ -34,14 +34,14 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
     private Boolean[][] itemState;
     private String[][] itemContent;
 
-    public ListContent(Context context, FragmentActivity listFragment) {
+    public ListAdapter(Context context, FragmentActivity listFragment) {
         this.context = context;
         this.listFragment = listFragment;
     }
 
     @Override
     public @NonNull MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.list_content, parent,false));
+        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.list_main, parent,false));
     }
 
     @Override
@@ -55,13 +55,17 @@ public class ListContent  extends RecyclerView.Adapter<ListContent.MyViewHolder>
             final int index = i;
             LinearLayout layout = new LinearLayout(context);
             layout.setOrientation(LinearLayout.HORIZONTAL);
-            layout.setPadding(0,25,0,0);
+            //layout.setPadding(0,33,0,0);
 
             final TextView state = new TextView(context);
             final TextView content = new TextView(context);
             layout.addView(state);
             layout.addView(content);
             listItem.addView(layout);
+
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
+            layoutParams.setMargins(0, 10, 0, 40);
+            layout.setLayoutParams(layoutParams);
 
             content.setPadding(40,0,0,0);
             content.setTextSize(17);
