@@ -56,4 +56,8 @@ public class ToastUtils
 		toast.show();
 	}
 
+	public static void showShort(Context context, CharSequence message){
+		Toast.makeText(context,message,Toast.LENGTH_SHORT).show();
+	}
+
 }
