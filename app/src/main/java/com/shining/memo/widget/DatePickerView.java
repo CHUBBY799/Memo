@@ -2,6 +2,7 @@ package com.shining.memo.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Message;
@@ -232,7 +233,7 @@ public class DatePickerView extends View {
         mViewHeight = getMeasuredHeight();
         mViewWidth = getMeasuredWidth();
         // 按照View的高度计算字体大小
-        mMaxTextSize = mViewHeight / 12f;
+        mMaxTextSize = mViewHeight / 11f;
         mMinTextSize = mMaxTextSize / 1.3f;
         if (!mDataList.isEmpty()){
             isInit = true;
@@ -258,7 +259,7 @@ public class DatePickerView extends View {
         // 先绘制选中的text再往上往下绘制其余的text
         float scale = parabola(mViewHeight / 4.0f, mMoveLen);
         float size = (mMaxTextSize - mMinTextSize) * scale + mMinTextSize;
-        mPaint.setTextSize(size);
+        mPaint.setTextSize(size+4);
         mPaint.setAlpha((int) ((mMaxTextAlpha - mMinTextAlpha) * scale + mMinTextAlpha));
         // text居中绘制，注意baseline的计算才能达到居中，y值是text中心坐标
         float x = (float) (mViewWidth / 2.0); //横坐标
@@ -281,6 +282,7 @@ public class DatePickerView extends View {
         float d = MARGIN_ALPHA * mMinTextSize * position + type * mMoveLen;
         float scale = parabola(mViewHeight / 4.0f, d);
         float size = (mMaxTextSize - mMinTextSize) * scale + mMinTextSize;
+        nPaint.setColor(getResources().getColor(R.color.pop_reminder));
         nPaint.setTextSize(size);
         nPaint.setAlpha((int) ((mMaxTextAlpha - mMinTextAlpha) * scale + mMinTextAlpha));
         float y = (float) (mViewHeight / 2.0 + type * d);

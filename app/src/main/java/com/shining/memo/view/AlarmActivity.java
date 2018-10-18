@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -34,8 +35,8 @@ import java.util.List;
 
 public class AlarmActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private Button alarm_cancel;
-    private Button alarm_save;
+    private ImageButton alarm_cancel;
+    private Button alarm_save,alarm_delete;
     private DatePickerView month_pv;
     private DatePickerView day_pv;
     private DatePickerView hour_pv;
@@ -52,8 +53,8 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     private String day;
     private String hour;
     private String minute;
-    private int ringtone = 1;
-    private int pop;
+    private int ringtone;
+    private int pop = 1;
     private int alarm;
     private int taskId;
 
@@ -84,6 +85,9 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
             case R.id.alarm_save:
                 alarmSave();
                 break;
+            case R.id.alarm_delete:
+                alarmDelete();
+                break;
             default:
                 break;
         }
@@ -95,12 +99,16 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         taskId = getIntent().getIntExtra("taskId",-1);
         Calendar calendar = Calendar.getInstance();
         if(alarm == 1){
+            alarm_save.setText(getResources().getText(R.string.alarm_update));
+            alarm_delete.setBackground(getDrawable(R.drawable.alarm_button_delete));
+            alarm_delete.setTextColor(getColor(R.color.alarm_btn_delete_border));
+            alarm_delete.setEnabled(true);
             String date,time;
             if(taskId == -1){
                 date = getIntent().getStringExtra("date");
                 time = getIntent().getStringExtra("time");
-                ringtone = getIntent().getIntExtra("ringtone",1);
-                pop = getIntent().getIntExtra("pop",0);
+                ringtone = getIntent().getIntExtra("ringtone",0);
+                pop = getIntent().getIntExtra("pop",1);
             }else {
                 Alarm alarmObject = alarmPresenter.getAlarm(taskId);
                 date = alarmObject.getDate();
@@ -116,7 +124,6 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
                 e.printStackTrace();
             }
             calendar.setTime(dates);
-            alarm_save.setText("UPDATE ALARM CLOCK");
         }
         year = formatTimeUnit(calendar.get(Calendar.YEAR));
         month = Utils.formatMonthSimUS(calendar.get(Calendar.MONTH)+1);
@@ -130,6 +137,20 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         finish();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
+
+    private void alarmDelete(){
+        if(alarmPresenter.deleteAlarm(taskId)){
+            ToastUtils.showShort(this,"Delete the Alarm successfully!");
+            Intent intent = new Intent();
+            intent.putExtra("alarm",0);
+            setResult(RESULT_OK,intent);
+        }else {
+            setResult(RESULT_CANCELED);
+        }
+        finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
 
     private void alarmSave(){
         String date = year+"-"+Utils.formatTimeUnit(Utils.formatMonthNumber(month))+"-"+day;
@@ -250,6 +271,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     private void iniView(){
         alarm_cancel = findViewById(R.id.alarm_cancel);
         alarm_save = findViewById(R.id.alarm_save);
+        alarm_delete = findViewById(R.id.alarm_delete);
         month_pv = findViewById(R.id.month_pv);
         day_pv = findViewById(R.id.day_pv);
         hour_pv = findViewById(R.id.hour_pv);
@@ -265,6 +287,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     private void initComponent(){
         alarm_cancel.setOnClickListener(this);
         alarm_save.setOnClickListener(this);
+        alarm_delete.setOnClickListener(this);
         ringtoneSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

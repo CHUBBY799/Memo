@@ -78,7 +78,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     public int requestFocusableIndex = -1,position = 0;
     private String type = "";
     private HashMap<Integer,shelterSize> shelter = new HashMap<>();
-    private int CurrentIndex = -1,btnIndex = -1;
+    private static int CurrentIndex = -1,btnIndex = -1;
     private static String CurrentType = "";
     private boolean isView,isViewEdit = false,isPlaying;
     public static int currentColor;
@@ -97,6 +97,10 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         status = new ArrayList<>();
         for(int i=0; status.size() < 4; i++)
             status.add(0);
+    }
+
+    public void setCurrentIndex(int currentIndex) {
+        CurrentIndex = currentIndex;
     }
 
     public int getRequestFocusableIndex() {
@@ -194,7 +198,6 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 break;
         }
         if(i ==  requestFocusableIndex){
-            textChanged.updateRecyclerView(requestFocusableIndex);
             textChanged.recyclerViewFocusable();
             switch (map.get(i).getType()){
                 case "text":
@@ -214,6 +217,8 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                         audioViewHolder.editTextStart.requestFocus();
                     break;
             }
+        }else if(requestFocusableIndex == -1){
+            CurrentIndex = -1;
         }
     }
 
@@ -304,6 +309,9 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 if(isView){
                     textChanged.viewToEdit();
                 }
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(editText,0);
+
             }
             else {
                 CurrentIndex = -1;
@@ -655,11 +663,12 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             delete = (Button)itemView.findViewById(R.id.photo_delete);
             imageView.setOnClickListener(this);
             delete.setOnClickListener(this);
-
         }
 
         @Override
         public void onClick(View view) {
+            CurrentIndex = (int)itemView.getTag();
+            CurrentType = "photo_end";
             switch (view.getId()){
                 case R.id.item_imageView:
                     if(isView){
@@ -815,8 +824,13 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     }
 
     public List<Spanned> distachText(RecyclerView recyclerView){
-        TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(CurrentIndex - textChanged.getCurrentFirstIndex()));
-        return editTextDistach(textViewHolder.editText);
+        try{
+            TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(CurrentIndex - textChanged.getCurrentFirstIndex()));
+            return editTextDistach(textViewHolder.editText);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public List<Spanned> editTextDistach(EditText editText){
@@ -1042,6 +1056,13 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             }
         }
         return editable;
+    }
+
+    public int getRequestFocusIndex(int index){
+        HashMap<Integer,RecordingContent> map = textChanged.getMap();
+        if(map.get(index).getType().equals("text"))
+            return index;
+        return -1;
     }
 
     public interface TextChanged{

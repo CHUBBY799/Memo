@@ -1,7 +1,7 @@
 <resources>
 
     <!-- common string -->
-    <string name="cancer">Cancer</string>
+    <string name="cancer">Cancle</string>
     <string name="confirm">Confirm</string>
     <string name="state">state</string>
     <string name="title">title</string>
@@ -40,10 +40,12 @@
 
     <!-- alarm string -->
     <string name="alarm_clock">Alarm Clock</string>
-    <string name="set_alarm_clock">set an alarm clock</string>
+    <string name="set_alarm_clock">Set an Alarm Clock</string>
     <string name="ringtone_reminder">Ringtone reminder</string>
     <string name="pop_ups_reminder">Pop-ups reminder</string>
     <string name="alarm_confirm">OK</string>
+    <string name="alarm_update">Update the Alarm Clock</string>
+    <string name="alarm_delete">Delete the Alarm Clock</string>
 
     <!-- calendar string -->
     <string name="calendar">calendar</string>

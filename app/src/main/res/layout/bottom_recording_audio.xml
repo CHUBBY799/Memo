@@ -41,7 +41,7 @@
 
         <Button
             android:id="@+id/audio_cancel"
-            android:layout_width="60dp"
+            android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:background="@drawable/button_ripple"
@@ -55,7 +55,7 @@
             app:layout_constraintTop_toTopOf="parent" />
         <Button
             android:id="@+id/audio_finish"
-            android:layout_width="60dp"
+            android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:background="@drawable/button_ripple"
