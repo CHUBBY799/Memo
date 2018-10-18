@@ -4,10 +4,9 @@ import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.shining.memo.R;
 import com.shining.memo.home.adapter.GuideAdapter;
@@ -17,97 +16,49 @@ import java.util.ArrayList;
 public class GuideActivity extends AppCompatActivity {
 
     private ViewPager guidePager;
-    private ImageView guideImage;
-    private TextView guideTitle;
-    private TextView guideContent;
-    private Button guideButton;
-    private TextView guideDot_1;
-    private TextView guideDot_2;
-    private TextView guideDot_3;
-    private ArrayList<ImageView> imageViews;
+    private ArrayList<View> guideLayouts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
         initView();
-        initListener();
-        initImages();
-        GuideAdapter guideAdapter = new GuideAdapter(imageViews);
+        //initListener();
+        initLayout();
+        GuideAdapter guideAdapter = new GuideAdapter(guideLayouts);
         guidePager.setAdapter(guideAdapter);
     }
 
-    ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener(){
+    @SuppressWarnings("all")
+    private void initLayout(){
 
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+        guideLayouts = new ArrayList<>();
+        View layoutView;
 
-        @Override
-        public void onPageSelected(int position) {
+        layoutView = LayoutInflater.from(this).inflate(R.layout.guide_one, null, false);
+        guideLayouts.add(layoutView);
 
-            if(position == 0){
-                guideImage.setBackground(getDrawable(R.drawable.guide_page_one_image));
-                guideTitle.setText(getString(R.string.guide_title_1));
-                guideContent.setText(getString(R.string.guide_content_1));
-                guideDot_1.setBackground(getDrawable(R.drawable.orange_dot));
-                guideDot_2.setBackground(getDrawable(R.drawable.white_dot));
-                guideDot_3.setBackground(getDrawable(R.drawable.white_dot));
-                guideButton.setVisibility(View.GONE);
-            }else if(position == 1){
-                guideImage.setBackground(getDrawable(R.drawable.guide_page_two_image));
-                guideTitle.setText(getString(R.string.guide_title_2));
-                guideContent.setText(getString(R.string.guide_content_2));
-                guideDot_1.setBackground(getDrawable(R.drawable.white_dot));
-                guideDot_2.setBackground(getDrawable(R.drawable.orange_dot));
-                guideDot_3.setBackground(getDrawable(R.drawable.white_dot));
-                guideButton.setVisibility(View.GONE);
-            }else {
-                guideImage.setBackground(getDrawable(R.drawable.guide_page_three_image));
-                guideTitle.setText(getString(R.string.guide_title_3));
-                guideContent.setText(getString(R.string.guide_content_3));
-                guideDot_1.setBackground(getDrawable(R.drawable.white_dot));
-                guideDot_2.setBackground(getDrawable(R.drawable.white_dot));
-                guideDot_3.setBackground(getDrawable(R.drawable.orange_dot));
-                guideButton.setVisibility(View.VISIBLE);
+        layoutView = LayoutInflater.from(this).inflate(R.layout.guide_two, null, false);
+        guideLayouts.add(layoutView);
+
+        layoutView = LayoutInflater.from(this).inflate(R.layout.guide_three, null, false);
+        Button guideButton = layoutView.findViewById(R.id.guide_button);
+        guideButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonClick();
             }
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {}
-    };
-
-    private void initImages(){
-        //设置每一张图片都填充窗口
-        ViewPager.LayoutParams mParams = new ViewPager.LayoutParams();
-        imageViews = new ArrayList<>();
-        for(int i=0 ; i<3 ; i++) {
-            ImageView iv = new ImageView(this);
-            iv.setLayoutParams(mParams);//设置布局
-            iv.setImageResource(R.drawable.guide_pager);//为ImageView添加图片资源
-            iv.setScaleType(ImageView.ScaleType.FIT_XY);//这里也是一个图片的适配
-            imageViews.add(iv);
-        }
+        });
+        guideLayouts.add(layoutView);
     }
 
     private void initView(){
         guidePager = findViewById(R.id.guide_pager);
-        guideImage = findViewById(R.id.guide_image);
-        guideTitle = findViewById(R.id.guide_title);
-        guideContent = findViewById(R.id.guide_content);
-        guideButton = findViewById(R.id.guide_button);
-        guideDot_1 = findViewById(R.id.guide_dot_1);
-        guideDot_2 = findViewById(R.id.guide_dot_2);
-        guideDot_3 = findViewById(R.id.guide_dot_3);
     }
 
-    private void initListener(){
-        guidePager.addOnPageChangeListener(viewPagerPageChangeListener);
-        guideButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(GuideActivity.this, MemoActivity.class);
-                startActivity(intent);
-            }
-        });
+    public void buttonClick(){
+        Intent intent = new Intent(GuideActivity.this, MemoActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

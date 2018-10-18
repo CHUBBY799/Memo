@@ -152,10 +152,10 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
     }
     private void onClickTitle(TextView textView){
         if(currentClickText!=null){
-            currentClickText.setTextColor(getColor(R.color.main_task_noclickcolor));
+            currentClickText.setTextColor(getColor(R.color.main_task_not_click));
             currentClickText.setTextSize(20);
         }
-        textView.setTextColor(getColor(R.color.main_task_clickcolor));
+        textView.setTextColor(getColor(R.color.main_task_click));
         textView.setTextSize(24);
         currentClickText=textView;
     }

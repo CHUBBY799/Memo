@@ -129,9 +129,6 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
         });
     }
 
-
-
-
     @Override
     public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, int nestedScrollAxes) {
         return true;
@@ -337,6 +334,10 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
 
     }
 
+    public MonthCalendar getMonthCalendar() {
+        return monthCalendar;
+    }
+
     //自动滑动
     protected void autoScroll(int startMonth, int endMonth, int startChild, int endChild) {
         monthValueAnimator.setIntValues(startMonth, endMonth);
@@ -478,15 +479,6 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
             return weekRect.contains(x, y);
         }
     }
-
-
-    /*public void toToday() {
-        if (STATE == MONTH) {
-            monthCalendar.toToday();
-        } else {
-            weekCalendar.toToday();
-        }
-    }*/
 
     /**
      * 设置指示圆点

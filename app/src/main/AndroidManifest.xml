@@ -16,22 +16,44 @@
 
     <application
         android:allowBackup="false"
-        android:icon="@drawable/app_launch_icon"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/app_launch_icon"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:logo="@drawable/app_launch_icon"
+        android:logo="@mipmap/ic_launcher"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
+
+        <activity android:name=".home.WelcomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".home.GuideActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen"/>
+
+        <activity android:name=".home.MemoActivity"
+            android:theme="@style/OrangeTheme"
+            android:launchMode="singleTask"/>
+
         <activity
             android:name=".view.AlarmActivity"
             android:theme="@style/OrangeTheme" />
+
         <activity
             android:name=".view.CalendarActivity"
             android:theme="@style/OrangeTheme" />
+
         <activity
             android:name=".view.ListActivity"
             android:theme="@style/OrangeTheme" />
+
         <activity
             android:name=".view.TaskActivity"
 
@@ -42,10 +64,13 @@
             android:theme="@style/OrangeTheme" />
 
         <activity android:name=".view.AlarmClockActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog"/>
+            android:theme="@style/OrangeTheme"/>
+
         <activity android:name=".view.NoteActivity"
             android:theme="@style/OrangeTheme"/>
+
         <receiver
+            tools:ignore="ExportedReceiver"
             android:name=".receiver.AlarmReceiver"
             android:enabled="true"
             android:exported="true">
@@ -54,23 +79,5 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".home.MemoActivity"
-            android:theme="@style/OrangeTheme" />
-        <activity
-            android:name=".home.GuideActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/FullScreen"/>
-
-        <activity android:name=".home.WelcomeActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/FullScreen">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-        </activity>
     </application>
-
 </manifest>

@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.shining.memo.R;
-import com.shining.memo.adapter.ListContent;
+import com.shining.memo.home.adapter.ListAdapter;
 import com.shining.memo.bean.ListBean;
 import com.shining.memo.model.ListImpl;
 import com.shining.memo.model.ListModel;
@@ -20,7 +20,7 @@ public class ListFragment extends Fragment {
 
     private Context context;
     private RecyclerView listFragment;
-    private ListContent listContent;
+    private ListAdapter listContent;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -36,7 +36,7 @@ public class ListFragment extends Fragment {
             listFragment = getActivity().findViewById(R.id.list_fragment);
         }
         listFragment.setLayoutManager(new LinearLayoutManager(context));
-        listContent = new ListContent(context, getActivity());
+        listContent = new ListAdapter(context, getActivity());
     }
 
     @Override

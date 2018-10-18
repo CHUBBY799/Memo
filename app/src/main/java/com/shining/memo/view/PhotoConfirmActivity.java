@@ -1,6 +1,7 @@
 package com.shining.memo.view;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,11 +16,14 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import imageload.ImageLoader;
+
 public class PhotoConfirmActivity extends Activity implements View.OnClickListener{
 
     private Button mBtnCancel,mBtnConfirm;
     private ImageView mImageView;
     private String photoPath ="";
+    private ImageLoader imageLoader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,18 +34,8 @@ public class PhotoConfirmActivity extends Activity implements View.OnClickListen
         mBtnCancel.setOnClickListener(this);
         mImageView = (ImageView)findViewById(R.id.photo_image);
         photoPath = getIntent().getStringExtra("photoPath");
-        Log.d("PhotoConfirmActivity", "onCreate: "+photoPath);
-        try {
-            FileInputStream in = new FileInputStream(photoPath);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 2;//图片的长宽都是原来的1/8
-            BufferedInputStream bis = new BufferedInputStream(in);
-            Bitmap bm = BitmapFactory.decodeStream(bis, null, options);
-            mImageView.setImageBitmap(bm);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            mImageView.setImageResource(R.drawable.image_null_icon);
-        }
+        imageLoader = new ImageLoader(this);
+        imageLoader.DisplayImage(photoPath,this,mImageView);
     }
 
     @Override

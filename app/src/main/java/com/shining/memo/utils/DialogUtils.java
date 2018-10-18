@@ -19,8 +19,8 @@ public class DialogUtils {
         .setPositiveButton("OK", positive)
                 .setNegativeButton("Cancel",negative).create();
         dialog.show();
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(context.getColor(R.color.textcolor_orange));
-        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(context.getColor(R.color.textcolor_orange));
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(context.getColor(R.color.item_btn_text));
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(context.getColor(R.color.item_btn_text));
 
     }
 }

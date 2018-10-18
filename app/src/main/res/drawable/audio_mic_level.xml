@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <level-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:minLevel="0" android:maxLevel="20" android:drawable="@drawable/volume_icon_one"></item>
-    <item android:minLevel="20" android:maxLevel="25" android:drawable="@drawable/volume_icon_two"></item>
-    <item android:minLevel="25" android:maxLevel="30" android:drawable="@drawable/volume_icon_three"></item>
-    <item android:minLevel="30" android:maxLevel="35" android:drawable="@drawable/volume_icon_four"></item>
-    <item android:minLevel="35" android:maxLevel="42" android:drawable="@drawable/volume_icon_five"></item>
-    <item android:minLevel="42" android:maxLevel="50" android:drawable="@drawable/volume_icon_six"></item>
+    <item android:minLevel="0" android:maxLevel="20" android:drawable="@drawable/volume_icon_one"/>
+    <item android:minLevel="20" android:maxLevel="25" android:drawable="@drawable/volume_icon_two"/>
+    <item android:minLevel="25" android:maxLevel="30" android:drawable="@drawable/volume_icon_three"/>
+    <item android:minLevel="30" android:maxLevel="35" android:drawable="@drawable/volume_icon_four"/>
+    <item android:minLevel="35" android:maxLevel="42" android:drawable="@drawable/volume_icon_five"/>
+    <item android:minLevel="42" android:maxLevel="50" android:drawable="@drawable/volume_icon_six"/>
 </level-list>

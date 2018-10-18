@@ -2,42 +2,35 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <!-- MyEditText -->
     <style name="MyEditText" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@color/underline_background</item>
         <item name="colorControlActivated">@android:color/holo_orange_dark</item>
     </style>
 
-    <style name="ListDialog" parent="android:style/Theme.Dialog">
-        <!--背景颜色及和透明程度-->
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--是否去除标题 -->
-        <item name="android:windowNoTitle">true</item>
-        <!--是否去除边框-->
-        <item name="android:windowFrame">@null</item>
-        <!--是否浮现在activity之上-->
-        <item name="android:windowIsFloating">true</item>
-        <!--是否模糊-->
-        <item name="android:backgroundDimEnabled">false</item>
-    </style>
+    <!-- anim -->
     <style name="anim" parent="@android:style/Animation">
         <item name="android:windowEnterAnimation">@anim/push_popupwindow_in</item>
         <item name="android:windowExitAnimation">@anim/push_popupwindow_out</item>
     </style>
+
+    <!-- dialog anim -->
     <style name="dialog_anim" parent="@android:style/Animation">
         <item name="android:windowEnterAnimation">@null</item>
         <item name="android:windowExitAnimation">@anim/dialog_out</item>
     </style>
 
+    <!-- orange theme -->
     <style name="OrangeTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/item_btn_textcolor</item>
+        <item name="android:statusBarColor">@color/item_btn_text</item>
     </style>
 
-
+    <!-- full screen theme -->
     <style name="FullScreen" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowFullscreen">true</item>//设置全屏
         <item name="android:windowNoTitle">true</item> //设置没有状态栏

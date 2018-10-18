@@ -6,10 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.shining.calendar.calendar.MonthCalendar;
 import com.shining.calendar.calendar.NCalendar;
 import com.shining.calendar.listener.OnCalendarChangedListener;
 
@@ -25,14 +25,19 @@ import com.shining.memo.adapter.CalendarAdapter;
 import com.shining.memo.presenter.CalendarPresenter;
 import com.shining.memo.utils.Utils;
 
-public class CalendarActivity extends AppCompatActivity implements OnCalendarChangedListener{
+public class CalendarActivity extends AppCompatActivity implements OnCalendarChangedListener,View.OnClickListener{
 
     private NCalendar ncalendar;
+    private MonthCalendar monthCalendar;
     private RecyclerView recyclerView;
     private CalendarAdapter calendarAdapter;
     private TextView calendar_month;
     private Button calendar_close;
+    private Button last_month;
+    private Button next_month;
 
+    private LocalDate date;
+    private List<LocalDate> mSelectDateList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,23 +45,16 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         setContentView(R.layout.activity_calendar);
 
         initView();
-
-        calendar_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-            }
-        });
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        calendarAdapter = new CalendarAdapter(this, this);
-        ncalendar.setOnCalendarChangedListener(this);
+        initListener();
     }
 
 
     @Override
     public void onCalendarChanged(LocalDate date, List<LocalDate> dateList) {
+        this.date = date;
+        this.mSelectDateList = dateList;
+        this.monthCalendar = ncalendar.getMonthCalendar();
+
         JSONArray taskDataArr;
         calendar_month.setText(Utils.formatMonthUS(date.getMonthOfYear()));
         CalendarPresenter calendarPresenter = new CalendarPresenter(this);
@@ -72,6 +70,29 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         recyclerView.setAdapter(calendarAdapter);
     }
 
+    @Override
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.calendar_close:
+                finish();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                break;
+            case R.id.last_month:
+                date = date.plusMonths(-1).dayOfMonth().withMaximumValue();
+                if (monthCalendar != null){
+                    monthCalendar.onClickLastMonth(date, true);
+                    ncalendar.onMonthCalendarChanged(date, mSelectDateList);
+                }
+                break;
+            case R.id.next_month:
+                date = date.plusMonths(1).dayOfMonth().withMaximumValue();
+                if (monthCalendar != null){
+                    monthCalendar.onClickNextMonth(date, true);
+                    ncalendar.onMonthCalendarChanged(date, mSelectDateList);
+                }
+                break;
+        }
+    }
 
     public Context getContext(){
         return this;
@@ -82,6 +103,17 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         recyclerView = findViewById(R.id.recyclerView);
         calendar_month = findViewById(R.id.calendar_month);
         calendar_close = findViewById(R.id.calendar_close);
+        last_month = findViewById(R.id.last_month);
+        next_month = findViewById(R.id.next_month);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        calendarAdapter = new CalendarAdapter(this, this);
+        ncalendar.setOnCalendarChangedListener(this);
+    }
+
+    private void initListener(){
+        calendar_close.setOnClickListener(this);
+        last_month.setOnClickListener(this);
+        next_month.setOnClickListener(this);
     }
 
     @Override

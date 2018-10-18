@@ -11,7 +11,7 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="54dp"
         android:gravity="center_vertical"
         tools:ignore="MissingConstraints"
         android:background="@color/content_background">
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="@string/audio_time_length"
-            android:textColor="@color/item_btn_textcolor"
+            android:textColor="@color/item_btn_text"
             android:textSize="16dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -41,11 +41,11 @@
 
         <Button
             android:id="@+id/audio_cancel"
-            android:layout_width="60dp"
+            android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:background="@drawable/button_ripple"
-            android:text="@string/audio_cancel"
+            android:text="@string/cancer"
             android:textColor="@color/half_transparent_orange"
             android:textSize="16dp"
             android:textStyle="normal"
@@ -55,12 +55,12 @@
             app:layout_constraintTop_toTopOf="parent" />
         <Button
             android:id="@+id/audio_finish"
-            android:layout_width="60dp"
+            android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:background="@drawable/button_ripple"
             android:text="@string/audio_finish"
-            android:textColor="@color/item_btn_textcolor"
+            android:textColor="@color/item_btn_text"
             android:textSize="16dp"
             android:textStyle="normal"
             android:layout_marginEnd="25dp"

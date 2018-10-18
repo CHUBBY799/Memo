@@ -26,7 +26,6 @@ import android.support.v7.widget.RecyclerView;
 
 import android.text.Html;
 import android.text.Spanned;
-import android.text.SpannedString;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
@@ -39,13 +38,12 @@ import android.view.View.OnFocusChangeListener;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,11 +51,9 @@ import android.widget.Toast;
 import com.shining.memo.R;
 import com.shining.memo.adapter.RecordingAdapter;
 import com.shining.memo.home.MemoActivity;
-import com.shining.memo.model.Alarm;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.model.Task;
 import com.shining.memo.model.Task_Recording;
-import com.shining.memo.presenter.AlarmPresenter;
 import com.shining.memo.presenter.AudioRecordPresenter;
 import com.shining.memo.presenter.NotePresenter;
 import com.shining.memo.presenter.PhotoPresenter;
@@ -66,16 +62,15 @@ import com.shining.memo.utils.ToastUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static android.text.Html.FROM_HTML_MODE_COMPACT;
 
-
-public class NoteActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged,OnFocusChangeListener{
+public class NoteActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged{
     private final static  String TAG = "NoteActivity";
     private static final int REQUEST_AUDIO_PERMISSION = 0xc1;
     private static final int REQUEST_CAMERA_PERMISSION = 0xc2;
@@ -89,7 +84,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private ImageButton mBtnViewBack,mBtnViewDelete,mBtnViewShare;
     private ConstraintLayout layout;
     private TextView mTvTime,dialogTv;
-    private EditText editTitle;
+
     private AlertDialog dialog;
     private PopupWindow volumePopWindow;
     private ImageView volumeImage;
@@ -210,8 +205,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         mBtnColPurple = (ImageButton)view.findViewById(R.id.colorpick_purple);
         mBtnColGray = (ImageButton)view.findViewById(R.id.colorpick_gray);
         mRecyclerView = (RecyclerView)findViewById(R.id.recording_recyclerView);
-        editTitle = (EditText)findViewById(R.id.recording_title);
-        editTitle.setOnFocusChangeListener(this);
+
         mBtnCancel.setOnClickListener(this);
         mBtnConfirm.setOnClickListener(this);
         mBtnEdit.setOnClickListener(this);
@@ -260,6 +254,11 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             if(mMap == null || mMap.isEmpty()){
                 mMap = new HashMap<>();
                 RecordingContent content = new RecordingContent();
+                content.setType("title");
+                content.setColor("#666666");
+                content.setContent("");
+                mMap.put(mMap.size(),content);
+                content = new RecordingContent();
                 content.setType("text");
                 content.setColor("#666666");
                 content.setContent("");
@@ -267,7 +266,6 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             }
         }else{
             Task_Recording task_recording = recordingPresenter.getTaskRecording(taskId);
-            editTitle.setText(task_recording.getTask().getTitle());
             mMap = task_recording.getRecording().getRecordingMap();
         }
         adapter = new RecordingAdapter(mMap,this,this);
@@ -400,22 +398,22 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                 clickColorBcak();
                 break;
             case R.id.colorpick_red:
-                clickColorChanged(getColor(R.color.textcolor_red),true);
+                clickColorChanged(getColor(R.color.text_color_red),true);
                 break;
             case R.id.colorpick_orange:
-                clickColorChanged(getColor(R.color.textcolor_orange),true);
+                clickColorChanged(getColor(R.color.text_color_orange),true);
                 break;
             case R.id.colorpick_blue:
-                clickColorChanged(getColor(R.color.textcolor_blue),true);
+                clickColorChanged(getColor(R.color.text_color_blue),true);
                 break;
             case R.id.colorpick_purple:
-                clickColorChanged(getColor(R.color.textcolor_purple),true);
+                clickColorChanged(getColor(R.color.text_color_purple),true);
                 break;
             case R.id.colorpick_gray:
-                clickColorChanged(getColor(R.color.textcolor_gray),true);
+                clickColorChanged(getColor(R.color.text_color_gray),true);
                 break;
             case R.id.colorpick_black:
-                clickColorChanged(getColor(R.color.textcolor_black),true);
+                clickColorChanged(getColor(R.color.text_color_black),true);
                 break;
         }
     }
@@ -444,14 +442,14 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
     private void clickConfirm(){
         Log.d(TAG, "clickConfirm: ");
-        if(!(editTitle.getText().toString().equals("") && mMap.size() == 1 && mMap.get(0).getContent().equals(""))){
+        if(!(mMap.get(0).getContent().equals("") && mMap.size() == 2 && mMap.get(1).getContent().equals(""))){
             adapter.presenter.onStop();
             Task task = new Task();
             task.setType(taskType());
             task.setUrgent(0);
             task.setAlarm(0);
             task.setCategory("note");
-            task.setTitle(editTitle.getText().toString());
+            task.setTitle(mMap.get(0).getContent());
             if(taskId == -1){
                 if(notePresenter.saveNote(task,mMap)){
                     Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
@@ -585,7 +583,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
 
 
     private void clickRerecording(){
-        Log.d(TAG, "clickRerecording: ");
+        Log.d(TAG,"clickRerecording"+adapter.getCurrentIndex());
         try {
             if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -756,37 +754,15 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             mMap.clear();
             mMap.putAll(map);
             checkDefaultEditTex();
-            if(type.equals("photo")){
-                adapter.photoSetFocusable(RecordingPresenter.insertIndex);
-            }else {
-                adapter.setRequestFocusableArgs(RecordingPresenter.insertIndex,0,"end");
-            }
-            Log.d("requestFocusableIndex",RecordingPresenter.insertIndex+"");
-            Log.d("requestFocusableIndex",adapter.getRequestFocusableIndex()+"");
+            adapter.photoSetFocusable(RecordingPresenter.insertIndex);
             adapter.notifyItemRangeChanged(index,mMap.size() - index);
-            mRecyclerView.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (adapter.requestFocusableIndex < getCurrentFirstIndex() || adapter.requestFocusableIndex > getCurrentLastIndex()) {
-                        updateRecyclerView(adapter.getRequestFocusableIndex());
-                    }else {
-                        adapter.requestFocusable(mRecyclerView);
-                    }
-                }
-            });
+            updateRecyclerView(adapter.requestFocusableIndex);
 
         }else{
             recordingPresenter.insertRecording(mMap,filePath,type);
-            Log.d("TAG", "onStop: "+mMap.toString());
             adapter.notifyItemRangeChanged(mMap.size() - 1,mMap.size());
-            if(type.equals("photo")){
-                adapter.photoSetFocusable(RecordingPresenter.insertIndex);
-            }else {
-                adapter.setRequestFocusableArgs(RecordingPresenter.insertIndex,0,"end");
-            }
-            if(adapter.requestFocusableIndex < getCurrentFirstIndex() || adapter.requestFocusableIndex >getCurrentLastIndex()) {
-                updateRecyclerView(adapter.getRequestFocusableIndex());
-            }
+            adapter.photoSetFocusable(RecordingPresenter.insertIndex);
+            updateRecyclerView(adapter.requestFocusableIndex);
         }
     }
 
@@ -798,7 +774,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
 
     private void checkDefaultEditTex(){
         Log.d(TAG, "checkDefaultEditTex: ");
-        if(mMap.size() -1 >= 0){
+        if(mMap.size() -1 >= 1){
             if(!mMap.get(mMap.size() - 1).getType().equals("text")){
                 RecordingContent content = new RecordingContent();
                 content.setType("text");
@@ -836,26 +812,21 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         Log.d(TAG, "deleteEditText: "+ mMap.toString());
         adapter.notifyItemRemoved(index);
         checkDefaultEditTex();
-        if (index - 1 >= 0) {
-            adapter.setRequestFocusableArgs(index - 1,position,type);
+        if (index - 1 >= 1) {
+            adapter.setRequestFocusableArgs(adapter.getRequestFocusIndex(index - 1),position,type);
             adapter.notifyItemRangeChanged(index - 1, mMap.size());
         } else {
-            adapter.setRequestFocusableArgs(index,position,type);
+            adapter.setRequestFocusableArgs(-1,position,type);
             adapter.notifyItemRangeChanged(0, mMap.size());
         }
+        updateRecyclerView(adapter.requestFocusableIndex);
     }
 
     @Override
     public void updateAdapter(int index) {
         Log.d(TAG, "updateAdapter: "+ mMap.toString());
         adapter.notifyItemRangeChanged(index,mMap.size() - index);
-        mRecyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                if(adapter.requestFocusableIndex < getCurrentFirstIndex() || adapter.requestFocusableIndex >getCurrentLastIndex())
-                    updateRecyclerView(adapter.requestFocusableIndex);
-            }
-        });
+        updateRecyclerView(adapter.requestFocusableIndex);
     }
 
     @Override
@@ -879,7 +850,12 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     @Override
     public void updateRecyclerView(int position) {
         Log.d("updateRecyclerView",adapter.getRequestFocusableIndex()+"");
-        mRecyclerView.scrollToPosition(position);
+        if(position >= 0)
+            mRecyclerView.scrollToPosition(position);
+        else{
+            mRecyclerView.clearFocus();
+            adapter.setCurrentIndex(-1);
+        }
     }
 
     @Override
@@ -891,6 +867,12 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         Log.d(TAG, "TextChanged: "+mMap.toString());
     }
 
+    @Override
+    public void titleChanged(String title, int index) {
+        mMap.get(index).setContent(title);
+        Log.d(TAG, "titleChanged: "+mMap.toString());
+    }
+
     private String taskType(){
         Log.d(TAG, "taskType: ");
         for(int i = 0; i < mMap.size(); i++){
@@ -900,21 +882,19 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         return "text";
     }
 
-    @Override
-    public void onFocusChange(View view, boolean b) {
-        if(isView)
-            viewToEdit();
-    }
 
     private void clickBold(){
-        adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StyleSpan(Typeface.BOLD));
+        if(adapter.getCurrentIndex() != 0)
+            adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StyleSpan(Typeface.BOLD));
     }
     private void clickUnderLine(){
-        adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new UnderlineSpan());
+        if(adapter.getCurrentIndex() != 0)
+            adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new UnderlineSpan());
 
     }
     private void clickDeleteLine(){
-        adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StrikethroughSpan());
+        if(adapter.getCurrentIndex() != 0)
+            adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StrikethroughSpan());
     }
 
     private void clickColorBcak(){
@@ -923,49 +903,55 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickColorChanged(int color,boolean insert){
-        resetColorBackground();
-        RecordingAdapter.currentColor = color;
-        if(color == getColor(R.color.textcolor_black)){
-            mBtnColBlack.setImageDrawable(getDrawable(R.drawable.color_oval_black));
+        if(adapter.getCurrentIndex() == 0){
+            return;
         }
-        else if(color == getColor(R.color.textcolor_red)){
-            mBtnColRed.setImageDrawable(getDrawable(R.drawable.color_oval_red));
-        }
-        else if(color == getColor(R.color.textcolor_orange)){
-            mBtnColOrange.setImageDrawable(getDrawable(R.drawable.color_oval_orange));
-        }
-        else if(color == getColor(R.color.textcolor_blue)){
-            mBtnColBlue.setImageDrawable(getDrawable(R.drawable.color_oval_blue));
-        }
-        else if(color == getColor(R.color.textcolor_purple)){
-            mBtnColPurple.setImageDrawable(getDrawable(R.drawable.color_oval_purple));
-        }
-        else if(color == getColor(R.color.textcolor_gray)){
-            mBtnColGray.setImageDrawable(getDrawable(R.drawable.color_oval_gray));
-        }
+        boolean changed = false;
         if(insert){
-            adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color);
+            changed = adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color);
+        }
+        if((insert && changed) || !insert){
+            resetColorBackground();
+            RecordingAdapter.currentColor = color;
+            if(color == getColor(R.color.text_color_black)){
+                mBtnColBlack.setImageDrawable(getDrawable(R.drawable.bg_oval_black));
+            }
+            else if(color == getColor(R.color.text_color_red)){
+                mBtnColRed.setImageDrawable(getDrawable(R.drawable.bg_oval_red));
+            }
+            else if(color == getColor(R.color.text_color_orange)){
+                mBtnColOrange.setImageDrawable(getDrawable(R.drawable.bg_oval_orange));
+            }
+            else if(color == getColor(R.color.text_color_blue)){
+                mBtnColBlue.setImageDrawable(getDrawable(R.drawable.bg_oval_blue));
+            }
+            else if(color == getColor(R.color.text_color_purple)){
+                mBtnColPurple.setImageDrawable(getDrawable(R.drawable.bg_oval_purple));
+            }
+            else if(color == getColor(R.color.text_color_gray)){
+                mBtnColGray.setImageDrawable(getDrawable(R.drawable.bg_oval_gray));
+            }
         }
     }
 
     private void resetColorBackground(){
-        if(RecordingAdapter.currentColor == getColor(R.color.textcolor_black)){
-            mBtnColBlack.setImageDrawable(getDrawable(R.drawable.color_ring_black));
+        if(RecordingAdapter.currentColor == getColor(R.color.text_color_black)){
+            mBtnColBlack.setImageDrawable(getDrawable(R.drawable.bg_ring_black));
         }
-        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_red)){
-            mBtnColRed.setImageDrawable(getDrawable(R.drawable.color_ring_red));
+        else if(RecordingAdapter.currentColor == getColor(R.color.text_color_red)){
+            mBtnColRed.setImageDrawable(getDrawable(R.drawable.bg_ring_red));
         }
-        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_orange)){
-            mBtnColOrange.setImageDrawable(getDrawable(R.drawable.color_ring_orange));
+        else if(RecordingAdapter.currentColor == getColor(R.color.text_color_orange)){
+            mBtnColOrange.setImageDrawable(getDrawable(R.drawable.bg_ring_orange));
         }
-        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_blue)){
-            mBtnColBlue.setImageDrawable(getDrawable(R.drawable.color_ring_blue));
+        else if(RecordingAdapter.currentColor == getColor(R.color.text_color_blue)){
+            mBtnColBlue.setImageDrawable(getDrawable(R.drawable.bg_ring_blue));
         }
-        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_purple)){
-            mBtnColPurple.setImageDrawable(getDrawable(R.drawable.color_ring_purple));
+        else if(RecordingAdapter.currentColor == getColor(R.color.text_color_purple)){
+            mBtnColPurple.setImageDrawable(getDrawable(R.drawable.bg_ring_purple));
         }
-        else if(RecordingAdapter.currentColor == getColor(R.color.textcolor_gray)){
-            mBtnColGray.setImageDrawable(getDrawable(R.drawable.color_ring_gray));
+        else if(RecordingAdapter.currentColor == getColor(R.color.text_color_gray)){
+            mBtnColGray.setImageDrawable(getDrawable(R.drawable.bg_ring_gray));
         }
     }
 
@@ -1029,7 +1015,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         if(status.get(3) != 0){
             clickColorChanged(status.get(3),false);
         }else {
-            clickColorChanged(getColor(R.color.textcolor_black),false);
+            clickColorChanged(getColor(R.color.text_color_black),false);
         }
     }
 

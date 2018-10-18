@@ -5,7 +5,7 @@
     android:id="@+id/calendar_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/gray_rectangle_background"
+    android:background="@drawable/bg_rect10_gray"
     android:layout_marginTop="5dp">
 
     <TextView
