@@ -59,6 +59,7 @@
     <color name="seek_bar_transparent_orange">#1EFF8833 </color>
     <color name="photo_divider">#EEEEEE</color>
     <color name="photo_shelter">#80000000</color>
+    <color name="toast_background">#EAFF8833</color>
 
     <!-- calendar color -->
     <color name="calendar_select">#FF8833</color>

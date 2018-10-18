@@ -39,8 +39,8 @@ public class PhotoPresenter {
     public String takePicture(Activity activity,int requestCode) {
         if(hasSdcard()){
             //创建File对象，用于存储拍照后的照片
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String fileName = "IMG_"+ timeStamp + ".jpg";
+            String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+            String fileName = timeStamp + ".jpg";
             File outputImage=new File(FolderPath,fileName);
             String filePath = FolderPath + fileName;
             try{
@@ -60,11 +60,11 @@ public class PhotoPresenter {
                 return filePath;
             }catch (Exception e){
                 e.printStackTrace();
-                ToastUtils.showShort(context, "没有找到储存目录！");
+                ToastUtils.showFailedShort(context, "没有找到储存目录！");
                 return null;
             }
         }else {
-            ToastUtils.showShort(context, "设备没有SD卡！");
+            ToastUtils.showFailedShort(context, "设备没有SD卡！");
             return null;
         }
     }

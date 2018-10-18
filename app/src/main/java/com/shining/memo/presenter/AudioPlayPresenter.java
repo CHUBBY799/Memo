@@ -82,7 +82,7 @@ public class AudioPlayPresenter {
                     mHandlerProgress.sendEmptyMessage(MSG_PROGRESS_UPDATE);
                 }catch (Exception e){
                     e.printStackTrace();
-                    ToastUtils.showShort(context,"failed to play audio");
+                    ToastUtils.showFailedShort(context,"failed to play audio");
                     //提示用户
                     mMediaPlayer.reset();
                     mMediaPlayer.release();

@@ -484,19 +484,19 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                 if( (id = recordingPresenter.saveRecording(task,mMap,alarmObject)) != -1){
                     if(alarmChanged)
                         alarmPresenter.setAlarmNotice((int)id);
-                    Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccessShort(this,"save successful");
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else{
-                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                  ToastUtils.showSuccessShort(this,"save successful");
                 }
             }else {
                 task.setId(taskId);
                 if(alarmObject != null)
                     alarmObject.setTaskId(taskId);
                 if(recordingPresenter.modifyRecording(task,mMap,alarmObject)){
-                    Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccessShort(this,"save successful");
                     if(alarmChanged)
                         alarmPresenter.setAlarmNotice(taskId);
                     if(adapter.deletePath != null && adapter.deletePath.size() > 0){
@@ -512,23 +512,23 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     mRecyclerView.clearFocus();
                     initData();
                 }else{
-                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccessShort(this,"save failed");
                 }
             }
         }else {
             if(taskId == -1){
-                Toast.makeText(this,"save failed for empty text",Toast.LENGTH_SHORT).show();
+                ToastUtils.showFailedShort(this,"save failed for empty text");
                 setResult(RESULT_OK);
                 finish();
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
             }else {
                 if(recordingPresenter.deleteRecording(taskId)){
-                    Toast.makeText(this,"save failed for empty text",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showFailedShort(this,"save failed for empty text");
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else {
-                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showFailedShort(this,"save failed");
                 }
             }
         }
@@ -636,6 +636,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio));
                     handler.sendEmptyMessageDelayed(MSG_RECORDING,600);
                     requestPermission = true;
+                    hideInputMethod(this,getCurrentFocus());
                 }
                 break;
             case REQUEST_CAMERA_PERMISSION:
@@ -666,6 +667,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_AUDIO_PERMISSION);
             } else {
+                hideInputMethod(this,getCurrentFocus());
                 isRecording = true;
                 animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio));
                 handler.sendEmptyMessageDelayed(MSG_RECORDING,600);
@@ -823,7 +825,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             HashMap<Integer,RecordingContent> map = null;
             if(currentType.equals("text")){
                 List<Spanned> text =  adapter.distachText(mRecyclerView);
-                Log.d(TAG, "onStop: text"+text.toString());
+                if(text == null)
+                    return;
                 map = recordingPresenter.insertRecording(mMap,text,index,filePath,type);
             }else{
                 map = recordingPresenter.insertRecording(mMap,filePath,index,currentType,type);
@@ -947,7 +950,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     @Override
     public void titleChanged(String title, int index) {
         mMap.get(index).setContent(title);
-        Log.d(TAG, "titleChanged: "+mMap.toString());
     }
 
     private String taskType(){
@@ -1045,7 +1047,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_share:
-                    ToastUtils.showShort(TaskActivity.this,"TBD");
+                    ToastUtils.showSuccessShort(TaskActivity.this,"TBD");
                     break;
                 case R.id.bottom_view_alarm:
                     clickAlarm();

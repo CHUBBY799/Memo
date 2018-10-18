@@ -452,17 +452,17 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             task.setTitle(mMap.get(0).getContent());
             if(taskId == -1){
                 if(notePresenter.saveNote(task,mMap)){
-                    Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccessShort(NoteActivity.this,"save successful");
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else{
-                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccessShort(NoteActivity.this,"save successful");
                 }
             }else {
                 task.setId(taskId);
                 if(notePresenter.modifyRecording(task,mMap)){
-                    Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccessShort(NoteActivity.this,"save successful");
                     if(adapter.deletePath != null && adapter.deletePath.size() > 0){
                         for(int i=0; i < adapter.deletePath.size(); i++){
                             File file = new File(adapter.deletePath.get(i));
@@ -476,23 +476,23 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     mRecyclerView.clearFocus();
                     initData();
                 }else{
-                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showFailedShort(this,"save failed");
                 }
             }
         }else {
             if(taskId == -1){
-                Toast.makeText(this,"save failed for empty text",Toast.LENGTH_SHORT).show();
+                ToastUtils.showFailedShort(this,"save failed for empty text");
                 setResult(RESULT_OK);
                 finish();
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
             }else {
                 if(notePresenter.deleteRecording(taskId)){
-                    Toast.makeText(this,"save failed for empty text",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showFailedShort(this,"save failed for empty text");
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else {
-                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showFailedShort(this,"save failed");
                 }
             }
         }
@@ -968,7 +968,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_share:
-                    ToastUtils.showShort(NoteActivity.this,"TBD");
+                    ToastUtils.showSuccessShort(NoteActivity.this,"TBD");
                     break;
             }
         }

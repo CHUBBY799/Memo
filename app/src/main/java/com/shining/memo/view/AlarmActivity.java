@@ -140,7 +140,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
 
     private void alarmDelete(){
         if(alarmPresenter.deleteAlarm(taskId)){
-            ToastUtils.showShort(this,"Delete the Alarm successfully!");
+            ToastUtils.showSuccessShort(this,"Delete the Alarm successfully!");
             Intent intent = new Intent();
             intent.putExtra("alarm",0);
             setResult(RESULT_OK,intent);

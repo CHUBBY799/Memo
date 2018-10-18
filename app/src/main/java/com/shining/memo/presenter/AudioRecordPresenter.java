@@ -47,9 +47,9 @@ public class AudioRecordPresenter {
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);// 设置麦克风
             mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
             mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             Date date = new Date(System.currentTimeMillis());     //获取当前时间
-            filePath = FolderPath + "RCD_" + simpleDateFormat.format(date) + ".amr" ;
+            filePath = FolderPath + simpleDateFormat.format(date) + ".amr" ;
             mMediaRecorder.setOutputFile(filePath);
             mMediaRecorder.setMaxDuration(MAX_LENGTH);
             try {
@@ -83,7 +83,7 @@ public class AudioRecordPresenter {
                 File file = new File(filePath);
                 if (file.exists())
                     file.delete();
-                Toast.makeText(context, "The recording time is less than 1S. Please rerecord it.", Toast.LENGTH_SHORT).show();
+                ToastUtils.showFailedShort(context,"The recording time is less than 1S. Please rerecord it.");
             }
             else {
                 viewAudioRecording.onStop(filePath,"audio");
@@ -128,7 +128,7 @@ public class AudioRecordPresenter {
             filePath = "";
         }
         else {
-            ToastUtils.showShort(context,"Recording has not started yet!");
+            ToastUtils.showFailedShort(context,"Recording has not started yet!");
             viewAudioRecording.onStopActivateRecording();
             long startTime = 0;
         }
