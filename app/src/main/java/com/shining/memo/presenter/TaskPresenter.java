@@ -1,5 +1,6 @@
 package com.shining.memo.presenter;
 
+import com.shining.memo.model.Task;
 import com.shining.memo.model.TaskImpl;
 
 import org.json.JSONObject;
@@ -23,7 +24,10 @@ public class TaskPresenter implements MemoContract.Presenter{
        tasks.addAll(taskModel.getNotAlarmTasksByUrgentDesc(0));
        return tasks;
     }
-
+    public List<Task> getNotes(){
+        List<Task> notes=taskModel.getNotesByDateDesc();
+        return notes;
+    }
     public void finishTaskById(int id){
         taskModel.finishTaskById(id);
     }

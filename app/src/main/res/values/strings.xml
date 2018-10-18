@@ -25,6 +25,8 @@
     <string name="main_add_task">Add a new task</string>
     <string name="main_add_list">Add a new list</string>
     <string name="main_add_note">Add a new note</string>
+    <string name="main_finish_dialog_message">Do you want to finish the task ?</string>
+    <string name="main_finish_dialog_title">Finish</string>
 
     <!-- list string -->
     <string name="expand_icon">expand icon</string>

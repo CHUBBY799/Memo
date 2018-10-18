@@ -21,4 +21,5 @@ public interface TaskModel {
     void modifyTaskFinished(int taskId,int finished,SQLiteDatabase db);
     boolean hasAudioById(long id);
     void finishTaskById(int id);
+    List<Task> getNotesByDateDesc();
 }
