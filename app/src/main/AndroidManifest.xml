@@ -68,7 +68,7 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".view.AlarmClockActivity"
-            android:theme="@style/OrangeTheme"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".view.NoteActivity"

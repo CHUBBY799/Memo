@@ -1,9 +1,12 @@
 package com.shining.memo.presenter;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.Handler;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,39 +20,43 @@ import java.util.Date;
 
 public class AudioRecordPresenter {
 
+    private String TAG = "AudioRecordPresenter";
     private static String filePath = "";     //录音文件路径
     private String FolderPath = "";     //文件夹路径
-    private MediaRecorder mMediaRecorder;   //音频录制API
+    public MediaRecorder mMediaRecorder;   //音频录制API
     private static final int MAX_LENGTH = 1000 * 60 * 120;// 最大录音时长1000*60*30;
     private ViewRecord viewAudioRecording;
     private Context context;
-    private long startTime,endTime;
-    public AudioRecordPresenter(ViewRecord vAudioRec){
-        this(Environment.getExternalStorageDirectory()+"/OhMemo/recording/");
+    private long startTime, endTime;
+    private AudioManager audioManager;
+
+    public AudioRecordPresenter(ViewRecord vAudioRec) {
+        this(Environment.getExternalStorageDirectory() + "/OhMemo/recording/");
         this.viewAudioRecording = vAudioRec;
         context = viewAudioRecording.getContext();
+        audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
     }
 
     public AudioRecordPresenter(String filePath) {
 
         File path = new File(filePath);
-        if(!path.exists())
+        if (!path.exists())
             path.mkdirs();
         this.FolderPath = filePath;
     }
 
     // 开始录音
     public void startRecord() {
-
         if (mMediaRecorder == null)
             mMediaRecorder = new MediaRecorder();
         try {
+            audioManager.requestAudioFocus(null,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_REQUEST_GRANTED);
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);// 设置麦克风
             mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
             mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             Date date = new Date(System.currentTimeMillis());     //获取当前时间
-            filePath = FolderPath + simpleDateFormat.format(date) + ".amr" ;
+            filePath = FolderPath + simpleDateFormat.format(date) + ".amr";
             mMediaRecorder.setOutputFile(filePath);
             mMediaRecorder.setMaxDuration(MAX_LENGTH);
             try {
@@ -75,23 +82,23 @@ public class AudioRecordPresenter {
             return 0L;
         endTime = System.currentTimeMillis();
         try {
+            audioManager.abandonAudioFocus(null);
             mMediaRecorder.stop();
             mMediaRecorder.reset();
             mMediaRecorder.release();
             mMediaRecorder = null;
-            if(((endTime - startTime) / 1000) < 1) {
+            if (((endTime - startTime) / 1000) < 1) {
                 File file = new File(filePath);
                 if (file.exists())
                     file.delete();
-                ToastUtils.showFailedShort(context,"The recording time is less than 1S. Please rerecord it.");
-            }
-            else {
-                viewAudioRecording.onStop(filePath,"audio");
+                ToastUtils.showFailedShort(context, "The recording time is less than 1S. Please rerecord it.");
+            } else {
+                viewAudioRecording.onStop(filePath, "audio");
             }
             filePath = "";
-        }catch (RuntimeException e){
-            Log.e("Exception",e.getMessage());
-            if(mMediaRecorder != null){
+        } catch (RuntimeException e) {
+            Log.e("Exception", e.getMessage());
+            if (mMediaRecorder != null) {
                 mMediaRecorder.reset();
                 mMediaRecorder.release();
                 mMediaRecorder = null;
@@ -109,15 +116,15 @@ public class AudioRecordPresenter {
     /**
      * 取消录音
      */
-    public void cancelRecord(){
-        if(mMediaRecorder != null){
+    public void cancelRecord() {
+        if (mMediaRecorder != null) {
             try {
                 mMediaRecorder.stop();
                 mMediaRecorder.reset();
                 mMediaRecorder.release();
                 mMediaRecorder = null;
 
-            }catch (RuntimeException e){
+            } catch (RuntimeException e) {
                 mMediaRecorder.reset();
                 mMediaRecorder.release();
                 mMediaRecorder = null;
@@ -126,9 +133,8 @@ public class AudioRecordPresenter {
             if (file.exists())
                 file.delete();
             filePath = "";
-        }
-        else {
-            ToastUtils.showFailedShort(context,"Recording has not started yet!");
+        } else {
+            ToastUtils.showFailedShort(context, "Recording has not started yet!");
             viewAudioRecording.onStopActivateRecording();
             long startTime = 0;
         }
@@ -143,21 +149,23 @@ public class AudioRecordPresenter {
 
     private int BASE = 100;
     private int SPACE = 100;// 间隔取样时间
+
     private void updateMicStatus() {
 
         if (mMediaRecorder != null) {
-            double ratio = (double)mMediaRecorder.getMaxAmplitude() / BASE;
-            Log.d("ratio",String.valueOf(ratio));
+            double ratio = (double) mMediaRecorder.getMaxAmplitude() / BASE;
+            Log.d("ratio", String.valueOf(ratio));
             double db = 0;// 分贝
             if (ratio > 0) {
                 db = 20 * Math.log10(ratio);
-                Log.d("db",String.valueOf(db));
-                if(null != viewAudioRecording) {
-                    viewAudioRecording.onUpdate(db,System.currentTimeMillis()-startTime);
+                Log.d("db", String.valueOf(db));
+                if (null != viewAudioRecording) {
+                    viewAudioRecording.onUpdate(db, System.currentTimeMillis() - startTime);
                 }
             }
             mHandler.postDelayed(mUpdateMicStatusTimer, SPACE);
         }
     }
+
 
 }

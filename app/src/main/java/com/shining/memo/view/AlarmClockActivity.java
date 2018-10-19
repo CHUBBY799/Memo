@@ -1,6 +1,7 @@
 package com.shining.memo.view;
 
 import android.app.Activity;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.os.Build;
@@ -41,7 +42,9 @@ public class AlarmClockActivity extends Activity{
         setFinishOnTouchOutside(false);
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         init();
-        startMedia();
+        AudioManager audioManager = (AudioManager)getSystemService(AUDIO_SERVICE);
+        if(audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT)
+            startMedia();
     }
 
     private void init(){

@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,6 +26,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import android.support.v7.widget.RecyclerView.OnScrollListener;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
@@ -59,6 +62,7 @@ import com.shining.memo.model.RecordingContent;
 import com.shining.memo.model.Task;
 import com.shining.memo.model.Task_Recording;
 import com.shining.memo.presenter.AlarmPresenter;
+import com.shining.memo.presenter.AudioPlayPresenter;
 import com.shining.memo.presenter.AudioRecordPresenter;
 import com.shining.memo.presenter.PhotoPresenter;
 import com.shining.memo.presenter.RecordingPresenter;
@@ -146,6 +150,13 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             isRecording = true;
         else
             isRecording = false;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        TelephonyManager tmgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        tmgr.listen(mPhoneStateListener, 0);
     }
 
     @Override
@@ -262,6 +273,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             mBtnViewAlarm.setOnClickListener(onClickView);
             mBtnViewUrgent.setOnCheckedChangeListener(this);
         }
+        TelephonyManager tmgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        tmgr.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
     }
 
 
@@ -1104,5 +1117,23 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             clickColorChanged(getColor(R.color.text_color_black),false);
         }
     }
+
+    private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
+        @Override
+        public void onCallStateChanged(int state, String incomingNumber) {
+            if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                int ringvolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+                if (ringvolume > 0) {
+                    handler.removeMessages(MSG_RECORDING);
+                    if(AudioPlayPresenter.mMediaPlayer.isPlaying()){
+                        adapter.presenter.onPausePlay();
+                    }
+                    if(presenter.mMediaRecorder != null)
+                        presenter.stopRecord();
+                }
+            }
+        }
+    };
 
 }

@@ -224,9 +224,8 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                         audioViewHolder.editTextStart.requestFocus();
                     break;
             }
-        }else if(requestFocusableIndex == -1){
-            CurrentIndex = -1;
         }
+        CurrentIndex = requestFocusableIndex;
     }
 
     @Override
@@ -258,6 +257,13 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         isPlaying = false;
         changedBtnDrawable(0,button);
         Log.d(TAG, "onStopPlay: btnIndex"+btnIndex);
+    }
+
+    @Override
+    public void onInterruptPause(ImageButton btn) {
+        presenter.onPausePlay();
+        isPlaying = false;
+        changedBtnDrawable(0,btn);
     }
 
     public void changedBtnDrawable(int type,ImageButton button){
