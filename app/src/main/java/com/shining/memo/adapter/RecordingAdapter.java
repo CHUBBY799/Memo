@@ -211,12 +211,14 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                         textViewHolder.editText.setSelection(0);
                     break;
                 case "audio":
-                    audioViewHolder.itemView.requestFocus();
-                    if(type.equals("end"))
-                        audioViewHolder.editTextEnd.requestFocus();
-                    else
-                        audioViewHolder.editTextStart.requestFocus();
-                    break;
+                    if(!type.equals("play_end")){
+                        audioViewHolder.itemView.requestFocus();
+                        if(type.equals("end"))
+                            audioViewHolder.editTextEnd.requestFocus();
+                        else
+                            audioViewHolder.editTextStart.requestFocus();
+                        break;
+                    }
             }
         }
         CurrentIndex = requestFocusableIndex;
@@ -500,6 +502,9 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                     break;
               case R.id.item_btn_play:
                   textChanged.recyclerViewClearFocusable();
+                  requestFocusableIndex = (int)itemView.getTag();
+                  CurrentIndex = (int)itemView.getTag();
+                  CurrentType = "play_end";
                   if(btnIndex == (int)itemView.getTag()){
                       if(isPlaying){
                           presenter.onPausePlay();
@@ -648,6 +653,9 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             textChanged.recyclerViewClearFocusable();
+            requestFocusableIndex = (int)itemView.getTag();
+            CurrentIndex = (int)itemView.getTag();
+            CurrentType = "play_end";
             if(btnIndex == (int)itemView.getTag()){
                 if(isPlaying){
                     presenter.seekTo(seekBar.getProgress());
@@ -692,6 +700,8 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
 
         @Override
         public void onClick(View view) {
+            textChanged.recyclerViewClearFocusable();
+            requestFocusableIndex = (int)itemView.getTag();
             CurrentIndex = (int)itemView.getTag();
             CurrentType = "photo_end";
             switch (view.getId()){
@@ -729,7 +739,6 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             InputMethodManager imm = (InputMethodManager)context.getSystemService( Context.INPUT_METHOD_SERVICE );
             imm.hideSoftInputFromWindow( v.getApplicationWindowToken( ) , 0 );
         }
-        textChanged.recyclerViewClearFocusable();
         textChanged.updateRecyclerView((int)itemView.getTag());
         if(!((MaskImageView)imageView).isIsShowMaskOnClick()){
             ((MaskImageView)imageView).setIsShowMaskOnClick(true);
@@ -819,7 +828,6 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
 
     public List<Spanned> distachText(RecyclerView recyclerView){
         try{
-            Log.d("distachText",getCurrentIndex()+"-"+textChanged.getCurrentFirstIndex());
             TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(CurrentIndex - textChanged.getCurrentFirstIndex()));
             return editTextDistach(textViewHolder.editText);
         }catch (Exception e){

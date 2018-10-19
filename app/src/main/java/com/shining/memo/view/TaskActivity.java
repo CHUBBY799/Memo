@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
@@ -25,6 +26,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Html;
@@ -48,7 +50,6 @@ import android.widget.PopupWindow;
 import android.widget.Switch;
 import android.widget.TextView;
 
-
 import com.shining.memo.R;
 import com.shining.memo.adapter.RecordingAdapter;
 import com.shining.memo.home.MemoActivity;
@@ -61,9 +62,16 @@ import com.shining.memo.presenter.AudioPlayPresenter;
 import com.shining.memo.presenter.AudioRecordPresenter;
 import com.shining.memo.presenter.PhotoPresenter;
 import com.shining.memo.presenter.RecordingPresenter;
+import com.shining.memo.utils.ShotUtils;
 import com.shining.memo.utils.ToastUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -955,6 +963,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private String taskType(){
+        Log.d(TAG, "taskType: ");
         for(int i = 0; i < mMap.size(); i++){
             if(mMap.get(i).getType().equals("audio"))
                 return "audio";
@@ -1048,7 +1057,18 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_share:
-                    ToastUtils.showSuccessShort(TaskActivity.this,"TBD");
+                 //   ToastUtils.showSuccessShort(TaskActivity.this,"TBD");
+                    Bitmap bitmap = ShotUtils.shotRecyclerView(mRecyclerView);
+                    try {
+                        File file = new File(Environment.getExternalStorageDirectory()+"/OhMemo/"+
+                                System.currentTimeMillis()+".jpg");
+                 //       ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file));
+                        outputStream.writeObject(bitmap);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case R.id.bottom_view_alarm:
                     clickAlarm();

@@ -572,6 +572,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio));
                     handler.sendEmptyMessageDelayed(MSG_RECORDING,600);
                     requestPermission = true;
+                    hideInputMethod(this,getCurrentFocus());
                 }
                 break;
             case REQUEST_CAMERA_PERMISSION:
@@ -591,6 +592,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_AUDIO_PERMISSION);
             } else {
+                hideInputMethod(this,getCurrentFocus());
                 isRecording = true;
                 animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio));
                 handler.sendEmptyMessageDelayed(MSG_RECORDING,600);
@@ -748,7 +750,8 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             HashMap<Integer,RecordingContent> map = null;
             if(currentType.equals("text")){
                 List<Spanned> text =  adapter.distachText(mRecyclerView);
-                Log.d(TAG, "onStop: text"+text.toString());
+                if(text == null)
+                    return;
                 map = recordingPresenter.insertRecording(mMap,text,index,filePath,type);
             }else{
                 map = recordingPresenter.insertRecording(mMap,filePath,index,currentType,type);
