@@ -1,11 +1,14 @@
 package com.shining.memo.utils;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.util.LruCache;
@@ -43,7 +46,6 @@ public class ShotUtils {
                 holder.itemView.buildDrawingCache();
                 Bitmap drawingCache = holder.itemView.getDrawingCache();
                 if (drawingCache != null) {
-
                     bitmaCache.put(String.valueOf(i), drawingCache);
                 }
                 height += holder.itemView.getMeasuredHeight();
@@ -95,11 +97,43 @@ public class ShotUtils {
             fos.flush();
             fos.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return null;
         }
 
         return file.getAbsolutePath();
     }
+
+
+    public static void share(Context context,String sharePath){
+        if(sharePath != null){
+            Uri imageUri = Uri.fromFile(new File(sharePath));
+            Intent shareIntent = new Intent();
+            //发送图片给好友。
+            ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");
+            //发送图片到朋友圈
+            //ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
+            //发送图片到qq
+            // ComponentName comp = new ComponentName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");
+            shareIntent.setComponent(comp);
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+            shareIntent.setType("image/*");
+            context.startActivity(Intent.createChooser(shareIntent, "分享图片"));
+        }
+    }
+
+
+    public static void shareLocal(Context context,String sharePath){
+        if(sharePath != null){
+            Uri imageUri = Uri.fromFile(new File(sharePath));
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+            shareIntent.setType("image/*");
+            context.startActivity(Intent.createChooser(shareIntent, "分享图片"));
+        }
+    }
+
+
 }

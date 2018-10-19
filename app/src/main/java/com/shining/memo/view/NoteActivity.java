@@ -58,6 +58,7 @@ import com.shining.memo.presenter.AudioRecordPresenter;
 import com.shining.memo.presenter.NotePresenter;
 import com.shining.memo.presenter.PhotoPresenter;
 import com.shining.memo.presenter.RecordingPresenter;
+import com.shining.memo.utils.ShotUtils;
 import com.shining.memo.utils.ToastUtils;
 
 import java.io.File;
@@ -984,7 +985,8 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_share:
-                    ToastUtils.showSuccessShort(NoteActivity.this,"TBD");
+                    String path = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
+                    ShotUtils.shareLocal(NoteActivity.this,path);
                     break;
             }
         }

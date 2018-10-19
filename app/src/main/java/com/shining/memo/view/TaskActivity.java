@@ -1068,8 +1068,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_share:
-                    ShotUtils.saveBitmap(TaskActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
-                    ToastUtils.showShort(TaskActivity.this,"TBD");
+                    String path = ShotUtils.saveBitmap(TaskActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
+                    ShotUtils.shareLocal(TaskActivity.this,path);
                     break;
                 case R.id.bottom_view_alarm:
                     clickAlarm();
