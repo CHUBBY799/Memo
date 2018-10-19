@@ -84,6 +84,5 @@
                 <action android:name="com.shining.memo.alarmandnotice" />
             </intent-filter>
         </receiver>
-
     </application>
 </manifest>

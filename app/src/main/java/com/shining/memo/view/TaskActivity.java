@@ -463,6 +463,23 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     private void clickCancel(){
         Log.d(TAG, "clickCancel: ");
         adapter.presenter.onStop();
+//        if(taskId == -1){
+//            for(int i = 0; i < mMap.size(); i++){
+//                if((mMap.get(i).getType().equals("audio"))||(mMap.get(i).getType().equals("photo")
+//                        && mMap.get(i).getContent().contains(Environment.getExternalStorageDirectory()+"/OhMemo/photo/"))){
+//                        File file = new File(mMap.get(i).getContent());
+//                        if (file.exists())
+//                            file.delete();
+//                }
+//            }
+//            setResult(RESULT_CANCELED);
+//            finish();
+//            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+//        }else {
+//            animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
+//            isView = true;
+//            initData();
+//        }
         if(taskId == -1){
             for(int i = 0; i < mMap.size(); i++){
                 if((mMap.get(i).getType().equals("audio"))||(mMap.get(i).getType().equals("photo")
@@ -472,14 +489,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                             file.delete();
                 }
             }
-            setResult(RESULT_CANCELED);
-            finish();
-            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
-        }else {
-            animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
-            isView = true;
-            initData();
         }
+        clickConfirm();
     }
     private void clickConfirm(){
         Log.d(TAG, "clickConfirm: ");
@@ -1057,18 +1068,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_share:
-                 //   ToastUtils.showSuccessShort(TaskActivity.this,"TBD");
-                    Bitmap bitmap = ShotUtils.shotRecyclerView(mRecyclerView);
-                    try {
-                        File file = new File(Environment.getExternalStorageDirectory()+"/OhMemo/"+
-                                System.currentTimeMillis()+".jpg");
-                 //       ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                        ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file));
-                        outputStream.writeObject(bitmap);
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    ShotUtils.saveBitmap(TaskActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
+                    ToastUtils.showShort(TaskActivity.this,"TBD");
                     break;
                 case R.id.bottom_view_alarm:
                     clickAlarm();

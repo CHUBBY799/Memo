@@ -426,6 +426,23 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private void clickCancel(){
         Log.d(TAG, "clickCancel: ");
         adapter.presenter.onStop();
+//        if(noteID == -1){
+//            for(int i = 0; i < mMap.size(); i++){
+//                if((mMap.get(i).getType().equals("audio"))||(mMap.get(i).getType().equals("photo")
+//                        && mMap.get(i).getContent().contains(Environment.getExternalStorageDirectory()+"/OhMemo/photo/"))){
+//                    File file = new File(mMap.get(i).getContent());
+//                    if (file.exists())
+//                        file.delete();
+//                }
+//            }
+//            setResult(RESULT_CANCELED);
+//            finish();
+//            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+//        }else {
+//            animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
+//            isView = true;
+//            initData();
+//        }
         if(noteID == -1){
             for(int i = 0; i < mMap.size(); i++){
                 if((mMap.get(i).getType().equals("audio"))||(mMap.get(i).getType().equals("photo")
@@ -435,14 +452,8 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                         file.delete();
                 }
             }
-            setResult(RESULT_CANCELED);
-            finish();
-            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
-        }else {
-            animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
-            isView = true;
-            initData();
         }
+        clickConfirm();
     }
     private void clickConfirm(){
         Log.d(TAG, "clickConfirm: ");

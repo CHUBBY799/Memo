@@ -1,6 +1,8 @@
 package com.shining.memo.utils;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.Html;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +59,16 @@ public class ToastUtils
 	}
 
 	public static void showShort(Context context, CharSequence message){
-		Toast.makeText(context,message,Toast.LENGTH_SHORT).show();
+
+		Toast toast = Toast.makeText(context,  message, Toast.LENGTH_SHORT);
+		toast.setDuration(Toast.LENGTH_SHORT);
+		View view = toast.getView();
+		view.setBackground(context.getDrawable(R.drawable.toast_background));
+		TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+		v.setTextColor(Color.WHITE);
+		v.setTextSize(16);
+		toast.setView(view);
+		toast.show();
 	}
 
 }

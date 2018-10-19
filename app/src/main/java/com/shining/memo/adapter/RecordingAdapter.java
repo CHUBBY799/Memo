@@ -3,6 +3,7 @@ package com.shining.memo.adapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -36,10 +37,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.shining.memo.R;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.presenter.AudioPlayPresenter;
+import com.shining.memo.utils.DialogUtils;
 import com.shining.memo.utils.ToastUtils;
 import com.shining.memo.widget.MaskImageView;
 import com.shining.memo.widget.SelectEditText;
@@ -485,21 +488,33 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                       textChanged.viewToEdit();
                       return;
                   }
-                  int index = (int)itemView.getTag();
-                  HashMap<Integer, RecordingContent> map = textChanged.getMap();
-                  String filepath = map.get(index).getContent();
-                  if(isViewEdit)
-                      deletePath.add(filepath);
-                  else{
-                      File file = new File(filepath);
-                      if (file.exists())
-                          file.delete();
-                  };
-                  for (int i = index; i < map.size() - 1; i++)
-                      map.put(i, map.get(i + 1));
-                  map.remove(map.size() - 1);
-                  textChanged.deleteEditText(map, index, 0, "end");
-                    break;
+                  DialogUtils.showDialog(context, context.getResources().getString(R.string.audio_delete_title),
+                          context.getResources().getString(R.string.audio_delete_tip), new DialogInterface.OnClickListener() {
+                              @Override
+                              public void onClick(DialogInterface dialogInterface, int in) {
+                                  int index = (int)itemView.getTag();
+                                  HashMap<Integer, RecordingContent> map = textChanged.getMap();
+                                  String filepath = map.get(index).getContent();
+                                  if(isViewEdit)
+                                      deletePath.add(filepath);
+                                  else{
+                                      File file = new File(filepath);
+                                      if (file.exists())
+                                          file.delete();
+                                  };
+                                  for (int i = index; i < map.size() - 1; i++)
+                                      map.put(i, map.get(i + 1));
+                                  map.remove(map.size() - 1);
+                                  textChanged.deleteEditText(map, index, 0, "end");
+                              }
+                          }, new DialogInterface.OnClickListener() {
+                              @Override
+                              public void onClick(DialogInterface dialogInterface, int i) {
+                                  ToastUtils.showShort(context,context.getResources().getString(R.string.cancel));
+                              }
+                          });
+
+                  break;
               case R.id.item_btn_play:
                   textChanged.recyclerViewClearFocusable();
                   requestFocusableIndex = (int)itemView.getTag();

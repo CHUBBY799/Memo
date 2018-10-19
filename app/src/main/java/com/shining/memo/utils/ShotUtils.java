@@ -1,13 +1,21 @@
 package com.shining.memo.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.util.LruCache;
 import android.view.View;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ShotUtils {
     public static Bitmap shotRecyclerView(RecyclerView view) {
@@ -58,5 +66,40 @@ public class ShotUtils {
             }
         }
         return bigBitmap;
+    }
+
+
+    public static String saveBitmap(Context context, Bitmap mBitmap) {
+        String savePath = "";
+        File file;
+        if (Environment.getExternalStorageState().equals(
+                Environment.MEDIA_MOUNTED)) {
+            savePath = Environment.getExternalStorageDirectory()+"/OhMemo/shot/";
+            file = new File(savePath);
+            if (!file.exists()) {
+                file.mkdir();
+            }
+        }else {
+            return null;
+        }
+        try {
+            String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+            String fileName = timeStamp + ".jpg";
+            file = new File(savePath,fileName);
+            if (file.exists()) {
+                file.delete();
+            }
+            file.createNewFile();
+            FileOutputStream fos = new FileOutputStream(file);
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+
+        return file.getAbsolutePath();
     }
 }
