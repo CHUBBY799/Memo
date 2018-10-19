@@ -9,7 +9,10 @@
         android:right="2dp"
         android:bottom="2dp">
         <shape android:shape="rectangle" >
-            <solid android:color="@color/alarm_save_shadow"></solid>
+            <gradient
+                android:startColor="@color/text_color_orange"
+                android:endColor="@color/alarm_save_shadow"
+                android:angle="270"/>
             <corners android:radius="10dp"/>
         </shape>
     </item>
@@ -20,7 +23,7 @@
         android:left="2dp"
         android:top="2dp"
         android:right="2dp"
-        android:bottom="3.5dp">
+        android:bottom="4dp">
         <shape android:shape="rectangle" >
             <solid android:color="@color/text_color_orange"></solid>
             <corners android:radius="8dp"/>

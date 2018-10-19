@@ -25,7 +25,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Html;
@@ -38,20 +37,16 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.shining.memo.R;
@@ -67,11 +62,9 @@ import com.shining.memo.presenter.AudioRecordPresenter;
 import com.shining.memo.presenter.PhotoPresenter;
 import com.shining.memo.presenter.RecordingPresenter;
 import com.shining.memo.utils.ToastUtils;
-import com.shining.memo.widget.WrapContentLinearLayoutManager;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -93,7 +86,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     private ImageButton mBtnBold,mBtnUnderLine,mBtnDeleteLine,mBtnColor,mBtnTextBack;
     private ImageButton mBtnColBack,mBtnColRed,mBtnColOrange,mBtnColBlue,mBtnColPurple,mBtnColGray,mBtnColBlack;
     private ImageButton mBtnViewBack,mBtnViewDelete,mBtnViewShare,mBtnViewAlarm;
-    private ConstraintLayout layout;
     private Switch mSwitchUrgent,mBtnViewUrgent;
     private TextView mTvTime,dialogTv;
     private AlertDialog dialog;
@@ -421,7 +413,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             case R.id.bottom_textedit_back:
                 isTextEdit = false;
                 animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit));
-                layout.requestFocus();
                 break;
             case R.id.bottom_bold:
                 clickBold();
@@ -548,8 +539,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
     private void clickEdit(){
         isTextEdit = true;
-        if(layout == null)
-            layout = (ConstraintLayout)findViewById(R.id.recroding_edit_root);
         animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_textedit));
     }
 
@@ -966,7 +955,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private String taskType(){
-        Log.d(TAG, "taskType: ");
         for(int i = 0; i < mMap.size(); i++){
             if(mMap.get(i).getType().equals("audio"))
                 return "audio";
@@ -1070,7 +1058,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void returnHomePage(){
-        finish();
         if(isNotification){
             Intent intent = new Intent();
             intent.setClass(this,MemoActivity.class);

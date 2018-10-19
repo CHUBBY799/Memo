@@ -37,23 +37,19 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 
 import com.shining.memo.R;
 import com.shining.memo.adapter.RecordingAdapter;
-import com.shining.memo.home.MemoActivity;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.model.Task;
 import com.shining.memo.model.Task_Recording;
@@ -66,7 +62,6 @@ import com.shining.memo.utils.ToastUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -86,17 +81,15 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private ImageButton mBtnBold,mBtnUnderLine,mBtnDeleteLine,mBtnColor,mBtnTextBack;
     private ImageButton mBtnColBack,mBtnColRed,mBtnColOrange,mBtnColBlue,mBtnColPurple,mBtnColGray,mBtnColBlack;
     private ImageButton mBtnViewBack,mBtnViewDelete,mBtnViewShare;
-    private ConstraintLayout layout;
     private TextView mTvTime,dialogTv;
-
     private AlertDialog dialog;
     private PopupWindow volumePopWindow;
     private ImageView volumeImage;
     private RecyclerView mRecyclerView;
-    private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false,noBackKey = false,isView = false;
+    private static boolean isRecording,isPhotoChoosing,isTextEdit,isColorPick,noBackKey,isView;
     private String photoPath="";
     private int noteID = -1;
-    private boolean isNotification,requestPermission;
+    private boolean requestPermission;
     private OonClickView onClickView;
 
     private RecordingAdapter adapter;
@@ -243,7 +236,6 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         notePresenter = new NotePresenter(this);
         recordingPresenter = new RecordingPresenter(this);
         noteID = getIntent().getIntExtra("taskId",-1);
-        isNotification = getIntent().getBooleanExtra("isNotification",false);
         if(noteID != -1){
             isView = true;
             View v = findViewById(R.id.bottom_recording_view);
@@ -392,7 +384,6 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             case R.id.bottom_textedit_back:
                 isTextEdit = false;
                 animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit));
-                layout.requestFocus();
                 break;
             case R.id.bottom_bold:
                 clickBold();
@@ -513,8 +504,6 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
     private void clickEdit(){
         isTextEdit = true;
-        if(layout == null)
-            layout = (ConstraintLayout)findViewById(R.id.recroding_edit_root);
         animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_textedit));
     }
 
@@ -989,15 +978,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
 
     private void returnHomePage(){
         finish();
-        if(isNotification){
-            Intent intent = new Intent();
-            intent.setClass(this,MemoActivity.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
-        }else {
-            finish();
-            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
-        }
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
 
     @Override

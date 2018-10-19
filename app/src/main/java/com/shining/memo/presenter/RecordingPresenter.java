@@ -3,10 +3,7 @@ package com.shining.memo.presenter;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.Html;
-import android.text.SpannableString;
 import android.text.Spanned;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.shining.memo.adapter.RecordingAdapter;
 import com.shining.memo.model.Alarm;
@@ -21,7 +18,6 @@ import com.shining.memo.model.Task;
 import com.shining.memo.model.TaskImpl;
 import com.shining.memo.model.TaskModel;
 import com.shining.memo.model.Task_Recording;
-import com.shining.memo.utils.ToastUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -165,7 +161,6 @@ public class RecordingPresenter {
     public static int insertIndex = -1;
     public HashMap<Integer, RecordingContent> insertRecording(HashMap<Integer, RecordingContent> oldMap, List<Spanned> text, int index, String filePath, String type) {
         HashMap<Integer, RecordingContent> map = new HashMap<>();
-        Log.d("RecordingAdapter oldMap", oldMap.toString());
         int number = 0;
         String html = "";
         if(text != null && oldMap != null){
@@ -180,7 +175,6 @@ public class RecordingPresenter {
             for(int i = 0; i < index; i++){
                 map.put(i,oldMap.get(i));
             }
-            Log.d("RecordingAdapter oldMap", number+"");
             if(number > 1){
                 RecordingContent content = new RecordingContent();
                 content.setType("text");
@@ -291,7 +285,6 @@ public class RecordingPresenter {
             map.put(i,mMap.get(i));
         for(int i = mMap.size() - 1; i > index; i--)
             map.put(i + 1,mMap.get(i));
-        Log.d("insertRecording",map.toString());
         if(position.contains("start")){
             map.put(index + 1,mMap.get(index));
             RecordingContent content = new RecordingContent();

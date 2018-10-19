@@ -5,10 +5,6 @@ import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.Handler;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.shining.memo.utils.ToastUtils;
 import com.shining.memo.view.ViewRecord;
@@ -96,8 +92,8 @@ public class AudioRecordPresenter {
                 viewAudioRecording.onStop(filePath, "audio");
             }
             filePath = "";
-        } catch (RuntimeException e) {
-            Log.e("Exception", e.getMessage());
+        } catch (Exception e) {
+             e.printStackTrace();
             if (mMediaRecorder != null) {
                 mMediaRecorder.reset();
                 mMediaRecorder.release();
@@ -107,8 +103,6 @@ public class AudioRecordPresenter {
             if (file.exists())
                 file.delete();
             filePath = "";
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return endTime - startTime;
     }
@@ -154,11 +148,9 @@ public class AudioRecordPresenter {
 
         if (mMediaRecorder != null) {
             double ratio = (double) mMediaRecorder.getMaxAmplitude() / BASE;
-            Log.d("ratio", String.valueOf(ratio));
             double db = 0;// 分贝
             if (ratio > 0) {
                 db = 20 * Math.log10(ratio);
-                Log.d("db", String.valueOf(db));
                 if (null != viewAudioRecording) {
                     viewAudioRecording.onUpdate(db, System.currentTimeMillis() - startTime);
                 }
