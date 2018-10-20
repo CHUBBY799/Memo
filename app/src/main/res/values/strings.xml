@@ -60,6 +60,7 @@
     <string name="calendar_thursday">Thur</string>
     <string name="calendar_friday">Fri</string>
     <string name="calendar_saturday">Sat</string>
+    <string name="back_top">back to the top</string>
     <string name="title_date">%1$s  %2$dth,%3$d</string>
 
     <!-- audio string -->
