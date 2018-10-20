@@ -2,11 +2,9 @@ package com.shining.memo.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -216,12 +214,12 @@ public class DatePickerView extends View {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setTextAlign(Paint.Align.CENTER);
-        mPaint.setColor(ContextCompat.getColor(context, R.color.recording_title));
+        mPaint.setColor(context.getColor(R.color.recording_title));
         //第二个paint
         nPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         nPaint.setStyle(Paint.Style.FILL);
         nPaint.setTextAlign(Paint.Align.CENTER);
-        nPaint.setColor(ContextCompat.getColor(context, R.color.alarm_unselected));
+        nPaint.setColor(context.getColor(R.color.pop_reminder));
     }
 
     /**
@@ -282,7 +280,6 @@ public class DatePickerView extends View {
         float d = MARGIN_ALPHA * mMinTextSize * position + type * mMoveLen;
         float scale = parabola(mViewHeight / 4.0f, d);
         float size = (mMaxTextSize - mMinTextSize) * scale + mMinTextSize;
-        nPaint.setColor(getResources().getColor(R.color.pop_reminder));
         nPaint.setTextSize(size);
         nPaint.setAlpha((int) ((mMaxTextAlpha - mMinTextAlpha) * scale + mMinTextAlpha));
         float y = (float) (mViewHeight / 2.0 + type * d);

@@ -330,8 +330,7 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
         //现在选中的是第几行
         int selectRowIndex = currentMonthView.getSelectRowIndex();
         //month需要移动selectRowIndex*h/rowNum ,计算时依每个行的中点计算
-        return selectRowIndex * currentMonthView.getDrawHeight() / rowNum;
-
+        return selectRowIndex * currentMonthView.getMonthHeight() / rowNum;
     }
 
     public MonthCalendar getMonthCalendar() {
@@ -397,7 +396,7 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
         monthCalendarOffset = getMonthCalendarOffset();
 
         if (STATE == MONTH) {
-            weekCalendar.setDate(date, dateList);
+            weekCalendar.setDate(LocalDate.now(), dateList);
             if (onCalendarChangedListener != null) {
                 onCalendarChangedListener.onCalendarChanged(date, dateList);
             }

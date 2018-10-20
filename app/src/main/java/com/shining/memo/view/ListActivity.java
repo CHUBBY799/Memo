@@ -24,6 +24,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button listCancel;
     private Button listConfirm;
+    private Button listDelete;
     private Button addItem;
     private EditText listTitle;
     private RecyclerView listContent;
@@ -68,6 +69,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.list_confirm:
                 listConfirm();
                 break;
+            case R.id.list_delete:
+                listDelete();
             case R.id.add_item:
                 addItem();
             default:
@@ -103,6 +106,18 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
+     * 删除
+     */
+    private void listDelete(){
+        ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+        if(id != -1){
+            listPresenter.deletePresenter(String.valueOf(id));
+        }
+        finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    /**
      * 保存并向数据库中插入数据
      */
     private void listConfirm(){
@@ -132,6 +147,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private void initView(){
         listCancel = findViewById(R.id.list_cancel);
         listConfirm = findViewById(R.id.list_confirm);
+        listDelete = findViewById(R.id.list_delete);
         addItem = findViewById(R.id.add_item);
         listTitle = findViewById(R.id.list_title);
 
@@ -146,6 +162,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private void initComponent(){
         listCancel.setOnClickListener(this);
         listConfirm.setOnClickListener(this);
+        listDelete.setOnClickListener(this);
         addItem.setOnClickListener(this);
 
         listConfirm.setOnFocusChangeListener(new android.view.View.OnFocusChangeListener() {

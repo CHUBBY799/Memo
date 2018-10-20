@@ -1,32 +1,19 @@
 package com.shining.calendar.utils;
 
 public class Attrs {
-    public static int solarTextColor;
-    public static int lunarTextColor ;
+    public static int currentColor;
     public static int hintColor ;
-    public static int toDayColor;
-    public static int selectCircleColor;
-    public static float solarTextSize ;
-    public static float lunarTextSize;
-    public static float selectCircleRadius ;
-    public static boolean isShowLunar ;
+    public static int todayColor;
+    public static int selectColor;
 
-
+    public static float textSize ;
     public static float pointSize;
-    public static int pointColor;
-    public static int hollowCircleColor;
-    public static float hollowCircleStroke;
 
     public static int firstDayOfWeek;
     public static int defaultCalendar;
 
     public static int monthCalendarHeight;
     public static int duration;
-
-
-    public static boolean isShowHoliday;
-    public static int holidayColor;
-    public static int workdayColor;
 
     public static int backgroundColor;
 

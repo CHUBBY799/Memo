@@ -18,8 +18,8 @@ public class WelcomeActivity extends AppCompatActivity implements Runnable{
 
     public void run(){
         try{
-            //延迟1秒时间
-            Thread.sleep(1000);
+            //延迟秒时间
+            Thread.sleep(300);
             SharedPreferences preferences= getSharedPreferences("count", 0);// 存在则打开它，否则创建新的Preferences
             int count = preferences.getInt("count", 0);// 取出数据
 

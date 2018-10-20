@@ -8,13 +8,10 @@ import com.shining.memo.model.ListModel;
 import com.shining.memo.view.ViewList;
 
 public class ListPresenter {
-    private Context context;
-    private ViewList listView;
     private ListModel listModel;
 
     public ListPresenter(ViewList listView){
-        this.context = listView.getContext();
-        this.listView = listView;
+        Context context = listView.getContext();
         this.listModel = new ListImpl(context);
     }
 
@@ -42,8 +39,8 @@ public class ListPresenter {
     /**
      * 删除数据控制逻辑单元
      */
-    public void deletePresenter(String title){
-        deleteDataByTitle(title);
+    public void deletePresenter(String id){
+        deleteDataById(id);
     }
 
     /**
@@ -51,14 +48,6 @@ public class ListPresenter {
      */
     public void updatePresenter(ListBean listBean){
         updateDataById(listBean);
-    }
-
-    private ListBean formatData(){
-        if (listView != null){
-            return listView.formatData();
-        }else {
-            return null;
-        }
     }
 
     private void insertData(ListBean listBean){
@@ -73,8 +62,8 @@ public class ListPresenter {
         return listModel.queryDataByTitle(title);
     }
 
-    private void deleteDataByTitle(String title){
-        listModel.deleteDataByTitle(title);
+    private void deleteDataById(String id){
+        listModel.deleteDataById(id);
     }
 
     private void updateDataById(ListBean listBean){

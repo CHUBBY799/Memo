@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CalendarPager">
-        <attr name="solarTextColor" format="color" />
-        <attr name="lunarTextColor" format="color" />
+        <attr name="currentColor" format="color" />
         <attr name="hintColor" format="color" />
-        <attr name="selectCircleColor" format="color" />
-        <attr name="solarTextSize" format="dimension" />
-        <attr name="lunarTextSize" format="dimension" />
-        <attr name="selectCircleRadius" format="dimension" />
-        <attr name="isShowLunar" format="boolean" />
+        <attr name="selectColor" format="color" />
+        <attr name="todayColor" format="color" />
 
+        <attr name="textSize" format="dimension" />
         <attr name="pointSize" format="dimension" />
-        <attr name="pointColor" format="color" />
-        <attr name="hollowCircleColor" format="color" />
-        <attr name="hollowCircleStroke" format="dimension" />
+
         <attr name="startDate" format="string" />
         <attr name="endDate" format="string" />
 
@@ -23,9 +18,6 @@
         <attr name="firstDayOfWeek" format="string"/>
         <attr name="defaultCalendar" format="string"/>
 
-        <attr name="isShowHoliday" format="boolean" />
-        <attr name="holidayColor" format="color" />
-        <attr name="workdayColor" format="color" />
         <attr name="backgroundColor" format="color" />
 
     </declare-styleable>

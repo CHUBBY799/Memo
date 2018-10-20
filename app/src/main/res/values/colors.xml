@@ -50,7 +50,7 @@
     <color name="recording_title">#666666</color>
     <color name="content_background">#FAFAFA</color>
     <color name="underline_background">#EEEEEE</color>
-    <string name="hint_color">#AAAAAA</string>
+    <color name="hint_color">#AAAAAA</color>
     <color name="item_btn_background">#FFF6F0</color>
     <color name="item_btn_text">#FF8833</color>
     <color name="half_transparent_orange">#8EFF8833 </color>
@@ -63,6 +63,7 @@
     <color name="calendar_unselected">#CCCCCC</color>
     <color name="calendar_line">#DDDDDD</color>
     <color name="calendar_week">#AAAAAA</color>
+    <color name="back_top">#FFC8A3</color>
 
     <!-- text color -->
     <color name="text_color_red">#FF0000</color>

@@ -4,16 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/calendar_item"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/bg_rect10_gray"
-    android:layout_marginTop="5dp">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/task_finished"
-        android:layout_width="14dp"
-        android:layout_height="11dp"
+        android:layout_width="12dp"
+        android:layout_height="9dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="25dp"
         android:background="@drawable/finish_icon"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -25,8 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:textSize="18sp"
         android:textColor="@color/recording_title"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/task_finished"
         app:layout_constraintTop_toTopOf="parent" />
@@ -36,9 +34,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/recording_title"
-        android:textSize="26sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -46,11 +44,11 @@
         android:id="@+id/task_month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="3dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="2dp"
         android:textColor="@color/recording_title"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/task_date" />

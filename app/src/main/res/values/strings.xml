@@ -1,7 +1,7 @@
 <resources>
 
     <!-- common string -->
-    <string name="cancer">Cancle</string>
+    <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
     <string name="state">state</string>
     <string name="title">title</string>
@@ -27,6 +27,7 @@
     <string name="main_add_note">Add a new note</string>
 
     <!-- list string -->
+    <string name="list_hint_title">Please input title of list</string>
     <string name="expand_icon">expand icon</string>
     <string name="start_default">start default</string>
 
@@ -57,6 +58,7 @@
     <string name="calendar_thursday">Thur</string>
     <string name="calendar_friday">Fri</string>
     <string name="calendar_saturday">Sat</string>
+    <string name="back_top">back to the top</string>
     <string name="title_date">%1$s  %2$dth,%3$d</string>
 
     <!-- audio string -->

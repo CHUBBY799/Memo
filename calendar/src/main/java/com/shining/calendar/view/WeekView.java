@@ -15,97 +15,73 @@ import com.shining.calendar.utils.Utils;
 
 import org.joda.time.LocalDate;
 
-import java.util.List;
-
 @SuppressLint("ViewConstructor")
 public class WeekView extends CalendarView {
 
-
+    private Context context;
     private OnClickWeekViewListener mOnClickWeekViewListener;
-    private List<String> lunarList;
 
     public WeekView(Context context, LocalDate date, OnClickWeekViewListener onClickWeekViewListener) {
         super(context);
 
+        this.context = context;
         this.mInitialDate = date;
-        Utils.NCalendar weekCalendar2 = Utils.getWeekCalendar(date, Attrs.firstDayOfWeek);
-
-        dates = weekCalendar2.dateList;
-        lunarList = weekCalendar2.lunarList;
+        Utils.NCalendar weekCalendar = Utils.getWeekCalendar(date, Attrs.firstDayOfWeek);
+        dates = weekCalendar.dateList;
         mOnClickWeekViewListener = onClickWeekViewListener;
     }
 
+    @SuppressWarnings("all")
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mWidth = getWidth();
-        //mHeight = getHeight();
-        //为了与月日历保持一致，往上压缩一下,5倍的关系
-        mHeight = (int) (getHeight() - Utils.dp2px(getContext(), 2));
+        mHeight = getHeight();
         mRectList.clear();
-
+        Rect rect = null;
         for (int i = 0; i < 7; i++) {
-            @SuppressWarnings("all")
-            Rect rect = new Rect(i * mWidth / 7, 0, i * mWidth / 7 + mWidth / 7, mHeight);
+            if (i == 0){
+                rect = new Rect(0, 0, i * mWidth / 7 + mWidth / 7, mHeight);
+            }else {
+                rect = new Rect(mRectList.get(i-1).right, 0, i * mWidth / 7 + mWidth / 7, mHeight);
+            }
             mRectList.add(rect);
+
+            //得到当前矩形日期
             LocalDate date = dates.get(i);
-            Paint.FontMetricsInt fontMetrics = mSolarPaint.getFontMetricsInt();
+            Paint.FontMetricsInt fontMetrics = mPaint.getFontMetricsInt();
+
+            //绘制基线
             int baseline = (rect.bottom + rect.top - fontMetrics.bottom - fontMetrics.top) / 2;
 
             if (Utils.isToday(date)) {
-                mSolarPaint.setColor(mToDayColor);
-                canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius, mSolarPaint);
-                mSolarPaint.setColor(Color.WHITE);
-                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
+                mPaint.setColor(mTodayColor);
+                canvas.drawRect(rect, mPaint);
+                mPaint.setColor(Color.WHITE);
+                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
                 drawPoint(canvas, rect, date, baseline);
             } else if (mSelectDateList != null && mSelectDateList.contains(date)) {
-                mSolarPaint.setColor(mSelectCircleColor);
-                canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius, mSolarPaint);
-                mSolarPaint.setColor(mHollowCircleColor);
-                canvas.drawCircle(rect.centerX(), rect.centerY(), mSelectCircleRadius - mHollowCircleStroke, mSolarPaint);
-                mSolarPaint.setColor(mSolarTextColor);
-                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
+                mPaint.setColor(mSelectColor);
+                canvas.drawRect(rect, mPaint);
+                mPaint.setColor(Color.WHITE);
+                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
                 drawPoint(canvas, rect, date, baseline);
             } else {
-                mSolarPaint.setColor(mSolarTextColor);
-                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
-                //绘制农历
-                drawLunar(canvas, rect, baseline,i);
-                //绘制节假日
-                drawHolidays(canvas, rect, date, baseline);
-                //绘制圆点
+                mPaint.setColor(mCurrentColor);
+                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
+                mPaint.setColor(mSelectColor);
                 drawPoint(canvas, rect, date, baseline);
-
             }
         }
-    }
-
-    private void drawLunar(Canvas canvas, Rect rect, int baseline, int i) {
-        if (isShowLunar) {
-            mLunarPaint.setColor(mLunarTextColor);
-            String lunar = lunarList.get(i);
-            canvas.drawText(lunar, rect.centerX(), baseline + getHeight() / 4, mLunarPaint);
-        }
-    }
-
-
-    private void drawHolidays(Canvas canvas, Rect rect, LocalDate date, int baseline) {
-        if (isShowHoliday) {
-            if (holidayList.contains(date.toString())) {
-                mLunarPaint.setColor(mHolidayColor);
-                canvas.drawText("休", rect.centerX() + rect.width() / 4, baseline - getHeight() / 4, mLunarPaint);
-
-            } else if (workdayList.contains(date.toString())) {
-                mLunarPaint.setColor(mWorkdayColor);
-                canvas.drawText("班", rect.centerX() + rect.width() / 4, baseline - getHeight() / 4, mLunarPaint);
-            }
-        }
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setStrokeWidth(4);
+        mPaint.setColor(Color.parseColor("#e2e2e2"));
+        canvas.drawLine(0, rect.bottom, rect.right, rect.bottom, mPaint);
     }
 
     public void drawPoint(Canvas canvas, Rect rect, LocalDate date, int baseline) {
         if (pointList != null && pointList.contains(date.toString())) {
-            mLunarPaint.setColor(mSelectCircleColor);
-            canvas.drawCircle(rect.centerX(), baseline + getHeight() / 4, mPointSize, mLunarPaint);
+            canvas.drawCircle(rect.centerX(), baseline + Utils.dp2px(context,15), mPointSize, mPaint);
         }
     }
 

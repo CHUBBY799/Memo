@@ -65,38 +65,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guide_content" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="110dp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guide_content">
-
-        <TextView
-            android:id="@+id/guide_dot_1"
-            android:layout_width="7dp"
-            android:layout_height="7dp"
-            android:background="@drawable/dot_white"
-            android:layout_marginEnd="10dp"/>
-
-        <TextView
-            android:id="@+id/guide_dot_2"
-            android:layout_width="7dp"
-            android:layout_height="7dp"
-            android:background="@drawable/dot_orange"
-            android:layout_marginEnd="10dp"/>
-
-        <TextView
-            android:id="@+id/guide_dot_3"
-            android:layout_width="7dp"
-            android:layout_height="7dp"
-            android:background="@drawable/dot_white"/>
-
-    </LinearLayout>
-
 </android.support.constraint.ConstraintLayout>

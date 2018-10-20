@@ -2,7 +2,9 @@ package com.shining.memo.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -29,12 +31,13 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
 
     private NCalendar ncalendar;
     private MonthCalendar monthCalendar;
-    private RecyclerView recyclerView;
+    private RecyclerView calendar_event;
     private CalendarAdapter calendarAdapter;
     private TextView calendar_month;
     private Button calendar_close;
     private Button last_month;
     private Button next_month;
+    private ConstraintLayout back_top;
 
     private LocalDate date;
     private List<LocalDate> mSelectDateList;
@@ -67,7 +70,7 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         Collections.reverse(dateList);
         taskDataArr = calendarPresenter.queryData(dateList);
         calendarAdapter.setInfo(taskDataArr, taskDataArr.length());
-        recyclerView.setAdapter(calendarAdapter);
+        calendar_event.setAdapter(calendarAdapter);
     }
 
     @Override
@@ -91,6 +94,11 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
                     ncalendar.onMonthCalendarChanged(date, mSelectDateList);
                 }
                 break;
+            case R.id.back_to_top:
+                calendar_event.scrollToPosition(0);
+                break;
+            default:
+                break;
         }
     }
 
@@ -100,12 +108,14 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
 
     private void initView(){
         ncalendar = findViewById(R.id.calendar_content);
-        recyclerView = findViewById(R.id.recyclerView);
+        calendar_event = findViewById(R.id.calendar_event);
         calendar_month = findViewById(R.id.calendar_month);
         calendar_close = findViewById(R.id.calendar_close);
         last_month = findViewById(R.id.last_month);
         next_month = findViewById(R.id.next_month);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        back_top = findViewById(R.id.back_to_top);
+        calendar_event.setLayoutManager(new LinearLayoutManager(this));
+        calendar_event.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         calendarAdapter = new CalendarAdapter(this, this);
         ncalendar.setOnCalendarChangedListener(this);
     }
@@ -114,6 +124,7 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         calendar_close.setOnClickListener(this);
         last_month.setOnClickListener(this);
         next_month.setOnClickListener(this);
+        back_top.setOnClickListener(this);
     }
 
     @Override

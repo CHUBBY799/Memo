@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.shining.memo.R;
 import com.shining.memo.home.adapter.GuideAdapter;
@@ -17,17 +18,52 @@ public class GuideActivity extends AppCompatActivity {
 
     private ViewPager guidePager;
     private ArrayList<View> guideLayouts;
+    private TextView guideDot_1;
+    private TextView guideDot_2;
+    private TextView guideDot_3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
         initView();
-        //initListener();
         initLayout();
         GuideAdapter guideAdapter = new GuideAdapter(guideLayouts);
         guidePager.setAdapter(guideAdapter);
     }
+
+    ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener(){
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+        @Override
+        public void onPageSelected(int position) {
+
+            switch (position){
+                case 0:
+                    guideDot_1.setBackground(getDrawable(R.drawable.dot_orange));
+                    guideDot_2.setBackground(getDrawable(R.drawable.dot_white));
+                    guideDot_3.setBackground(getDrawable(R.drawable.dot_white));
+                    break;
+                case 1:
+                    guideDot_1.setBackground(getDrawable(R.drawable.dot_white));
+                    guideDot_2.setBackground(getDrawable(R.drawable.dot_orange));
+                    guideDot_3.setBackground(getDrawable(R.drawable.dot_white));
+                    break;
+                case 2:
+                    guideDot_1.setBackground(getDrawable(R.drawable.dot_white));
+                    guideDot_2.setBackground(getDrawable(R.drawable.dot_white));
+                    guideDot_3.setBackground(getDrawable(R.drawable.dot_orange));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {}
+    };
 
     @SuppressWarnings("all")
     private void initLayout(){
@@ -54,6 +90,11 @@ public class GuideActivity extends AppCompatActivity {
 
     private void initView(){
         guidePager = findViewById(R.id.guide_pager);
+        guideDot_1 = findViewById(R.id.guide_dot_1);
+        guideDot_2 = findViewById(R.id.guide_dot_2);
+        guideDot_3 = findViewById(R.id.guide_dot_3);
+
+        guidePager.addOnPageChangeListener(viewPagerPageChangeListener);
     }
 
     public void buttonClick(){

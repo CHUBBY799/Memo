@@ -32,14 +32,14 @@ public class GuideAdapter extends PagerAdapter {
     }
 
     /**
-     * 从ViewGroup中移除当前对象（图片）
+     * 从ViewGroup中移除当前对象
      */
     @Override public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView(guideLayouts.get(position));
     }
 
     /**
-     * 当前要显示的对象（图片）
+     * 当前要显示的对象
      */
     @Override public @NonNull
     Object instantiateItem(@NonNull ViewGroup container, int position) {
