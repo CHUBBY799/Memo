@@ -25,7 +25,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private Button listCancel;
     private Button listConfirm;
     private Button listDelete;
-    private Button addItem;
     private EditText listTitle;
     private RecyclerView listContent;
     private ListItemAdapter listItemAdapter;
@@ -71,8 +70,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.list_delete:
                 listDelete();
-            case R.id.add_item:
-                addItem();
             default:
                 break;
         }
@@ -148,12 +145,17 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         listCancel = findViewById(R.id.list_cancel);
         listConfirm = findViewById(R.id.list_confirm);
         listDelete = findViewById(R.id.list_delete);
-        addItem = findViewById(R.id.add_item);
         listTitle = findViewById(R.id.list_title);
 
         listContent = findViewById(R.id.list_content);
         listContent.setLayoutManager(new LinearLayoutManager(this));
         listItemAdapter = new ListItemAdapter(this);
+        listItemAdapter.setOnItemClickListener(new ListItemAdapter.OnItemClickListener(){
+            @Override
+            public void onClick(int position) {
+                addItem();
+            }
+         });
     }
 
     /**
@@ -163,7 +165,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         listCancel.setOnClickListener(this);
         listConfirm.setOnClickListener(this);
         listDelete.setOnClickListener(this);
-        addItem.setOnClickListener(this);
 
         listConfirm.setOnFocusChangeListener(new android.view.View.OnFocusChangeListener() {
             @Override
