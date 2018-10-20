@@ -54,19 +54,19 @@ public class WeekView extends CalendarView {
             //绘制基线
             int baseline = (rect.bottom + rect.top - fontMetrics.bottom - fontMetrics.top) / 2;
 
-            if (Utils.isToday(date)) {
-                mPaint.setColor(mTodayColor);
-                canvas.drawRect(rect, mPaint);
-                mPaint.setColor(Color.WHITE);
-                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
-                drawPoint(canvas, rect, date, baseline);
-            } else if (mSelectDateList != null && mSelectDateList.contains(date)) {
+            if (mSelectDateList != null && mSelectDateList.contains(date)) {
                 mPaint.setColor(mSelectColor);
                 canvas.drawRect(rect, mPaint);
                 mPaint.setColor(Color.WHITE);
                 canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
                 drawPoint(canvas, rect, date, baseline);
-            } else {
+            }else if (Utils.isToday(date)) {
+                mPaint.setColor(mTodayColor);
+                canvas.drawRect(rect, mPaint);
+                mPaint.setColor(Color.WHITE);
+                canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
+                drawPoint(canvas, rect, date, baseline);
+            }else {
                 mPaint.setColor(mCurrentColor);
                 canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
                 mPaint.setColor(mSelectColor);

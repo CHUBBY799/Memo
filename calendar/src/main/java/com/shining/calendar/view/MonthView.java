@@ -63,19 +63,20 @@ public class MonthView extends CalendarView {
 
                 //当月和上下月的颜色不同
                 if (Utils.isEqualsMonth(date, mInitialDate)) {
-                    if (Utils.isToday(date)) {
-                        mPaint.setColor(mTodayColor);
-                        canvas.drawRect(rect, mPaint);
-                        mPaint.setColor(Color.WHITE);
-                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
-                        drawPoint(canvas, rect, date, baseline);
-                    } else if (mSelectDateList != null && mSelectDateList.contains(date)) { //绘制选中的日期
+                    if (mSelectDateList != null && mSelectDateList.contains(date)) { //绘制选中的日期
                         mPaint.setColor(mSelectColor);
                         canvas.drawRect(rect, mPaint);
                         mPaint.setColor(Color.WHITE);
                         canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
                         drawPoint(canvas, rect, date, baseline);
-                    } else {
+                    } else if (Utils.isToday(date)) {
+                        mPaint.setColor(mTodayColor);
+                        canvas.drawRect(rect, mPaint);
+                        mPaint.setColor(Color.WHITE);
+                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
+                        drawPoint(canvas, rect, date, baseline);
+                    }
+                    else {
                         mPaint.setColor(mCurrentColor);
                         canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
                         mPaint.setColor(mSelectColor);
