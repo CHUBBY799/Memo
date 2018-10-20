@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/toast_background">
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/toast_image"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="15dp"
+            android:src="@drawable/finish_notice"
+            app:layout_constraintTop_toTopOf="@id/toast_info"
+            app:layout_constraintBottom_toBottomOf="@+id/toast_info"
+            app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/toast_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
+            android:maxLines="3"
+            android:layout_marginStart="55dp"
+            android:layout_marginEnd="15dp"
+            android:textColor="@color/content_background"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:textAlignment="gravity"
+            android:gravity="center_vertical|left"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/toast_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>

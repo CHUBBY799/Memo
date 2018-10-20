@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,6 +25,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
@@ -34,35 +37,32 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 
 import com.shining.memo.R;
 import com.shining.memo.adapter.RecordingAdapter;
-import com.shining.memo.home.MemoActivity;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.model.Task;
 import com.shining.memo.model.Task_Recording;
+import com.shining.memo.presenter.AudioPlayPresenter;
 import com.shining.memo.presenter.AudioRecordPresenter;
 import com.shining.memo.presenter.NotePresenter;
 import com.shining.memo.presenter.PhotoPresenter;
 import com.shining.memo.presenter.RecordingPresenter;
+import com.shining.memo.utils.ShotUtils;
 import com.shining.memo.utils.ToastUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -70,7 +70,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 
-public class NoteActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged,OnFocusChangeListener{
+public class NoteActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged{
     private final static  String TAG = "NoteActivity";
     private static final int REQUEST_AUDIO_PERMISSION = 0xc1;
     private static final int REQUEST_CAMERA_PERMISSION = 0xc2;
@@ -82,17 +82,15 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private ImageButton mBtnBold,mBtnUnderLine,mBtnDeleteLine,mBtnColor,mBtnTextBack;
     private ImageButton mBtnColBack,mBtnColRed,mBtnColOrange,mBtnColBlue,mBtnColPurple,mBtnColGray,mBtnColBlack;
     private ImageButton mBtnViewBack,mBtnViewDelete,mBtnViewShare;
-    private ConstraintLayout layout;
     private TextView mTvTime,dialogTv;
-    private EditText editTitle;
     private AlertDialog dialog;
     private PopupWindow volumePopWindow;
     private ImageView volumeImage;
     private RecyclerView mRecyclerView;
-    private static boolean isRecording = false,isPhotoChoosing = false,isTextEdit = false,isColorPick = false,noBackKey = false,isView = false;
+    private static boolean isRecording,isPhotoChoosing,isTextEdit,isColorPick,noBackKey,isView;
     private String photoPath="";
-    private int taskId = -1;
-    private boolean isNotification,requestPermission,isTitleFocus;
+    private int noteID = -1;
+    private boolean requestPermission;
     private OonClickView onClickView;
 
     private RecordingAdapter adapter;
@@ -142,6 +140,13 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        TelephonyManager tmgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        tmgr.listen(mPhoneStateListener, 0);
+    }
+
+    @Override
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed: ");
         if(isPhotoChoosing){
@@ -163,7 +168,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         }else if(isTextEdit){
             isTextEdit = false;
             animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit));
-        }else if(taskId != -1 && !isView){
+        }else if(noteID != -1 && !isView){
             isView = true;
             initData();
             adapter.presenter.onStop();
@@ -205,8 +210,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         mBtnColPurple = (ImageButton)view.findViewById(R.id.colorpick_purple);
         mBtnColGray = (ImageButton)view.findViewById(R.id.colorpick_gray);
         mRecyclerView = (RecyclerView)findViewById(R.id.recording_recyclerView);
-        editTitle = (EditText)findViewById(R.id.recording_title);
-        editTitle.setOnFocusChangeListener(this);
+
         mBtnCancel.setOnClickListener(this);
         mBtnConfirm.setOnClickListener(this);
         mBtnEdit.setOnClickListener(this);
@@ -232,9 +236,8 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         photoPresenter = new PhotoPresenter(this);
         notePresenter = new NotePresenter(this);
         recordingPresenter = new RecordingPresenter(this);
-        taskId = getIntent().getIntExtra("taskId",-1);
-        isNotification = getIntent().getBooleanExtra("isNotification",false);
-        if(taskId != -1){
+        noteID = getIntent().getIntExtra("taskId",-1);
+        if(noteID != -1){
             isView = true;
             View v = findViewById(R.id.bottom_recording_view);
             v.setVisibility(View.VISIBLE);
@@ -248,53 +251,31 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             mBtnViewDelete.setOnClickListener(onClickView);
             mBtnViewShare.setOnClickListener(onClickView);
         }
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            final RecyclerView.OnScrollListener context = this;
-            int state = 0;
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                if(state == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-//                    Log.d(TAG,"onScrollStateChanged");
-//                    if(!mRecyclerView.canScrollVertically(-1)){
-//                        editTitle.setVisibility(View.VISIBLE);
-//                    }
-//                }
-//                if(isTitleFocus)
-//                    editTitle.clearFocus();
-//                state = newState;
-//            }
-//
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                Log.d(TAG,"onScrolled");
-//                if(!mRecyclerView.canScrollVertically(-1)&&state != AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-//                    editTitle.setVisibility(View.VISIBLE);
-//                }
-//                else{
-//                    editTitle.setVisibility(View.GONE);
-//                }
-//            }
-        });
+        TelephonyManager tmgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        tmgr.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
     }
 
     private void initData(){
-        if(taskId == -1){
+        if(noteID == -1){
             if(mMap == null || mMap.isEmpty()){
                 mMap = new HashMap<>();
                 RecordingContent content = new RecordingContent();
+                content.setType("title");
+                content.setColor("#666666");
+                content.setContent("");
+                mMap.put(mMap.size(),content);
+                content = new RecordingContent();
                 content.setType("text");
                 content.setColor("#666666");
                 content.setContent("");
                 mMap.put(mMap.size(),content);
             }
         }else{
-            Task_Recording task_recording = recordingPresenter.getTaskRecording(taskId);
-            editTitle.setText(task_recording.getTask().getTitle());
+            Task_Recording task_recording = recordingPresenter.getTaskRecording(noteID);
             mMap = task_recording.getRecording().getRecordingMap();
         }
         adapter = new RecordingAdapter(mMap,this,this);
-        if(taskId != -1){
+        if(noteID != -1){
             adapter.setView(true);
             adapter.setViewEdit(true);
         }
@@ -404,7 +385,6 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             case R.id.bottom_textedit_back:
                 isTextEdit = false;
                 animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit));
-                layout.requestFocus();
                 break;
             case R.id.bottom_bold:
                 clickBold();
@@ -447,7 +427,24 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private void clickCancel(){
         Log.d(TAG, "clickCancel: ");
         adapter.presenter.onStop();
-        if(taskId == -1){
+//        if(noteID == -1){
+//            for(int i = 0; i < mMap.size(); i++){
+//                if((mMap.get(i).getType().equals("audio"))||(mMap.get(i).getType().equals("photo")
+//                        && mMap.get(i).getContent().contains(Environment.getExternalStorageDirectory()+"/OhMemo/photo/"))){
+//                    File file = new File(mMap.get(i).getContent());
+//                    if (file.exists())
+//                        file.delete();
+//                }
+//            }
+//            setResult(RESULT_CANCELED);
+//            finish();
+//            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+//        }else {
+//            animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
+//            isView = true;
+//            initData();
+//        }
+        if(noteID == -1){
             for(int i = 0; i < mMap.size(); i++){
                 if((mMap.get(i).getType().equals("audio"))||(mMap.get(i).getType().equals("photo")
                         && mMap.get(i).getContent().contains(Environment.getExternalStorageDirectory()+"/OhMemo/photo/"))){
@@ -456,38 +453,32 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                         file.delete();
                 }
             }
-            setResult(RESULT_CANCELED);
-            finish();
-            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
-        }else {
-            animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
-            isView = true;
-            initData();
         }
+        clickConfirm();
     }
     private void clickConfirm(){
         Log.d(TAG, "clickConfirm: ");
-        if(!(editTitle.getText().toString().equals("") && mMap.size() == 1 && mMap.get(0).getContent().equals(""))){
+        if(!(mMap.get(0).getContent().equals("") && mMap.size() == 2 && mMap.get(1).getContent().equals(""))){
             adapter.presenter.onStop();
             Task task = new Task();
             task.setType(taskType());
             task.setUrgent(0);
             task.setAlarm(0);
             task.setCategory("note");
-            task.setTitle(editTitle.getText().toString());
-            if(taskId == -1){
+            task.setTitle(mMap.get(0).getContent());
+            if(noteID == -1){
                 if(notePresenter.saveNote(task,mMap)){
-                    Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccessShort(NoteActivity.this,"save successful");
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else{
-                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccessShort(NoteActivity.this,"save successful");
                 }
             }else {
-                task.setId(taskId);
+                task.setId(noteID);
                 if(notePresenter.modifyRecording(task,mMap)){
-                    Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccessShort(NoteActivity.this,"save successful");
                     if(adapter.deletePath != null && adapter.deletePath.size() > 0){
                         for(int i=0; i < adapter.deletePath.size(); i++){
                             File file = new File(adapter.deletePath.get(i));
@@ -501,23 +492,23 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     mRecyclerView.clearFocus();
                     initData();
                 }else{
-                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showFailedShort(this,"save failed");
                 }
             }
         }else {
-            if(taskId == -1){
-                Toast.makeText(this,"save failed for empty text",Toast.LENGTH_SHORT).show();
+            if(noteID == -1){
+                ToastUtils.showFailedShort(this,"save failed for empty text");
                 setResult(RESULT_OK);
                 finish();
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
             }else {
-                if(notePresenter.deleteRecording(taskId)){
-                    Toast.makeText(this,"save failed for empty text",Toast.LENGTH_SHORT).show();
+                if(notePresenter.deleteRecording(noteID)){
+                    ToastUtils.showFailedShort(this,"save failed for empty text");
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else {
-                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showFailedShort(this,"save failed");
                 }
             }
         }
@@ -525,8 +516,6 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
     private void clickEdit(){
         isTextEdit = true;
-        if(layout == null)
-            layout = (ConstraintLayout)findViewById(R.id.recroding_edit_root);
         animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_textedit));
     }
 
@@ -595,6 +584,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio));
                     handler.sendEmptyMessageDelayed(MSG_RECORDING,600);
                     requestPermission = true;
+                    hideInputMethod(this,getCurrentFocus());
                 }
                 break;
             case REQUEST_CAMERA_PERMISSION:
@@ -614,6 +604,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_AUDIO_PERMISSION);
             } else {
+                hideInputMethod(this,getCurrentFocus());
                 isRecording = true;
                 animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio));
                 handler.sendEmptyMessageDelayed(MSG_RECORDING,600);
@@ -771,7 +762,8 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             HashMap<Integer,RecordingContent> map = null;
             if(currentType.equals("text")){
                 List<Spanned> text =  adapter.distachText(mRecyclerView);
-                Log.d(TAG, "onStop: text"+text.toString());
+                if(text == null)
+                    return;
                 map = recordingPresenter.insertRecording(mMap,text,index,filePath,type);
             }else{
                 map = recordingPresenter.insertRecording(mMap,filePath,index,currentType,type);
@@ -799,7 +791,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
 
     private void checkDefaultEditTex(){
         Log.d(TAG, "checkDefaultEditTex: ");
-        if(mMap.size() -1 >= 0){
+        if(mMap.size() -1 >= 1){
             if(!mMap.get(mMap.size() - 1).getType().equals("text")){
                 RecordingContent content = new RecordingContent();
                 content.setType("text");
@@ -837,11 +829,11 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         Log.d(TAG, "deleteEditText: "+ mMap.toString());
         adapter.notifyItemRemoved(index);
         checkDefaultEditTex();
-        if (index - 1 >= 0) {
+        if (index - 1 >= 1) {
             adapter.setRequestFocusableArgs(adapter.getRequestFocusIndex(index - 1),position,type);
             adapter.notifyItemRangeChanged(index - 1, mMap.size());
         } else {
-            adapter.setRequestFocusableArgs(index,position,type);
+            adapter.setRequestFocusableArgs(-1,position,type);
             adapter.notifyItemRangeChanged(0, mMap.size());
         }
         updateRecyclerView(adapter.requestFocusableIndex);
@@ -892,6 +884,12 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         Log.d(TAG, "TextChanged: "+mMap.toString());
     }
 
+    @Override
+    public void titleChanged(String title, int index) {
+        mMap.get(index).setContent(title);
+        Log.d(TAG, "titleChanged: "+mMap.toString());
+    }
+
     private String taskType(){
         Log.d(TAG, "taskType: ");
         for(int i = 0; i < mMap.size(); i++){
@@ -901,36 +899,19 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         return "text";
     }
 
-    @Override
-    public void onFocusChange(View view, boolean b) {
-        if(b){
-            List<Integer> list = new ArrayList<>();
-            for(int i = 0; i < 4; i++)
-                list.add(0);
-            updateEditIcon(list);
-            isTitleFocus = true;
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(editTitle,0);
-            adapter.setCurrentIndex(-1);
-        }
-        else
-            isTitleFocus = false;
-        if(isView)
-            viewToEdit();
-    }
 
     private void clickBold(){
-        if(!isTitleFocus)
+        if(adapter.getCurrentIndex() != 0)
             adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StyleSpan(Typeface.BOLD));
     }
     private void clickUnderLine(){
-        if(!isTitleFocus)
-        adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new UnderlineSpan());
+        if(adapter.getCurrentIndex() != 0)
+            adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new UnderlineSpan());
 
     }
     private void clickDeleteLine(){
-        if(!isTitleFocus)
-        adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StrikethroughSpan());
+        if(adapter.getCurrentIndex() != 0)
+            adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StrikethroughSpan());
     }
 
     private void clickColorBcak(){
@@ -939,8 +920,9 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickColorChanged(int color,boolean insert){
-        if(isTitleFocus)
+        if(adapter.getCurrentIndex() == 0){
             return;
+        }
         boolean changed = false;
         if(insert){
             changed = adapter.setTextColor(adapter.getCurrentIndex(),mRecyclerView,color);
@@ -999,11 +981,12 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_delete:
-                    recordingPresenter.modifyDeleted(taskId,1);
+                    recordingPresenter.modifyDeleted(noteID,1);
                     returnHomePage();
                     break;
                 case R.id.bottom_share:
-                    ToastUtils.showShort(NoteActivity.this,"TBD");
+                    String path = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
+                    ShotUtils.shareLocal(NoteActivity.this,path);
                     break;
             }
         }
@@ -1011,15 +994,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
 
     private void returnHomePage(){
         finish();
-        if(isNotification){
-            Intent intent = new Intent();
-            intent.setClass(this,MemoActivity.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
-        }else {
-            finish();
-            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
-        }
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
 
     @Override
@@ -1054,4 +1029,21 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         }
     }
 
+    private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
+        @Override
+        public void onCallStateChanged(int state, String incomingNumber) {
+            if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                int ringvolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+                if (ringvolume > 0) {
+                    handler.removeMessages(MSG_RECORDING);
+                    if(AudioPlayPresenter.mMediaPlayer.isPlaying()){
+                        adapter.presenter.onPausePlay();
+                    }
+                    if(presenter.mMediaRecorder != null)
+                        presenter.stopRecord();
+                }
+            }
+        }
+    };
 }

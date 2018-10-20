@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.shining.memo.R;
@@ -13,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -24,6 +29,7 @@ import java.util.WeakHashMap;
 
 public class ImageLoader {
     // 手机中的缓存
+    private Context context;
     private MemoryCache memoryCache = new MemoryCache();
     private FileCache fileCache;
     private PicturesLoader pictureLoaderThread = new PicturesLoader();
@@ -36,6 +42,7 @@ public class ImageLoader {
         // 设置线程的优先级
         pictureLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);
         fileCache = new FileCache();
+        this.context = context;
     }
     // 在找不到图片时，默认的图片
     final int stub_id = R.drawable.image_null_icon;
@@ -73,6 +80,10 @@ public class ImageLoader {
         Bitmap b = decodeFile(f);
         if (b != null)
             return b;
+        else {
+
+
+        }
         // 否则从网络中获取
         try {
             Bitmap bitmap = null;
@@ -97,26 +108,23 @@ public class ImageLoader {
     private Bitmap decodeFile(File f) {
         try {
             // 解码图像尺寸
+            int angle = readPictureDegree(f.getAbsolutePath());
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
-            // 找到正确的缩放值。这应该是2的幂。
-            final int REQUIRED_SIZE = 70;
-            int width_tmp = o.outWidth, height_tmp = o.outHeight;
+            int width_tmp = o.outWidth;
+            WindowManager windowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+            int width = windowManager.getDefaultDisplay().getWidth();
             int scale = 1;
-            while (true) {
-                if (width_tmp / 2 < REQUIRED_SIZE
-                        || height_tmp / 2 < REQUIRED_SIZE)
-                    break;
-                width_tmp /= 2;
-                height_tmp /= 2;
-                scale *= 2;
+            if(width_tmp <= width){
+                scale = 1;
+            }else {
+                scale = width_tmp / width;
             }
-            // 设置恰当的inSampleSize可以使BitmapFactory分配更少的空间
-            // 用正确恰当的inSampleSize进行decode
             BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = 2;
-            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+            o2.inSampleSize = scale;
+            Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+            return  rotaingImageView(angle, bitmap);
         } catch (FileNotFoundException e) {
         }
         return null;
@@ -206,5 +214,46 @@ public class ImageLoader {
     public void clearCache() {
         memoryCache.clear();
         fileCache.clear();
+    }
+
+    public static int readPictureDegree(String path) {
+        int degree = 0;
+        try {
+            ExifInterface exifInterface = new ExifInterface(path);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    degree = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    degree = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    degree = 270;
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return degree;
+    }
+
+    public static Bitmap rotaingImageView(int angle, Bitmap bitmap) {
+        Bitmap returnBm = null;
+        // 根据旋转角度，生成旋转矩阵
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        try {
+            // 将原始图片按照旋转矩阵进行旋转，并得到新的图片
+            returnBm = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        } catch (OutOfMemoryError e) {
+        }
+        if (returnBm == null) {
+            returnBm = bitmap;
+        }
+        if (bitmap != returnBm) {
+            bitmap.recycle();
+        }
+        return returnBm;
     }
 }

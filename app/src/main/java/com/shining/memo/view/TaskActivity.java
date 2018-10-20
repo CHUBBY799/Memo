@@ -10,8 +10,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,7 +26,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import android.support.v7.widget.RecyclerView.OnScrollListener;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
@@ -35,21 +39,16 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import com.shining.memo.R;
 import com.shining.memo.adapter.RecordingAdapter;
@@ -59,15 +58,21 @@ import com.shining.memo.model.RecordingContent;
 import com.shining.memo.model.Task;
 import com.shining.memo.model.Task_Recording;
 import com.shining.memo.presenter.AlarmPresenter;
+import com.shining.memo.presenter.AudioPlayPresenter;
 import com.shining.memo.presenter.AudioRecordPresenter;
 import com.shining.memo.presenter.PhotoPresenter;
 import com.shining.memo.presenter.RecordingPresenter;
+import com.shining.memo.utils.ShotUtils;
 import com.shining.memo.utils.ToastUtils;
-import com.shining.memo.widget.WrapContentLinearLayoutManager;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +81,7 @@ import java.util.TimeZone;
 
 
 public class TaskActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged,
-        Switch.OnCheckedChangeListener,OnFocusChangeListener {
+        Switch.OnCheckedChangeListener {
     private final static  String TAG = "TaskActivity";
     private static final int REQUEST_AUDIO_PERMISSION = 0xc1;
     private static final int REQUEST_CAMERA_PERMISSION = 0xc2;
@@ -89,10 +94,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     private ImageButton mBtnBold,mBtnUnderLine,mBtnDeleteLine,mBtnColor,mBtnTextBack;
     private ImageButton mBtnColBack,mBtnColRed,mBtnColOrange,mBtnColBlue,mBtnColPurple,mBtnColGray,mBtnColBlack;
     private ImageButton mBtnViewBack,mBtnViewDelete,mBtnViewShare,mBtnViewAlarm;
-    private ConstraintLayout layout;
     private Switch mSwitchUrgent,mBtnViewUrgent;
     private TextView mTvTime,dialogTv;
-    private EditText editTitle;
     private AlertDialog dialog;
     private PopupWindow volumePopWindow;
     private ImageView volumeImage;
@@ -100,7 +103,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     public static boolean isRecording,isPhotoChoosing,isTextEdit,isColorPick,noBackKey,isView;
     private String photoPath="";
     private int urgent = 0,alarm = 0,taskId = -1;
-    private boolean isNotification,requestPermission,alarmChanged,isTitleFocus;
+    private boolean isNotification,requestPermission,alarmChanged;
     private OonClickView onClickView;
     private Alarm alarmObject;
     private RecordingAdapter adapter;
@@ -147,6 +150,13 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             isRecording = true;
         else
             isRecording = false;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        TelephonyManager tmgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        tmgr.listen(mPhoneStateListener, 0);
     }
 
     @Override
@@ -216,8 +226,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         mBtnColGray = (ImageButton)view.findViewById(R.id.colorpick_gray);
 
         mRecyclerView = (RecyclerView)findViewById(R.id.recording_recyclerView);
-        editTitle = (EditText)findViewById(R.id.recording_title);
-        editTitle.setOnFocusChangeListener(this);
+
         mBtnCancel.setOnClickListener(this);
         mBtnConfirm.setOnClickListener(this);
         mBtnAlarm.setOnClickListener(this);
@@ -264,42 +273,10 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             mBtnViewAlarm.setOnClickListener(onClickView);
             mBtnViewUrgent.setOnCheckedChangeListener(this);
         }
-        mRecyclerView.addOnScrollListener(new OnScrollListener() {
-            final OnScrollListener context = this;
-            int state = 0;
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//               if(state == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-//                    Log.d(TAG,"onScrollStateChanged");
-//                    if(mRecyclerView.computeVerticalScrollOffset() <= editTitle.getHeight()){
-//                        editTitle.setVisibility(View.VISIBLE);
-//                    }
-//                }
-//                if(isTitleFocus)
-//                    editTitle.clearFocus();
-//                state = newState;
-//            }
-//
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                if(mRecyclerView.computeVerticalScrollOffset() > editTitle.getHeight()){
-//                    editTitle.setVisibility(View.GONE);
-//                }
-//                else if(!mRecyclerView.canScrollVertically(-1)&&state != AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-//                    editTitle.setVisibility(View.VISIBLE);
-//                }
-//            }
-        });
+        TelephonyManager tmgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        tmgr.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
     }
 
-    public int getScollYDistance() {
-        LinearLayoutManager layoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
-        int position = layoutManager.findFirstVisibleItemPosition();
-        View firstVisiableChildView = layoutManager.findViewByPosition(position);
-        int itemHeight = firstVisiableChildView.getHeight();
-        return (position) * itemHeight - firstVisiableChildView.getTop();
-    }
 
 
     private void initData(){
@@ -307,6 +284,11 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             if(mMap == null || mMap.isEmpty()){
                 mMap = new HashMap<>();
                 RecordingContent content = new RecordingContent();
+                content.setType("title");
+                content.setColor("#666666");
+                content.setContent("");
+                mMap.put(mMap.size(),content);
+                content = new RecordingContent();
                 content.setType("text");
                 content.setColor("#666666");
                 content.setContent("");
@@ -314,7 +296,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             }
         }else{
             Task_Recording task_recording = recordingPresenter.getTaskRecording(taskId);
-            editTitle.setText(task_recording.getTask().getTitle());
             alarm = task_recording.getTask().getAlarm();
             if(alarm == 1){
                 alarmObject = alarmPresenter.getAlarm(taskId);
@@ -331,8 +312,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             adapter.setView(true);
             adapter.setViewEdit(true);
         }
-        WrapContentLinearLayoutManager linearLayoutManager = new WrapContentLinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.post(new Runnable() {
@@ -377,7 +357,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                 isPhotoChoosing = false;
                 animationTranslate(findViewById(R.id.bottom_recording_photo), findViewById(R.id.bottom_recording_edit));
                 return true;
-            }else if (isShouldHideInput(mRecyclerView, ev)) {
+            }
+            else if (isShouldHideInput(mRecyclerView, ev)) {
                 try {
                     v = mRecyclerView.getChildAt(getCurrentLastIndex());
                     int[] leftTop = { 0, 0 };
@@ -440,7 +421,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             case R.id.bottom_textedit_back:
                 isTextEdit = false;
                 animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit));
-                layout.requestFocus();
                 break;
             case R.id.bottom_bold:
                 clickBold();
@@ -483,6 +463,23 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     private void clickCancel(){
         Log.d(TAG, "clickCancel: ");
         adapter.presenter.onStop();
+//        if(taskId == -1){
+//            for(int i = 0; i < mMap.size(); i++){
+//                if((mMap.get(i).getType().equals("audio"))||(mMap.get(i).getType().equals("photo")
+//                        && mMap.get(i).getContent().contains(Environment.getExternalStorageDirectory()+"/OhMemo/photo/"))){
+//                        File file = new File(mMap.get(i).getContent());
+//                        if (file.exists())
+//                            file.delete();
+//                }
+//            }
+//            setResult(RESULT_CANCELED);
+//            finish();
+//            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+//        }else {
+//            animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
+//            isView = true;
+//            initData();
+//        }
         if(taskId == -1){
             for(int i = 0; i < mMap.size(); i++){
                 if((mMap.get(i).getType().equals("audio"))||(mMap.get(i).getType().equals("photo")
@@ -492,43 +489,37 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                             file.delete();
                 }
             }
-            setResult(RESULT_CANCELED);
-            finish();
-            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
-        }else {
-            animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
-            isView = true;
-            initData();
         }
+        clickConfirm();
     }
     private void clickConfirm(){
         Log.d(TAG, "clickConfirm: ");
-        if(!(editTitle.getText().toString().equals("") && mMap.size() == 1 && mMap.get(0).getContent().equals(""))){
+        if(!(mMap.get(0).getContent().equals("") && mMap.size() == 2 && mMap.get(1).getContent().equals(""))){
             adapter.presenter.onStop();
             Task task = new Task();
             task.setType(taskType());
             task.setUrgent(urgent);
             task.setAlarm(alarm);
             task.setCategory("task");
-            task.setTitle(editTitle.getText().toString());
+            task.setTitle(mMap.get(0).getContent());
             if(taskId == -1){
                 long id = 0;
                 if( (id = recordingPresenter.saveRecording(task,mMap,alarmObject)) != -1){
                     if(alarmChanged)
                         alarmPresenter.setAlarmNotice((int)id);
-                    Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccessShort(this,"save successful");
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else{
-                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                  ToastUtils.showSuccessShort(this,"save successful");
                 }
             }else {
                 task.setId(taskId);
                 if(alarmObject != null)
                     alarmObject.setTaskId(taskId);
                 if(recordingPresenter.modifyRecording(task,mMap,alarmObject)){
-                    Toast.makeText(this,"save successful",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccessShort(this,"save successful");
                     if(alarmChanged)
                         alarmPresenter.setAlarmNotice(taskId);
                     if(adapter.deletePath != null && adapter.deletePath.size() > 0){
@@ -544,31 +535,29 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     mRecyclerView.clearFocus();
                     initData();
                 }else{
-                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccessShort(this,"save failed");
                 }
             }
         }else {
             if(taskId == -1){
-                Toast.makeText(this,"save failed for empty text",Toast.LENGTH_SHORT).show();
+                ToastUtils.showFailedShort(this,"save failed for empty text");
                 setResult(RESULT_OK);
                 finish();
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
             }else {
                 if(recordingPresenter.deleteRecording(taskId)){
-                    Toast.makeText(this,"save failed for empty text",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showFailedShort(this,"save failed for empty text");
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else {
-                    Toast.makeText(this,"save failed",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showFailedShort(this,"save failed");
                 }
             }
         }
     }
     private void clickEdit(){
         isTextEdit = true;
-        if(layout == null)
-            layout = (ConstraintLayout)findViewById(R.id.recroding_edit_root);
         animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_textedit));
     }
 
@@ -668,6 +657,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio));
                     handler.sendEmptyMessageDelayed(MSG_RECORDING,600);
                     requestPermission = true;
+                    hideInputMethod(this,getCurrentFocus());
                 }
                 break;
             case REQUEST_CAMERA_PERMISSION:
@@ -698,6 +688,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_AUDIO_PERMISSION);
             } else {
+                hideInputMethod(this,getCurrentFocus());
                 isRecording = true;
                 animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio));
                 handler.sendEmptyMessageDelayed(MSG_RECORDING,600);
@@ -855,7 +846,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             HashMap<Integer,RecordingContent> map = null;
             if(currentType.equals("text")){
                 List<Spanned> text =  adapter.distachText(mRecyclerView);
-                Log.d(TAG, "onStop: text"+text.toString());
+                if(text == null)
+                    return;
                 map = recordingPresenter.insertRecording(mMap,text,index,filePath,type);
             }else{
                 map = recordingPresenter.insertRecording(mMap,filePath,index,currentType,type);
@@ -882,7 +874,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     private void checkDefaultEditTex(){
         Log.d(TAG, "checkDefaultEditTex: ");
-        if(mMap.size() -1 >= 0){
+        if(mMap.size() -1 >= 1){
             Log.d(TAG, "checkDefaultEditTex: "+ mMap.get(mMap.size() - 1));
             if(!mMap.get(mMap.size() - 1).getType().equals("text")){
                 RecordingContent content = new RecordingContent();
@@ -921,7 +913,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         Log.d(TAG, "deleteEditText: index"+index+ mMap.toString());
         adapter.notifyItemRemoved(index);
         checkDefaultEditTex();
-        if (index - 1 >= 0) {
+        if (index - 1 >= 1) {
             adapter.setRequestFocusableArgs(adapter.getRequestFocusIndex(index - 1),position,type);
             adapter.notifyItemRangeChanged(index - 1, mMap.size());
         } else {
@@ -976,6 +968,11 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         Log.d(TAG, "TextChanged: "+mMap.toString());
     }
 
+    @Override
+    public void titleChanged(String title, int index) {
+        mMap.get(index).setContent(title);
+    }
+
     private String taskType(){
         Log.d(TAG, "taskType: ");
         for(int i = 0; i < mMap.size(); i++){
@@ -985,36 +982,18 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         return "text";
     }
 
-    @Override
-    public void onFocusChange(View view, boolean b) {
-        if(b){
-            List<Integer> list = new ArrayList<>();
-            for(int i = 0; i < 4; i++)
-                list.add(0);
-            updateEditIcon(list);
-            isTitleFocus = true;
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(editTitle,0);
-            adapter.setCurrentIndex(-1);
-        }
-        else{
-            isTitleFocus = false;
-        }
-        if(isView)
-            viewToEdit();
-    }
 
     private void clickBold(){
-        if(!isTitleFocus)
+        if(adapter.getCurrentIndex() != 0)
             adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StyleSpan(Typeface.BOLD));
     }
     private void clickUnderLine(){
-        if(!isTitleFocus)
+        if(adapter.getCurrentIndex() != 0)
             adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new UnderlineSpan());
 
     }
     private void clickDeleteLine(){
-        if(!isTitleFocus)
+        if(adapter.getCurrentIndex() != 0)
             adapter.setText(adapter.getCurrentIndex(),mRecyclerView,new StrikethroughSpan());
     }
 
@@ -1024,7 +1003,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickColorChanged(int color,boolean insert){
-        if(isTitleFocus){
+        if(adapter.getCurrentIndex() == 0){
             return;
         }
         boolean changed = false;
@@ -1089,7 +1068,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_share:
-                    ToastUtils.showShort(TaskActivity.this,"TBD");
+                    String path = ShotUtils.saveBitmap(TaskActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
+                    ShotUtils.shareLocal(TaskActivity.this,path);
                     break;
                 case R.id.bottom_view_alarm:
                     clickAlarm();
@@ -1099,7 +1079,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void returnHomePage(){
-        finish();
         if(isNotification){
             Intent intent = new Intent();
             intent.setClass(this,MemoActivity.class);
@@ -1146,5 +1125,23 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             clickColorChanged(getColor(R.color.text_color_black),false);
         }
     }
+
+    private PhoneStateListener mPhoneStateListener = new PhoneStateListener() {
+        @Override
+        public void onCallStateChanged(int state, String incomingNumber) {
+            if (state == TelephonyManager.CALL_STATE_RINGING || state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                int ringvolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+                if (ringvolume > 0) {
+                    handler.removeMessages(MSG_RECORDING);
+                    if(AudioPlayPresenter.mMediaPlayer.isPlaying()){
+                        adapter.presenter.onPausePlay();
+                    }
+                    if(presenter.mMediaRecorder != null)
+                        presenter.stopRecord();
+                }
+            }
+        }
+    };
 
 }

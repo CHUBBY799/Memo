@@ -1,10 +1,9 @@
 package com.shining.memo.presenter;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
-import android.util.Log;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -19,18 +18,19 @@ import java.util.TimeZone;
 public class AudioPlayPresenter {
     private static final int MSG_PROGRESS_UPDATE = 0xa1;
     private String playFilePath = "";     //录音文件路径
-    private static MediaPlayer mMediaPlayer;
+    public static MediaPlayer mMediaPlayer;
     private Context context;
     private onStopPlay onStopPlay;
     public ImageButton currentButton;
     public TextView mTvTime;
     public SeekBar seekBar;
     public String timeDuration;
-
+    public AudioManager audioManager;
 
     public AudioPlayPresenter(Context context, onStopPlay onStop) {
         this.context = context;
         onStopPlay = onStop;
+        audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
     }
 
     public void setPlayFilePath(String playFilePath) {
@@ -42,6 +42,7 @@ public class AudioPlayPresenter {
             //配置播放器 MediaPlayer
             if(mMediaPlayer == null){
                 mMediaPlayer = new MediaPlayer();
+                audioManager.requestAudioFocus(afChangeListener,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_REQUEST_GRANTED);
                 try {
                     mMediaPlayer.setDataSource(playFilePath);
                     //设置监听回调
@@ -82,7 +83,7 @@ public class AudioPlayPresenter {
                     mHandlerProgress.sendEmptyMessage(MSG_PROGRESS_UPDATE);
                 }catch (Exception e){
                     e.printStackTrace();
-                    ToastUtils.showShort(context,"failed to play audio");
+                    ToastUtils.showFailedShort(context,"failed to play audio");
                     //提示用户
                     mMediaPlayer.reset();
                     mMediaPlayer.release();
@@ -102,6 +103,7 @@ public class AudioPlayPresenter {
 
     public synchronized void onStop(){
         if(mMediaPlayer != null){
+            audioManager.abandonAudioFocus(afChangeListener);
             mMediaPlayer.reset();
             mMediaPlayer.release();
             mMediaPlayer = null;
@@ -115,13 +117,16 @@ public class AudioPlayPresenter {
     }
 
     public void onPausePlay(){
-        mMediaPlayer.pause();
-        mHandlerProgress.removeMessages(MSG_PROGRESS_UPDATE);
+        if(mMediaPlayer != null && mMediaPlayer.isPlaying()){
+            mMediaPlayer.pause();
+            mHandlerProgress.removeMessages(MSG_PROGRESS_UPDATE);
+        }
     }
 
 
     public interface onStopPlay{
         void onStopPlay(ImageButton btn);
+        void onInterruptPause(ImageButton btn);
     }
 
     private int progress,totalTime;
@@ -134,7 +139,6 @@ public class AudioPlayPresenter {
             }
             else{
                 updateProgress();
-                Log.d("TAG", "handleMessage: "+progress +"---"+ getRemaining()+"---"+mMediaPlayer.getCurrentPosition()+"---"+totalTime);
                 seekBar.setProgress(progress);
                 mTvTime.setText(getRemaining());
                 mHandlerProgress.sendEmptyMessageDelayed(MSG_PROGRESS_UPDATE, 100);
@@ -167,4 +171,14 @@ public class AudioPlayPresenter {
     public void removeHandler(){
         mHandlerProgress.removeMessages(MSG_PROGRESS_UPDATE);
     }
+
+    AudioManager.OnAudioFocusChangeListener afChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+        @Override
+        public void onAudioFocusChange(int focusChange) {
+            if(focusChange == AudioManager.AUDIOFOCUS_LOSS){
+                onStopPlay.onInterruptPause(currentButton);
+            }
+        }
+    };
+
 }

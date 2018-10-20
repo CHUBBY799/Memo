@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.shining.memo.R;
 import com.shining.memo.home.adapter.TaskAdapter;
 import com.shining.memo.model.Task;
+import com.shining.memo.presenter.AlarmPresenter;
 import com.shining.memo.presenter.TaskPresenter;
 
 import org.json.JSONObject;
@@ -25,6 +26,7 @@ public class TaskFragment extends Fragment{
     private List<JSONObject> mTasks;
     private TaskAdapter mAdapter;
     private TaskPresenter mPresenter;
+    private AlarmPresenter alarmPresenter;
     private RecyclerView mRecycleView;
 
     @Nullable
@@ -36,11 +38,12 @@ public class TaskFragment extends Fragment{
         mRecycleView=view.findViewById(R.id.main_task_recycler);
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(getActivity());
         mRecycleView.setLayoutManager(linearLayoutManager);
-        mAdapter=new TaskAdapter(mTasks);
+        mAdapter=new TaskAdapter(mTasks,getActivity());
         mAdapter.setCallback(new TaskAdapter.Callback() {
             @Override
             public void finishTaskById(int id) {
                 mPresenter.finishTaskById(id);
+                alarmPresenter.alarmCancel(id);
 //                refreshData();
             }
         });
@@ -60,7 +63,7 @@ public class TaskFragment extends Fragment{
     public void setPresenter(TaskPresenter presenter){
         mPresenter=presenter;
     }
-
+    public void setAlarmPresenter(AlarmPresenter presenter){alarmPresenter=presenter;}
     @Override
     public void onResume() {
         Log.d(TAG, "onResume: ");

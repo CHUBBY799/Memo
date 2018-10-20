@@ -4,13 +4,29 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingBottom="19dp">
-
+    <LinearLayout
+        android:id="@+id/main_note_audio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:layout_marginLeft="25dp">
+        <ImageView
+            android:layout_width="52dp"
+            android:layout_height="16dp"
+            android:src="@drawable/main_task_audio"/>
+        <ImageView
+            android:layout_width="52dp"
+            android:layout_height="16dp"
+            android:src="@drawable/main_task_audio"/>
+    </LinearLayout>
     <TextView
         android:id="@+id/main_note_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="This is a note title"
         android:textSize="16sp"
+        android:textStyle="bold"
         android:textColor="@color/main_task_title"
         android:layout_marginLeft="25dp"/>
     <TextView
@@ -18,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2018-10-08"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:textColor="@color/main_task_alarm"
         android:layout_marginLeft="25dp"
         android:layout_marginTop="10dp"/>

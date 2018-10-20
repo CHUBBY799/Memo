@@ -143,8 +143,8 @@ public class TaskImpl implements TaskModel {
         List<JSONObject> tasks=new ArrayList<>();
         Cursor cursor=db.rawQuery("select" +selectColNames
                 + "from task t inner join alarm a on t.id=a.taskId "
-                + "where urgent=? and deleted=0 and finished=0 "
-                + "order by alarmDate desc,alarmTime desc",new String[]{String.valueOf(urgent)});
+                + "where category = ? and urgent=? and deleted=0 and finished=0 "
+                + "order by alarmDate desc,alarmTime desc",new String[]{"task",String.valueOf(urgent)});
         try{
             while (cursor.moveToNext()){
                 JSONObject object=new JSONObject();
@@ -190,8 +190,8 @@ public class TaskImpl implements TaskModel {
         List<JSONObject> list=new ArrayList<>();
         Cursor cursor=db.rawQuery("select id as taskId,type,title " +
                 "from task " +
-                "where urgent = ? and finished =0 and deleted =0 and alarm = 0 " +
-                "order by date desc,time desc",new String[]{String.valueOf(urgent)});
+                "where category = ? and urgent = ? and finished =0 and deleted =0 and alarm = 0 " +
+                "order by date desc,time desc",new String[]{"task",String.valueOf(urgent)});
         try{
             while (cursor.moveToNext()){
                 JSONObject object=new JSONObject();
@@ -226,5 +226,24 @@ public class TaskImpl implements TaskModel {
         SQLiteDatabase db=dbHelper.getWritableDatabase();
         db.execSQL("update task set finished = 1,alarm = 0 " +
                 ",date = date(?,'localtime'),time = time(?,'localtime') where id = ?",new Object[]{"now","now",id});
+    }
+
+    @Override
+    public List<Task> getNotesByDateDesc() {
+        SQLiteDatabase db=dbHelper.getReadableDatabase();
+        List<Task> notes=new ArrayList<>();
+        Cursor cursor=db.rawQuery("select * from task " +
+                "where category = ? " +
+                "order by date desc , time desc",new String[]{"note"});
+        while (cursor.moveToNext()){
+            Task task=new Task();
+            task.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            task.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+            task.setType(cursor.getString(cursor.getColumnIndex("type")));
+            task.setDate(cursor.getString(cursor.getColumnIndex("date")));
+            task.setTime(cursor.getString(cursor.getColumnIndex("time")));
+            notes.add(task);
+        }
+        return notes;
     }
 }

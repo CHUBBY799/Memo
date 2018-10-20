@@ -1,5 +1,7 @@
 package com.shining.memo.home.adapter;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shining.memo.R;
+import com.shining.memo.utils.DialogUtils;
+import com.shining.memo.utils.ToastUtils;
 import com.shining.memo.view.TaskActivity;
 
 import org.json.JSONObject;
@@ -27,6 +31,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
 
     private List<JSONObject> tasks;
     private boolean click=false;
+    private Context mContext;
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         View mView;
@@ -52,8 +57,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
 //        this.hasAudio=hasAudio;
 //        this.alarms=alarms;
 //    }
-    public TaskAdapter(List<JSONObject> tasks){
+    public TaskAdapter(List<JSONObject> tasks, Context context){
         this.tasks=tasks;
+        mContext=context;
     }
 
     @NonNull
@@ -124,32 +130,43 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
                     case MotionEvent.ACTION_UP:
                         Log.d(TAG, "onTouch: up");
                         holder.complete.setBackgroundResource(R.color.colorWhite);
-                        if (!click) {
-                            click=true;
-                            final int position = holder.getLayoutPosition();
-                            final JSONObject task = tasks.get(position);
-                            try {
-                                final int id = task.getInt("taskId");
-                                Log.d("hh", "onClick: "+id);
-                                holder.confirm.setVisibility(View.VISIBLE);
-                                callback.finishTaskById(id);
-                                holder.complete.setClickable(false);
-                                holder.mView.setClickable(false);
-                                tasks.remove(position);
-                                android.os.Handler handler = new android.os.Handler();
-                                handler.postDelayed(new Runnable() {
+                        DialogUtils.showDialog(mContext, mContext.getString(R.string.main_finish_dialog_title)
+                                , mContext.getString(R.string.main_finish_dialog_message), new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void run() {
-                                        notifyItemRemoved(position);
-                                        notifyItemRangeRemoved(position,tasks.size());
-                                        click=false;
-                                    }
-                                }, 1000);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (!click) {
+                                            click = true;
+                                            final int position = holder.getLayoutPosition();
+                                            final JSONObject task = tasks.get(position);
+                                            try {
+                                                final int id = task.getInt("taskId");
+                                                Log.d("hh", "onClick: " + id);
+                                                holder.confirm.setVisibility(View.VISIBLE);
+                                                callback.finishTaskById(id);
+                                                holder.complete.setClickable(false);
+                                                holder.mView.setClickable(false);
+                                                tasks.remove(position);
+                                                android.os.Handler handler = new android.os.Handler();
+                                                handler.postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        notifyItemRemoved(position);
+                                                        notifyItemRangeRemoved(position, tasks.size());
+                                                        click = false;
+                                                    }
+                                                }, 500);
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
 
-                        }
+                                        }
+                                    }
+                                }, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ToastUtils.showShort(mContext,"Cancel");
+                                    }
+                                });
                         break;
                 }
                 return true;
@@ -157,6 +174,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
         });
         return holder;
     }
+
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {

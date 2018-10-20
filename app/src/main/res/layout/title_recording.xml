@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <EditText
+        android:id="@+id/recording_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textIsSelectable="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@null"
+        android:maxEms="14"
+        android:maxLines="4"
+        android:hint="@string/edit_title_hint_zh"
+        android:imeOptions="actionNext"
+        android:ellipsize="end"
+        android:minHeight="40dp"
+        android:paddingTop="10dp"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:textAlignment="textStart"
+        android:text="123564"
+        android:textStyle="bold"
+        android:textColor="@color/recording_title"
+        android:textColorHint="@color/hintColor"
+        android:textCursorDrawable="@drawable/cursor"
+        android:textSize="20dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="5dp"
+        android:textIsSelectable="true"
+        android:layout_marginBottom="5dp"
+        android:background="@color/underline_background"
+        android:layout_below="@+id/recording_title"/>
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

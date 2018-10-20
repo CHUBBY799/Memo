@@ -15,6 +15,7 @@ import com.shining.memo.home.fragment.ListFragment;
 import com.shining.memo.home.fragment.NoteFragment;
 import com.shining.memo.home.fragment.TaskFragment;
 import com.shining.memo.model.TaskImpl;
+import com.shining.memo.presenter.AlarmPresenter;
 import com.shining.memo.presenter.MemoContract;
 import com.shining.memo.presenter.TaskPresenter;
 import com.shining.memo.view.CalendarActivity;
@@ -37,6 +38,7 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
     private LinearLayout add;
 
     private TaskPresenter taskPresenter;
+    private AlarmPresenter alarmPresenter;
 
 
     @Override
@@ -65,6 +67,7 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
 
     public void initData(){
         taskPresenter=new TaskPresenter(this,new TaskImpl(this));
+        alarmPresenter=new AlarmPresenter(this);
         task.setOnClickListener(this);
         list.setOnClickListener(this);
         note.setOnClickListener(this);
@@ -73,6 +76,7 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
 //        initTestData();
         taskFragment=new TaskFragment();
         taskFragment.setPresenter(taskPresenter);
+        taskFragment.setAlarmPresenter(alarmPresenter);
         switchFragment(taskFragment).commit();
         addText.setText(getResources().getString(R.string.main_add_task));
         onClickTitle(task);
@@ -118,6 +122,7 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
                 onClickTitle((TextView)v);
                 if(noteFragment == null){
                     noteFragment = new NoteFragment();
+                    noteFragment.setPresenter(taskPresenter);
                 }
                 switchFragment(noteFragment).commit();
                 addText.setText(getResources().getString(R.string.main_add_note));
@@ -148,7 +153,7 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
     private void onClickTitle(TextView textView){
         if(currentClickText!=null){
             currentClickText.setTextColor(getColor(R.color.main_task_not_click));
-            currentClickText.setTextSize(16);
+            currentClickText.setTextSize(20);
         }
         textView.setTextColor(getColor(R.color.main_task_click));
         textView.setTextSize(24);

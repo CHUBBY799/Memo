@@ -9,43 +9,6 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:background="@color/content_background">
-    <EditText
-        android:id="@+id/recording_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textIsSelectable="true"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="25dp"
-        android:background="@null"
-        android:ems="10"
-        android:gravity="center_vertical|left"
-        android:hint="@string/edit_title_hint_zh"
-        android:imeOptions="actionNext"
-        android:inputType="textMultiLine"
-        android:minHeight="40dp"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp"
-        android:textAlignment="gravity"
-        android:textStyle="bold"
-        android:textColor="@color/recording_title"
-        android:textColorHint="@color/hintColor"
-        android:textCursorDrawable="@drawable/cursor"
-        android:textSize="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="5dp"
-        android:textIsSelectable="true"
-        android:background="@color/underline_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recording_title" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recording_recyclerView"
@@ -60,7 +23,7 @@
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recording_title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:layout_width="match_parent"

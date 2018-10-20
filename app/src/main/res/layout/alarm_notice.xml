@@ -66,7 +66,7 @@
             android:textStyle="bold"
             android:textColor="@color/white"
             android:text="@string/alarm_confirm"
-            android:background="@drawable/bg_rect10_orange"
+            android:background="@drawable/alarm_savebtn_shadow"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
