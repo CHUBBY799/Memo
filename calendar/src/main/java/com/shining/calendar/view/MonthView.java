@@ -148,7 +148,10 @@ public class MonthView extends CalendarView {
     }
 
     public int getSelectRowIndex() {
-        int indexOf = dates.indexOf(LocalDate.now());
-        return indexOf / 7;
+        if (mSelectDateList.size() == 0){
+            return dates.indexOf(LocalDate.now()) / 7;
+        }else {
+            return dates.indexOf(mSelectDateList.get(mSelectDateList.size() - 1)) / 7;
+        }
     }
 }
