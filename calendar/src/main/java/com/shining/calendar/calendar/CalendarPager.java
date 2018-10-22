@@ -2,7 +2,6 @@ package com.shining.calendar.calendar;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -46,30 +45,17 @@ public abstract class CalendarPager extends ViewPager {
         super(context, attrs);
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CalendarPager);
-        Attrs.solarTextColor = ta.getColor(R.styleable.CalendarPager_solarTextColor, ContextCompat.getColor(context, R.color.solarTextColor));
-        Attrs.lunarTextColor = ta.getColor(R.styleable.CalendarPager_lunarTextColor, ContextCompat.getColor(context, R.color.lunarTextColor));
-        Attrs.toDayColor = ta.getColor(R.styleable.CalendarPager_selectCircleColor, ContextCompat.getColor(context, R.color.toDayColor));
-        Attrs.selectCircleColor = ta.getColor(R.styleable.CalendarPager_selectCircleColor, ContextCompat.getColor(context, R.color.selectCircleColor));
+        Attrs.currentColor = ta.getColor(R.styleable.CalendarPager_currentColor, ContextCompat.getColor(context, R.color.currentColor));
         Attrs.hintColor = ta.getColor(R.styleable.CalendarPager_hintColor, ContextCompat.getColor(context, R.color.hintColor));
-        Attrs.solarTextSize = ta.getDimension(R.styleable.CalendarPager_solarTextSize, Utils.sp2px(context, 18));
-        Attrs.lunarTextSize = ta.getDimension(R.styleable.CalendarPager_lunarTextSize, Utils.sp2px(context, 10));
-        Attrs.selectCircleRadius = ta.getDimension(R.styleable.CalendarPager_selectCircleRadius, Utils.dp2px(context, 20));
+        Attrs.todayColor = ta.getColor(R.styleable.CalendarPager_todayColor, ContextCompat.getColor(context, R.color.todayColor));
+        Attrs.selectColor = ta.getColor(R.styleable.CalendarPager_selectColor, ContextCompat.getColor(context, R.color.selectColor));
 
-        Attrs.isShowLunar = ta.getBoolean(R.styleable.CalendarPager_isShowLunar, false);
+        Attrs.textSize = ta.getDimension(R.styleable.CalendarPager_textSize, Utils.sp2px(context, 18));
+        Attrs.pointSize = ta.getDimension(R.styleable.CalendarPager_pointSize, (int) Utils.dp2px(context, 3));
 
-        Attrs.pointSize = ta.getDimension(R.styleable.CalendarPager_pointSize, (int) Utils.dp2px(context, 2));
-        Attrs.pointColor = ta.getColor(R.styleable.CalendarPager_pointColor, ContextCompat.getColor(context, R.color.pointColor));
-        Attrs.hollowCircleColor = ta.getColor(R.styleable.CalendarPager_hollowCircleColor, Color.WHITE);
-        Attrs.hollowCircleStroke = ta.getDimension(R.styleable.CalendarPager_hollowCircleStroke, Utils.dp2px(context, 1));
+        Attrs.monthCalendarHeight = (int) ta.getDimension(R.styleable.CalendarPager_calendarHeight, Utils.dp2px(context, 340));
 
-
-        Attrs.monthCalendarHeight = (int) ta.getDimension(R.styleable.CalendarPager_calendarHeight, Utils.dp2px(context, 300));
         Attrs.duration = ta.getInt(R.styleable.CalendarPager_duration, 240);
-
-        Attrs.isShowHoliday = ta.getBoolean(R.styleable.CalendarPager_isShowHoliday, false);
-        Attrs.holidayColor = ta.getColor(R.styleable.CalendarPager_holidayColor, ContextCompat.getColor(context, R.color.holidayColor));
-        Attrs.workdayColor = ta.getColor(R.styleable.CalendarPager_workdayColor, ContextCompat.getColor(context, R.color.workdayColor));
-
         Attrs.backgroundColor = ta.getColor(R.styleable.CalendarPager_backgroundColor, ContextCompat.getColor(context, R.color.white));
 
         String firstDayOfWeek = ta.getString(R.styleable.CalendarPager_firstDayOfWeek);
@@ -85,7 +71,7 @@ public abstract class CalendarPager extends ViewPager {
 
         mInitialDate = new LocalDate();
 
-        startDate = new LocalDate(startString == null ? "1901-01-01" : startString);
+        startDate = new LocalDate(startString == null ? "2018-01-01" : startString);
         endDate = new LocalDate(endString == null ? "2099-12-31" : endString);
 
         setDateInterval(null, null);
@@ -140,7 +126,6 @@ public abstract class CalendarPager extends ViewPager {
         };
 
         addOnPageChangeListener(onPageChangeListener);
-
     }
 
 

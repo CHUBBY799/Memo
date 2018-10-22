@@ -26,7 +26,7 @@ public class  CalendarImpl implements CalendarModel{
     @Override
     public HashSet<String> queryData(String year_month){
         HashSet<String> dateList = new HashSet<>();
-        Cursor cursor = db.query("task", new String[]{"date"},"date like ? and finished = ?",new String[]{year_month + "-__", "0"},null,null,null);
+        Cursor cursor = db.query("task", new String[]{"date"},"date like ? and finished = ?",new String[]{year_month + "-__", "1"},null,null,null);
         if(cursor.moveToFirst()){
             do{
                 dateList.add(cursor.getString(cursor.getColumnIndex("date")));
@@ -41,7 +41,7 @@ public class  CalendarImpl implements CalendarModel{
         JSONArray taskDataArr = new JSONArray();
         int length = dateList.size();
         for(int i = 0 ; i < length ; i++){
-            Cursor cursor = db.query("task", new String[]{"id", "title"},"date = ? and finished = ?",new String[]{dateList.get(i).toString(), "0"},null,null,null);
+            Cursor cursor = db.query("task", new String[]{"id", "title"},"date = ? and finished = ?",new String[]{dateList.get(i).toString(), "1"},null,null,null);
             if(cursor.moveToFirst()){
                 do{
                     try{

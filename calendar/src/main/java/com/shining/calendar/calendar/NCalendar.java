@@ -322,7 +322,9 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
     }
 
 
-    //月日历需要滑动的距离，
+    /**
+     * 月日历需要滑动的距离
+     */
     private int getMonthCalendarOffset() {
         MonthView currentMonthView = monthCalendar.getCurrentMonthView();
         //该月有几行
@@ -330,15 +332,16 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
         //现在选中的是第几行
         int selectRowIndex = currentMonthView.getSelectRowIndex();
         //month需要移动selectRowIndex*h/rowNum ,计算时依每个行的中点计算
-        return selectRowIndex * currentMonthView.getDrawHeight() / rowNum;
-
+        return selectRowIndex * currentMonthView.getMonthHeight() / rowNum;
     }
 
     public MonthCalendar getMonthCalendar() {
         return monthCalendar;
     }
 
-    //自动滑动
+    /**
+     * 自动滑动
+     */
     protected void autoScroll(int startMonth, int endMonth, int startChild, int endChild) {
         monthValueAnimator.setIntValues(startMonth, endMonth);
         monthValueAnimator.setDuration(duration);
@@ -380,10 +383,19 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
         }
     }
 
+    /**
+     * 周日历改变的时候触发的事件
+     * @param date 当前选择的日期
+     * @param dateList 当前选中的日期集合
+     */
     @Override
     public void onWeekCalendarChanged(LocalDate date,  List<LocalDate> dateList) {
         if (STATE == WEEK) {
-            monthCalendar.setDate(date, dateList);
+            if (dateList.size() == 0){
+                monthCalendar.setDate(LocalDate.now(), dateList);
+            }else {
+                monthCalendar.setDate(dateList.get(dateList.size() - 1), dateList);
+            }
             requestLayout();
             if (onCalendarChangedListener != null) {
                 onCalendarChangedListener.onCalendarChanged(date ,dateList);
@@ -391,13 +403,23 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
         }
     }
 
+    /**
+     * 月日历改变的时候触发的事件
+     * @param date 当前选择的日期
+     * @param dateList 当前选中的日期集合
+     */
     @Override
     public void onMonthCalendarChanged(LocalDate date, List<LocalDate> dateList) {
         //monthCalendarOffset在这里赋值，月日历改变的时候
         monthCalendarOffset = getMonthCalendarOffset();
 
+        //通知周日历和主界面改变他们的状态
         if (STATE == MONTH) {
-            weekCalendar.setDate(date, dateList);
+            if (dateList.size() == 0){
+                weekCalendar.setDate(LocalDate.now(), dateList);
+            }else {
+                weekCalendar.setDate(dateList.get(dateList.size() - 1), dateList);
+            }
             if (onCalendarChangedListener != null) {
                 onCalendarChangedListener.onCalendarChanged(date, dateList);
             }

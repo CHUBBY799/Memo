@@ -69,8 +69,8 @@ public class ListImpl implements ListModel {
     }
 
     @Override
-    public void deleteDataByTitle(String title){
-        db.delete("tb_list","title = ?",new String[]{title});
+    public void deleteDataById(String id){
+        db.delete("tb_list","id = ?", new String[]{id});
     }
 
     @Override

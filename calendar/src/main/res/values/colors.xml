@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <color name="solarTextColor">#000000</color>
-    <color name="lunarTextColor">#B2B2B2</color>
-    <color name="hintColor">#999999</color>
-    <color name="toDayColor">#FFC8A3</color>
-    <color name="selectCircleColor">#FF8833</color>
-    <color name="holidayColor">#39AF81</color>
-    <color name="workdayColor">#EC7230</color>
-    <color name="pointColor">#FF8833</color>
-    <color name="white">#ffffff</color>
-
+    <color name="currentColor">#666666</color>
+    <color name="hintColor">#CCCCCC</color>
+    <color name="todayColor">#FFC8A3</color>
+    <color name="selectColor">#FF8833</color>
+    <color name="white">#FFFFFF</color>
 </resources>

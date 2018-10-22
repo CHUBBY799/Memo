@@ -6,8 +6,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
 
 import com.shining.memo.model.Alarm;
@@ -18,7 +16,6 @@ import com.shining.memo.model.Task;
 import com.shining.memo.model.TaskImpl;
 import com.shining.memo.model.TaskModel;
 
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

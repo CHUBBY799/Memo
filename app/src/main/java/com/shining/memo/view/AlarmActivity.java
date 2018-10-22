@@ -2,15 +2,9 @@ package com.shining.memo.view;
 
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.SpannedString;
-import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -140,7 +134,7 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
 
     private void alarmDelete(){
         if(alarmPresenter.deleteAlarm(taskId)){
-            ToastUtils.showShort(this,"Delete the Alarm successfully!");
+            ToastUtils.showSuccessShort(this,"Delete the Alarm successfully");
             Intent intent = new Intent();
             intent.putExtra("alarm",0);
             setResult(RESULT_OK,intent);
@@ -157,7 +151,6 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
         String time = hour+":"+minute;
         Intent textIntent = new Intent();
         textIntent.putExtra("alarm",1);
-        Log.d("TAG", "alarmSave" + date+"--"+ time +"--"+ ringtone+"--"+ pop+"--");
         if(taskId != -1){
             Alarm alarmObject = new Alarm();
             alarmObject.setDate(date);
@@ -166,11 +159,17 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
             alarmObject.setPop(pop);
             alarmObject.setTaskId(taskId);
             if(alarm == 1){
-                alarmPresenter.modifyAlarm(alarmObject);
-                alarmPresenter.setAlarmNotice(taskId);
+                if( alarmPresenter.modifyAlarm(alarmObject)){
+                    alarmPresenter.setAlarmNotice(taskId);
+                    ToastUtils.showSuccessShort(this,"Updated the Alarm successfully");
+                }else
+                    ToastUtils.showSuccessShort(this,"failed to update the alarm");
             }else {
-                alarmPresenter.addAlarm(alarmObject);
-                alarmPresenter.setAlarmNotice(taskId);
+                if( alarmPresenter.addAlarm(alarmObject)){
+                    alarmPresenter.setAlarmNotice(taskId);
+                    ToastUtils.showSuccessShort(this,"Set the Alarm successfully");
+                }else
+                    ToastUtils.showSuccessShort(this,"failed to set the alarm");
             }
         }
         textIntent.putExtra("date",date);
@@ -183,7 +182,6 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void setSelectedTime() {
-        Log.d("TAG", "setSelectedTime: "+month);
         month_pv.setSelected(month);
         day_pv.setSelected(day + "th");
         hour_pv.setSelected(hour);

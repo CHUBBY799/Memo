@@ -109,19 +109,19 @@ public class WeekCalendar extends CalendarPager implements OnClickWeekViewListen
 
         isPagerChanged = false;
 
-        WeekView currectWeekView = (WeekView) calendarViews.get(getCurrentItem());
+        WeekView currentWeekView = (WeekView) calendarViews.get(getCurrentItem());
 
         //不是当周
-        if (!currectWeekView.contains(date)) {
+        if (!currentWeekView.contains(date)) {
 
-            LocalDate initialDate = currectWeekView.getInitialDate();
+            LocalDate initialDate = currentWeekView.getInitialDate();
             int weeks = Utils.getIntervalWeek(initialDate, date, Attrs.firstDayOfWeek);
             int i = getCurrentItem() + weeks;
             setCurrentItem(i, Math.abs(weeks) < 2);
-            currectWeekView = (WeekView) calendarViews.get(getCurrentItem());
+            currentWeekView = (WeekView) calendarViews.get(getCurrentItem());
         }
 
-        currectWeekView.setDateAndPoint(date, mSelectDateList, pointList);
+        currentWeekView.setDateAndPoint(date, mSelectDateList, pointList);
         mSelectDate = date;
         lastSelectDate = date;
         mSelectDateList = dateList;

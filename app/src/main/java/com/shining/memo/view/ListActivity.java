@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.shining.memo.R;
@@ -22,9 +23,9 @@ import org.json.JSONObject;
 
 public class ListActivity extends AppCompatActivity implements View.OnClickListener,ViewList{
 
-    private Button listCancel;
-    private Button listConfirm;
-    private Button addItem;
+    private ImageButton listCancel;
+    private ImageButton listConfirm;
+    private ImageButton listDelete;
     private EditText listTitle;
     private RecyclerView listContent;
     private ListItemAdapter listItemAdapter;
@@ -68,8 +69,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.list_confirm:
                 listConfirm();
                 break;
-            case R.id.add_item:
-                addItem();
+            case R.id.list_delete:
+                listDelete();
             default:
                 break;
         }
@@ -98,6 +99,18 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      * 退出
      */
     private void listCancel(){
+        finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    /**
+     * 删除
+     */
+    private void listDelete(){
+        ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+        if(id != -1){
+            listPresenter.deletePresenter(String.valueOf(id));
+        }
         finish();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
@@ -132,12 +145,18 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private void initView(){
         listCancel = findViewById(R.id.list_cancel);
         listConfirm = findViewById(R.id.list_confirm);
-        addItem = findViewById(R.id.add_item);
+        listDelete = findViewById(R.id.list_delete);
         listTitle = findViewById(R.id.list_title);
 
         listContent = findViewById(R.id.list_content);
         listContent.setLayoutManager(new LinearLayoutManager(this));
         listItemAdapter = new ListItemAdapter(this);
+        listItemAdapter.setOnItemClickListener(new ListItemAdapter.OnItemClickListener(){
+            @Override
+            public void onClick(int position) {
+                addItem();
+            }
+         });
     }
 
     /**
@@ -146,7 +165,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private void initComponent(){
         listCancel.setOnClickListener(this);
         listConfirm.setOnClickListener(this);
-        addItem.setOnClickListener(this);
+        listDelete.setOnClickListener(this);
 
         listConfirm.setOnFocusChangeListener(new android.view.View.OnFocusChangeListener() {
             @Override

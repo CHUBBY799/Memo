@@ -2,6 +2,7 @@ package com.shining.memo.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,16 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
     private boolean[] state;
     private String[] content;
 
+    private OnItemClickListener mOnItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener ){
+        this.mOnItemClickListener = onItemClickListener;
+    }
+
+    public interface OnItemClickListener{
+        void onClick( int position);
+    }
+
     public ListItemAdapter(Context context) {
         this.context = context;
     }
@@ -37,81 +48,102 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         final TextView itemState = holder.itemState;
         final EditText itemContent = holder.itemContent;
+        final ConstraintLayout listItem = holder.listItem;
 
-        if (state[position]){
-            itemState.setBackground(context.getDrawable(R.drawable.group));
-            itemContent.setTextColor(context.getColor(R.color.calendar_unselected));
+        if (position == length){
+            itemState.setBackground(context.getDrawable(R.drawable.add_new_item_icon));
+            itemContent.setTextColor(context.getColor(R.color.main_add_item));
+            itemContent.setText(context.getString(R.string.list_add_item));
+            itemContent.setFocusable(false);
+            itemContent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnItemClickListener.onClick(holder.getAdapterPosition());
+                }
+            });
+            listItem.setOnClickListener( new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnItemClickListener.onClick(holder.getAdapterPosition());
+                }
+            });
+
         }else {
-            itemState.setBackground(context.getDrawable(R.drawable.group_2));
-            itemContent.setTextColor(context.getColor(R.color.recording_title));
-        }
-        itemContent.setText(content[position]);
-
-        itemState.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                int stateIndex = holder.getLayoutPosition();
-                if (state[stateIndex]){
-                    itemState.setBackground(context.getDrawable(R.drawable.group_2));
-                    itemContent.setTextColor(context.getColor(R.color.recording_title));
-                    state[stateIndex] = false;
-                }else {
-                    itemState.setBackground(context.getDrawable(R.drawable.group));
-                    itemContent.setTextColor(context.getColor(R.color.calendar_unselected));
-                    state[stateIndex] = true;
-                }
-                try {
-                    JSONObject itemInfo = new JSONObject();
-                    itemInfo.put("state", state[stateIndex]);
-                    itemInfo.put("content", content[stateIndex]);
-                    itemArr.put(stateIndex, itemInfo);
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
+            if (state[position]){
+                itemState.setBackground(context.getDrawable(R.drawable.group));
+                itemContent.setTextColor(context.getColor(R.color.calendar_unselected));
+            }else {
+                itemState.setBackground(context.getDrawable(R.drawable.group_2));
+                itemContent.setTextColor(context.getColor(R.color.recording_title));
             }
-        });
+            itemContent.setText(content[position]);
 
-        itemContent.setOnFocusChangeListener(new android.view.View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    int contentIndex = holder.getLayoutPosition();
-                    content[contentIndex] = itemContent.getText().toString();
-                    if(content[contentIndex].equals("")){
-                        itemArr.remove(contentIndex);
-                        setInfo(itemArr, itemArr.length());
-                        notifyItemRemoved(contentIndex);
-                        if (contentIndex != length - 1 || contentIndex == 0){
-                            notifyItemRangeChanged(contentIndex,length - contentIndex);
-                        }else {
-                            notifyItemChanged(length - 1);
-                        }
+            itemState.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    int stateIndex = holder.getLayoutPosition();
+                    if (state[stateIndex]){
+                        itemState.setBackground(context.getDrawable(R.drawable.group_2));
+                        itemContent.setTextColor(context.getColor(R.color.recording_title));
+                        state[stateIndex] = false;
                     }else {
-                        try {
-                            JSONObject itemInfo = new JSONObject();
-                            itemInfo.put("state", state[contentIndex]);
-                            itemInfo.put("content", content[contentIndex]);
-                            itemArr.put(contentIndex, itemInfo);
-                        }catch (JSONException e){
-                            e.printStackTrace();
+                        itemState.setBackground(context.getDrawable(R.drawable.group));
+                        itemContent.setTextColor(context.getColor(R.color.calendar_unselected));
+                        state[stateIndex] = true;
+                    }
+                    try {
+                        JSONObject itemInfo = new JSONObject();
+                        itemInfo.put("state", state[stateIndex]);
+                        itemInfo.put("content", content[stateIndex]);
+                        itemArr.put(stateIndex, itemInfo);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            itemContent.setOnFocusChangeListener(new android.view.View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus) {
+                        int contentIndex = holder.getLayoutPosition();
+                        content[contentIndex] = itemContent.getText().toString();
+                        if(content[contentIndex].equals("")){
+                            itemArr.remove(contentIndex);
+                            setInfo(itemArr, itemArr.length());
+                            notifyItemRemoved(contentIndex);
+                            if (contentIndex != length - 1 || contentIndex == 0){
+                                notifyItemRangeChanged(contentIndex,length - contentIndex);
+                            }else {
+                                notifyItemChanged(length - 1);
+                            }
+                        }else {
+                            try {
+                                JSONObject itemInfo = new JSONObject();
+                                itemInfo.put("state", state[contentIndex]);
+                                itemInfo.put("content", content[contentIndex]);
+                                itemArr.put(contentIndex, itemInfo);
+                            }catch (JSONException e){
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
 
-        if(holder.getAdapterPosition() == length - 1 && addItem){
-            itemContent.setFocusable(true);
-            itemContent.setFocusableInTouchMode(true);
-            itemContent.requestFocus();
-            addItem = false;
+            if(holder.getAdapterPosition() == length - 1 && addItem){
+                itemContent.setFocusable(true);
+                itemContent.setFocusableInTouchMode(true);
+                itemContent.requestFocus();
+                addItem = false;
+            }
         }
     }
 
     @Override
     public int getItemCount() {
-        return length;
+        return length + 1;
     }
 
     public void setInfo(JSONArray itemArr, int length){
@@ -134,7 +166,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
         itemArr.put(item);
         setInfo(itemArr, itemArr.length());
         addItem = true;
-        notifyItemChanged(length);
+        notifyItemRangeChanged(length-1,length);
     }
 
     public JSONArray getItemArr(){
@@ -143,11 +175,13 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView itemState;
-        public EditText itemContent;
+        EditText itemContent;
+        ConstraintLayout listItem;
         public MyViewHolder(View itemView) {
             super(itemView);
             itemState = itemView.findViewById(R.id.item_state);
             itemContent = itemView.findViewById(R.id.item_content);
+            listItem = itemView.findViewById(R.id.list_item);
         }
     }
 }

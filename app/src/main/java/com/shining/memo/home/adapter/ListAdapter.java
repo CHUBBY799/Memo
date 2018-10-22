@@ -55,7 +55,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
             final int index = i;
             LinearLayout layout = new LinearLayout(context);
             layout.setOrientation(LinearLayout.HORIZONTAL);
-            //layout.setPadding(0,33,0,0);
 
             final TextView state = new TextView(context);
             final TextView content = new TextView(context);
@@ -75,7 +74,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
             LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)state.getLayoutParams();
             lp.width = 40;
             lp.height= 40;
-            lp.topMargin = 8;
+            lp.topMargin = 4;
             state.setLayoutParams(lp);
             state.setGravity(CENTER);
             if (itemState[holder.getAdapterPosition()][index]){

@@ -20,7 +20,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent">
             <com.shining.memo.widget.MaskImageView
-                app:mask_color="#88000000"
+                app:mask_color="@color/photo_shelter"
                 app:mask_level="foreground"
                 app:is_ignore_alpha="false"
                 app:is_show_mask_on_click="false"

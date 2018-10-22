@@ -181,9 +181,9 @@ public class MonthCalendar extends CalendarPager implements OnClickMonthViewList
             }else {
                 mSelectDateList.add(mSelectDate);
             }
-            button = false;
         }
 
+        button = false;
         isPagerChanged = true;
 
         if (onMonthCalendarChangedListener != null) {

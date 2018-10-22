@@ -13,91 +13,86 @@ import com.shining.calendar.listener.OnClickMonthViewListener;
 import com.shining.calendar.utils.Attrs;
 import com.shining.calendar.utils.Utils;
 import org.joda.time.LocalDate;
-import java.util.List;
 
 @SuppressLint("ViewConstructor")
 public class MonthView extends CalendarView {
 
-    private List<String> lunarList;
+    private Context context;
     private int mRowNum;
     private OnClickMonthViewListener mOnClickMonthViewListener;
 
     public MonthView(Context context, LocalDate date, OnClickMonthViewListener onClickMonthViewListener) {
         super(context);
+
+        this.context = context;
         this.mInitialDate = date;
-
-        //0周日，1周一
-        Utils.NCalendar nCalendar2 = Utils.getMonthCalendar(date, Attrs.firstDayOfWeek);
+        Utils.NCalendar nCalendar = Utils.getMonthCalendar(date, Attrs.firstDayOfWeek);
         mOnClickMonthViewListener = onClickMonthViewListener;
-
-        lunarList = nCalendar2.lunarList;
-        dates = nCalendar2.dateList;
-
+        dates = nCalendar.dateList;
         mRowNum = dates.size() / 7;
     }
 
+    @SuppressWarnings("all")
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mWidth = getWidth();
-        //绘制高度
-        mHeight = getDrawHeight();
+        mHeight = getMonthHeight();
         mRectList.clear();
+
+        Rect rect = null;
+        //循环绘制每月的日期（7*5的矩形集合）
         for (int i = 0; i < mRowNum; i++) {
             for (int j = 0; j < 7; j++) {
-                @SuppressWarnings("all")
-                Rect rect = new Rect(j * mWidth / 7, i * mHeight / mRowNum, j * mWidth / 7 + mWidth / 7, i * mHeight / mRowNum + mHeight / mRowNum);
-                mRectList.add(rect);
-                LocalDate date = dates.get(i * 7 + j);
-                Paint.FontMetricsInt fontMetrics = mSolarPaint.getFontMetricsInt();
-
-                int baseline;//让6行的第一行和5行的第一行在同一直线上，处理选中第一行的滑动
-                if (mRowNum == 5) {
-                    baseline = (rect.bottom + rect.top - fontMetrics.bottom - fontMetrics.top) / 2;
-                } else {
-                    baseline = (rect.bottom + rect.top - fontMetrics.bottom - fontMetrics.top) / 2 + (mHeight / 5 - mHeight / 6) / 2;
+                //定义每个区域的矩形
+                if (i == 0 && j == 0){
+                    rect = new Rect(0, 0, mWidth / 7, mHeight / mRowNum);
+                }else if(j == 0){
+                    rect = new Rect(0, mRectList.get(i * 7 - 1).bottom,  mWidth / 7, i * mHeight / mRowNum + mHeight / mRowNum);
+                }else {
+                    rect = new Rect(mRectList.get(i * 7 + j - 1).right, mRectList.get(i * 7 + j - 1).top,  j * mWidth / 7 + mWidth / 7, mRectList.get(i * 7 + j - 1).bottom);
                 }
+                mRectList.add(rect);
+
+                //得到当前矩形的日期
+                LocalDate date = dates.get(i * 7 + j);
+                Paint.FontMetricsInt fontMetrics = mPaint.getFontMetricsInt();
+
+                //绘制基线
+                int baseline = (rect.bottom + rect.top - fontMetrics.bottom - fontMetrics.top) / 2;
+
                 //当月和上下月的颜色不同
                 if (Utils.isEqualsMonth(date, mInitialDate)) {
-                    //当天和选中的日期不绘制农历
-                    if (Utils.isToday(date)) {
-                        mSolarPaint.setColor(mToDayColor);
-                        int centerY = mRowNum == 5 ? rect.centerY() : (rect.centerY() + (mHeight / 5 - mHeight / 6) / 2);
-                        canvas.drawCircle(rect.centerX(), centerY, mSelectCircleRadius, mSolarPaint);
-                        mSolarPaint.setColor(Color.WHITE);
-                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
+                    if (mSelectDateList != null && mSelectDateList.contains(date)) { //绘制选中的日期
+                        mPaint.setColor(mSelectColor);
+                        canvas.drawRect(rect, mPaint);
+                        mPaint.setColor(Color.WHITE);
+                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
                         drawPoint(canvas, rect, date, baseline);
-                    } else if (mSelectDateList != null && mSelectDateList.contains(date)) {
-                        mSolarPaint.setColor(mSelectCircleColor);
-                        int centerY = mRowNum == 5 ? rect.centerY() : (rect.centerY() + (mHeight / 5 - mHeight / 6) / 2);
-                        canvas.drawCircle(rect.centerX(), centerY, mSelectCircleRadius, mSolarPaint);
-                        mSolarPaint.setColor(mHollowCircleColor);
-                        canvas.drawCircle(rect.centerX(), centerY, mSelectCircleRadius - mHollowCircleStroke, mSolarPaint);
-
-                        mSolarPaint.setColor(mSolarTextColor);
-                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
+                    } else if (Utils.isToday(date)) {
+                        mPaint.setColor(mTodayColor);
+                        canvas.drawRect(rect, mPaint);
+                        mPaint.setColor(Color.WHITE);
+                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
                         drawPoint(canvas, rect, date, baseline);
-                    } else {
-                        mSolarPaint.setColor(mSolarTextColor);
-                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
-                        drawLunar(canvas, rect, baseline, mLunarTextColor, i, j);
-                        //绘制节假日
-                        drawHolidays(canvas, rect, date, baseline);
-                        //绘制圆点
+                    }
+                    else {
+                        mPaint.setColor(mCurrentColor);
+                        canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
+                        mPaint.setColor(mSelectColor);
                         drawPoint(canvas, rect, date, baseline);
                     }
 
                 } else {
-                    mSolarPaint.setColor(mHintColor);
-                    canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mSolarPaint);
-                    drawLunar(canvas, rect, baseline, mHintColor, i, j);
-                    //绘制节假日
-                    drawHolidays(canvas, rect, date, baseline);
-                    //绘制圆点
-                    drawPoint(canvas, rect, date, baseline);
+                    mPaint.setColor(mHintColor);
+                    canvas.drawText(date.getDayOfMonth() + "", rect.centerX(), baseline, mPaint);
                 }
             }
         }
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setStrokeWidth(4);
+        mPaint.setColor(Color.parseColor("#DDDDDD"));
+        canvas.drawLine(0, rect.bottom, rect.right, rect.bottom, mPaint);
     }
 
     /**
@@ -109,44 +104,13 @@ public class MonthView extends CalendarView {
     }
 
     /**
-     * 月日历的绘制高度，
-     * 为了月日历6行时，绘制农历不至于太靠下，绘制区域网上压缩一下
-     *
+     * 绘制圆点
      */
-    public int getDrawHeight() {
-        return (int) (getMonthHeight() - Utils.dp2px(getContext(), 10));
-    }
-
-
-    private void drawLunar(Canvas canvas, Rect rect, int baseline, int color, int i, int j) {
-        if (isShowLunar) {
-            mLunarPaint.setColor(color);
-            String lunar = lunarList.get(i * 7 + j);
-            canvas.drawText(lunar, rect.centerX(), baseline + getMonthHeight() / 20, mLunarPaint);
-        }
-    }
-
-    private void drawHolidays(Canvas canvas, Rect rect, LocalDate date, int baseline) {
-        if (isShowHoliday) {
-            if (holidayList.contains(date.toString())) {
-                mLunarPaint.setColor(mHolidayColor);
-                canvas.drawText("休", rect.centerX() + rect.width() / 4, baseline - getMonthHeight() / 20, mLunarPaint);
-
-            } else if (workdayList.contains(date.toString())) {
-                mLunarPaint.setColor(mWorkdayColor);
-                canvas.drawText("班", rect.centerX() + rect.width() / 4, baseline - getMonthHeight() / 20, mLunarPaint);
-            }
-        }
-    }
-
-    //绘制圆点
     public void drawPoint(Canvas canvas, Rect rect, LocalDate date, int baseline) {
         if (pointList != null && pointList.contains(date.toString())) {
-            mLunarPaint.setColor(mSelectCircleColor);
-            canvas.drawCircle(rect.centerX(), baseline + getMonthHeight() / 20, mPointSize, mLunarPaint);
+            canvas.drawCircle(rect.centerX(), baseline + Utils.dp2px(context,15), mPointSize, mPaint);
         }
     }
-
 
     private GestureDetector mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
         @Override
@@ -185,10 +149,10 @@ public class MonthView extends CalendarView {
     }
 
     public int getSelectRowIndex() {
-        if (mSelectDate == null) {
-            return 0;
+        if (mSelectDateList.size() == 0){
+            return dates.indexOf(LocalDate.now()) / 7;
+        }else {
+            return dates.indexOf(mSelectDateList.get(mSelectDateList.size() - 1)) / 7;
         }
-        int indexOf = dates.indexOf(mSelectDate);
-        return indexOf / 7;
     }
 }

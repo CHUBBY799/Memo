@@ -3,14 +3,12 @@
     <item android:id="@android:id/background">
         <shape>
             <solid android:color="@color/seek_bar_transparent_orange"/>
-            <stroke android:width="20dp" android:color="#00FFFFFF"/>
         </shape>
     </item>
     <item android:id="@android:id/secondaryProgress">
         <clip>
             <shape >
                 <solid android:color="@color/half_transparent_orange"/>
-                <stroke android:width="20dp" android:color="#00FFFFFF"/>
             </shape>
         </clip>
     </item>
@@ -18,7 +16,6 @@
         <clip>
             <shape>
                 <solid android:color="@color/item_btn_text" />
-                <stroke android:width="20dp" android:color="#00FFFFFF"/>
             </shape>
         </clip>
     </item>

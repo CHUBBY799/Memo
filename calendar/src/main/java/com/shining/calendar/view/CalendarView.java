@@ -6,7 +6,6 @@ import android.graphics.Rect;
 import android.view.View;
 
 import com.shining.calendar.utils.Attrs;
-import com.shining.calendar.utils.Utils;
 
 import org.joda.time.LocalDate;
 
@@ -22,61 +21,30 @@ public abstract class CalendarView extends View {
     protected int mHeight;
     protected List<LocalDate> dates;
 
+    protected int mCurrentColor;//当月的字体颜色
+    protected int mHintColor;//不是当月的字体颜色
+    protected int mTodayColor;//当天矩形的颜色
+    protected int mSelectColor;//选中矩形的颜色
 
-    protected int mSolarTextColor;//公历字体颜色
-    protected int mLunarTextColor;//农历字体颜色
-    protected int mHintColor;//不是当月的颜色
-    protected float mSolarTextSize;
-    protected float mLunarTextSize;
-    protected Paint mSolarPaint;
-    protected Paint mLunarPaint;
-    protected float mSelectCircleRadius;//选中圆的半径
-    protected int mToDayColor;
-    protected int mSelectCircleColor;//选中圆的颜色
-    protected boolean isShowLunar;//是否显示农历
-
-    protected int mHolidayColor;
-    protected int mWorkdayColor;
+    protected float mTextSize;//字体大小
+    protected float mPointSize;//圆点大小
+    protected Paint mPaint;
 
     protected List<Rect> mRectList;//点击用的矩形集合
-    protected int mPointColor;//圆点颜色
-    protected float mPointSize;//圆点大小
-
-    protected int mHollowCircleColor;//空心圆颜色
-    protected float mHollowCircleStroke;//空心圆粗细
-
-    protected boolean isShowHoliday;//是否显示节假日
-    protected List<String> holidayList;
-    protected List<String> workdayList;
     protected List<String> pointList;
 
     public CalendarView(Context context) {
         super(context);
-        mSolarTextColor = Attrs.solarTextColor;
-        mLunarTextColor = Attrs.lunarTextColor;
+        mCurrentColor = Attrs.currentColor;
         mHintColor = Attrs.hintColor;
-        mSolarTextSize = Attrs.solarTextSize;
-        mLunarTextSize = Attrs.lunarTextSize;
-        mSelectCircleRadius = Attrs.selectCircleRadius;
-        mToDayColor = Attrs.toDayColor;
-        mSelectCircleColor = Attrs.selectCircleColor;
-        isShowLunar = Attrs.isShowLunar;
+        mTodayColor = Attrs.todayColor;
+        mSelectColor = Attrs.selectColor;
 
+        mTextSize = Attrs.textSize;
         mPointSize = Attrs.pointSize;
-        mPointColor = Attrs.pointColor;
-        mHollowCircleColor = Attrs.hollowCircleColor;
-        mHollowCircleStroke = Attrs.hollowCircleStroke;
-
-        isShowHoliday = Attrs.isShowHoliday;
-        mHolidayColor = Attrs.holidayColor;
-        mWorkdayColor = Attrs.workdayColor;
 
         mRectList = new ArrayList<>();
-        mSolarPaint = getPaint(mSolarTextColor, mSolarTextSize);
-        mLunarPaint = getPaint(mLunarTextColor, mLunarTextSize);
-
-        holidayList = Utils.getHolidayList(getContext());
-        workdayList = Utils.getWorkdayList(getContext());
+        mPaint = getPaint(mCurrentColor, mTextSize);
     }
 
     private Paint getPaint(int paintColor, float paintSize) {
