@@ -188,6 +188,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             adapter.presenter.onStop();
             animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
         }else {
+            clickConfirm();
             finish();
             adapter.presenter.onStop();
             overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
