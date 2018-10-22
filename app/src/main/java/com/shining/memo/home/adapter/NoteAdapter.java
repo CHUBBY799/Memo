@@ -41,10 +41,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder>{
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                long id=mNotes.get(holder.getLayoutPosition()).getId();
+                int id=(int)mNotes.get(holder.getLayoutPosition()).getId();
                 Log.d("helo", "onClick: "+id);
                 Intent intent=new Intent(viewGroup.getContext(), NoteActivity.class);
-                intent.putExtra("taskId",id);
+                intent.putExtra("noteId",id);
                 viewGroup.getContext().startActivity(intent);
             }
         });

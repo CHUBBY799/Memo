@@ -237,7 +237,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         photoPresenter = new PhotoPresenter(this);
         notePresenter = new NotePresenter(this);
         recordingPresenter = new RecordingPresenter(this);
-        noteID = getIntent().getIntExtra("taskId",-1);
+        noteID = getIntent().getIntExtra("noteId",-1);
         if(noteID != -1){
             isView = true;
             View v = findViewById(R.id.bottom_recording_view);
