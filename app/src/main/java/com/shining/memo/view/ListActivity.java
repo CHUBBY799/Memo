@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.shining.memo.R;
@@ -22,9 +23,9 @@ import org.json.JSONObject;
 
 public class ListActivity extends AppCompatActivity implements View.OnClickListener,ViewList{
 
-    private Button listCancel;
-    private Button listConfirm;
-    private Button listDelete;
+    private ImageButton listCancel;
+    private ImageButton listConfirm;
+    private ImageButton listDelete;
     private EditText listTitle;
     private RecyclerView listContent;
     private ListItemAdapter listItemAdapter;

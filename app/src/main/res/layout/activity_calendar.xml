@@ -14,22 +14,32 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <Button
+        <ImageButton
             android:id="@+id/last_month"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginStart="16dp"
-            android:background="@drawable/month_change_left_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/button_ripple"
+            android:contentDescription="@string/last_month_icon"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/month_change_left_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <ImageButton
             android:id="@+id/next_month"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginStart="135dp"
-            android:background="@drawable/month_change_right_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="125dp"
+            android:background="@drawable/button_ripple"
+            android:contentDescription="@string/next_month_icon"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/month_change_right_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/last_month"
             app:layout_constraintTop_toTopOf="parent" />
@@ -39,8 +49,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
             android:textColor="@color/calendar_select"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -49,12 +57,17 @@
             app:layout_constraintStart_toEndOf="@+id/last_month"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <ImageButton
             android:id="@+id/calendar_close"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/close_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/button_ripple"
+            android:contentDescription="@string/close_icon"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/close_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

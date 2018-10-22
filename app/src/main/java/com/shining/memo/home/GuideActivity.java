@@ -78,11 +78,14 @@ public class GuideActivity extends AppCompatActivity {
         guideLayouts.add(layoutView);
 
         layoutView = LayoutInflater.from(this).inflate(R.layout.guide_three, null, false);
-        Button guideButton = layoutView.findViewById(R.id.guide_button);
+        final Button guideButton = layoutView.findViewById(R.id.guide_button);
         guideButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buttonClick();
+                guideButton.setTextColor(R.color.colorWhite);
+                Intent intent = new Intent(GuideActivity.this, MemoActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
         guideLayouts.add(layoutView);
@@ -95,11 +98,5 @@ public class GuideActivity extends AppCompatActivity {
         guideDot_3 = findViewById(R.id.guide_dot_3);
 
         guidePager.addOnPageChangeListener(viewPagerPageChangeListener);
-    }
-
-    public void buttonClick(){
-        Intent intent = new Intent(GuideActivity.this, MemoActivity.class);
-        startActivity(intent);
-        finish();
     }
 }

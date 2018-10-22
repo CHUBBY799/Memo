@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.shining.calendar.calendar.MonthCalendar;
@@ -34,9 +35,9 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
     private RecyclerView calendar_event;
     private CalendarAdapter calendarAdapter;
     private TextView calendar_month;
-    private Button calendar_close;
-    private Button last_month;
-    private Button next_month;
+    private ImageButton calendar_close;
+    private ImageButton last_month;
+    private ImageButton next_month;
     private ConstraintLayout back_top;
 
     private LocalDate date;

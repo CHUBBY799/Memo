@@ -48,21 +48,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guide_title" />
 
-    <Button
-        android:id="@+id/guide_button"
-        android:layout_width="180dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="28dp"
-        android:background="@drawable/guide_button_selector"
-        android:textSize="16sp"
-        android:textColor="@color/guide_button"
-        android:text="@string/guide_button"
-        android:minHeight="0dp"
-        android:minWidth="0dp"
-        android:padding="0dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guide_content" />
-
 </android.support.constraint.ConstraintLayout>

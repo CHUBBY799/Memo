@@ -82,4 +82,14 @@
     <string name="photo_recording_btnText">photo</string>
     <string name="list_launches_icon">List launches Icon</string>
 
+    <!-- ImageButton contentDescription -->
+    <string name="close_icon">close icon</string>
+    <string name="calendar_icon">calendar icon</string>
+    <string name="last_month_icon">last month icon</string>
+    <string name="next_month_icon">next month icon</string>
+    <string name="back_icon">back icon</string>
+    <string name="delete_icon">delete icon</string>
+    <string name="share_icon">share icon</string>
+    <string name="save_icon">save icon</string>
+
 </resources>
