@@ -998,7 +998,6 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     break;
                 case R.id.bottom_share:
                     shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
-                    shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
                     if(ShotUtils.isAppAvilible(NoteActivity.this,"com.tencent.mm")){
                         ShotUtils.share(NoteActivity.this,shotPath,"com.tencent.mm",
                                 "com.tencent.mm.ui.tools.ShareImgUI");
