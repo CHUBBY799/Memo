@@ -1,8 +1,11 @@
 package com.shining.memo.utils;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -19,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class ShotUtils {
     public static Bitmap shotRecyclerView(RecyclerView view) {
@@ -104,22 +108,19 @@ public class ShotUtils {
         return file.getAbsolutePath();
     }
 
-
-    public static void share(Context context,String sharePath){
+    //发送图片给好友。"com.tencent.mm","com.tencent.mm.ui.tools.ShareImgUI";
+    //发送图片到朋友圈。"com.tencent.mm"，"com.tencent.mm.ui.tools.ShareToTimeLineUI"
+    //发送图片到qq。"com.tencent.mobileqq"，"com.tencent.mobileqq.activity.JumpActivity"
+    public static void share(Context context,String sharePath,String packName,String cls){
         if(sharePath != null){
             Uri imageUri = Uri.fromFile(new File(sharePath));
             Intent shareIntent = new Intent();
-            //发送图片给好友。
-            ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");
-            //发送图片到朋友圈
-            //ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
-            //发送图片到qq
-            // ComponentName comp = new ComponentName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");
+            ComponentName comp = new ComponentName(packName, cls);
             shareIntent.setComponent(comp);
             shareIntent.setAction(Intent.ACTION_SEND);
             shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
             shareIntent.setType("image/*");
-            context.startActivity(Intent.createChooser(shareIntent, "分享图片"));
+            ((Activity)context).startActivityForResult(Intent.createChooser(shareIntent, "分享图片"),0xa4);
         }
     }
 
@@ -131,9 +132,18 @@ public class ShotUtils {
             shareIntent.setAction(Intent.ACTION_SEND);
             shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
             shareIntent.setType("image/*");
-            context.startActivity(Intent.createChooser(shareIntent, "分享图片"));
+            ((Activity)context).startActivityForResult(Intent.createChooser(shareIntent, "分享图片"),0xa4);
         }
     }
 
+    public static boolean isAppAvilible(Context context,String packName){
+        final PackageManager packageManager = context.getPackageManager();
+        List<PackageInfo> packageInfos = packageManager.getInstalledPackages(0);
+        for(int i = 0; i < packageInfos.size(); i++){
+            if(packageInfos.get(i).packageName.equals(packName))
+                return true;
+        }
+        return false;
+    }
 
 }

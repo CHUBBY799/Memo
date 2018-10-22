@@ -89,6 +89,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     private static final int REQUEST_ALARM=0xb3;
     private static final int REQUEST_CAMERA=0xa1;
     private static final int REQUEST_GALLERY=0xa3;
+    private static final int REQUEST_SHARE=0xa4;
     private Button mBtnGallery,mBtnCamera,mBtnAudioCancel,mBtnFinish;
     private ImageButton mBtnCancel,mBtnConfirm,mBtnAlarm,mBtnEdit,mBtnRecord,mBtnPhoto;
     private ImageButton mBtnBold,mBtnUnderLine,mBtnDeleteLine,mBtnColor,mBtnTextBack;
@@ -101,7 +102,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     private ImageView volumeImage;
     private RecyclerView mRecyclerView;
     public static boolean isRecording,isPhotoChoosing,isTextEdit,isColorPick,noBackKey,isView;
-    private String photoPath="";
+    private String photoPath="",shotPath="";
     private int urgent = 0,alarm = 0,taskId = -1;
     private boolean isNotification,requestPermission,alarmChanged;
     private OonClickView onClickView;
@@ -642,6 +643,15 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                 break;
             default:
                 break;
+            case REQUEST_SHARE:
+                if(!shotPath.equals("")){
+                    File file = new File(shotPath);
+                    if(file.exists()){
+                        file.delete();
+                    }
+                    shotPath = "";
+                }
+                break;
         }
     }
 
@@ -652,7 +662,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode){
             case REQUEST_AUDIO_PERMISSION:
-                if(grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     isRecording = true;
                     animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio));
                     handler.sendEmptyMessageDelayed(MSG_RECORDING,600);
@@ -661,7 +671,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                 }
                 break;
             case REQUEST_CAMERA_PERMISSION:
-                if(grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                     animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_photo));
                     isPhotoChoosing = true;
                 }
@@ -814,8 +825,10 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     private void cliclPhotoRecording(){
         Log.d(TAG, "cliclPhotoRecording: ");
         if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                ||checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE},REQUEST_CAMERA_PERMISSION);
+                ||checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED
+                ||checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_CAMERA_PERMISSION);
         }else {
             animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_photo));
             isPhotoChoosing = true;
@@ -1068,8 +1081,16 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_share:
-                    String path = ShotUtils.saveBitmap(TaskActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
-                    ShotUtils.shareLocal(TaskActivity.this,path);
+                    shotPath = ShotUtils.saveBitmap(TaskActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
+                    if(ShotUtils.isAppAvilible(TaskActivity.this,"com.tencent.mm")){
+                        ShotUtils.share(TaskActivity.this,shotPath,"com.tencent.mm",
+                                "com.tencent.mm.ui.tools.ShareImgUI");
+                    }else if(ShotUtils.isAppAvilible(TaskActivity.this,"com.tencent.mobileqq")){
+                        ShotUtils.share(TaskActivity.this,shotPath,"com.tencent.mobileqq",
+                                "com.tencent.mobileqq.activity.JumpActivity");
+                    }else {
+                        ShotUtils.shareLocal(TaskActivity.this,shotPath);
+                    }
                     break;
                 case R.id.bottom_view_alarm:
                     clickAlarm();

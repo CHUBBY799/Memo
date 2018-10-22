@@ -77,6 +77,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private static final int MSG_RECORDING = 0x110;
     private static final int REQUEST_CAMERA=0xa1;
     private static final int REQUEST_GALLERY=0xa3;
+    private static final int REQUEST_SHARE=0xa4;
     private Button mBtnGallery,mBtnCamera,mBtnAudioCancel,mBtnFinish;
     private ImageButton mBtnCancel,mBtnConfirm,mBtnEdit,mBtnRecord,mBtnPhoto;
     private ImageButton mBtnBold,mBtnUnderLine,mBtnDeleteLine,mBtnColor,mBtnTextBack;
@@ -88,7 +89,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private ImageView volumeImage;
     private RecyclerView mRecyclerView;
     private static boolean isRecording,isPhotoChoosing,isTextEdit,isColorPick,noBackKey,isView;
-    private String photoPath="";
+    private String photoPath="",shotPath="";
     private int noteID = -1;
     private boolean requestPermission;
     private OonClickView onClickView;
@@ -567,6 +568,14 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     photoPresenter.openAlbum(this,REQUEST_GALLERY);
                 }
                 break;
+            case REQUEST_SHARE:
+                if(!shotPath.equals("")){
+                    File file = new File(shotPath);
+                    if(file.exists()){
+                        file.delete();
+                    }
+                    shotPath = "";
+                }
             default:
                 break;
         }
@@ -579,7 +588,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode){
             case REQUEST_AUDIO_PERMISSION:
-                if(grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     isRecording = true;
                     animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_audio));
                     handler.sendEmptyMessageDelayed(MSG_RECORDING,600);
@@ -588,7 +597,8 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                 }
                 break;
             case REQUEST_CAMERA_PERMISSION:
-                if(grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                     animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_photo));
                     isPhotoChoosing = true;
                 }
@@ -730,8 +740,10 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private void cliclPhotoRecording(){
         Log.d(TAG, "cliclPhotoRecording: ");
         if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                ||checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE},REQUEST_CAMERA_PERMISSION);
+                ||checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED
+                ||checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_CAMERA_PERMISSION);
         }else {
             animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_photo));
             isPhotoChoosing = true;
@@ -985,8 +997,17 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_share:
-                    String path = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
-                    ShotUtils.shareLocal(NoteActivity.this,path);
+                    shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
+                    shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
+                    if(ShotUtils.isAppAvilible(NoteActivity.this,"com.tencent.mm")){
+                        ShotUtils.share(NoteActivity.this,shotPath,"com.tencent.mm",
+                                "com.tencent.mm.ui.tools.ShareImgUI");
+                    }else if(ShotUtils.isAppAvilible(NoteActivity.this,"com.tencent.mobileqq")){
+                        ShotUtils.share(NoteActivity.this,shotPath,"com.tencent.mobileqq",
+                                "com.tencent.mobileqq.activity.JumpActivity");
+                    }else {
+                        ShotUtils.shareLocal(NoteActivity.this,shotPath);
+                    }
                     break;
             }
         }
