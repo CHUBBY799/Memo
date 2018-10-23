@@ -179,12 +179,12 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             isTextEdit = false;
             animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit));
         }else if(taskId != -1 && !isView){
+            clickCancel();
             isView = true;
             initData();
             adapter.presenter.onStop();
             animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
         }else {
-            clickConfirm();
             finish();
             adapter.presenter.onStop();
             overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
@@ -1050,15 +1050,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     break;
                 case R.id.bottom_share:
                     shotPath = ShotUtils.saveBitmap(TaskActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
-                    if(ShotUtils.isAppAvilible(TaskActivity.this,"com.tencent.mm")){
-                        ShotUtils.share(TaskActivity.this,shotPath,"com.tencent.mm",
-                                "com.tencent.mm.ui.tools.ShareImgUI");
-                    }else if(ShotUtils.isAppAvilible(TaskActivity.this,"com.tencent.mobileqq")){
-                        ShotUtils.share(TaskActivity.this,shotPath,"com.tencent.mobileqq",
-                                "com.tencent.mobileqq.activity.JumpActivity");
-                    }else {
-                        ShotUtils.shareLocal(TaskActivity.this,shotPath);
-                    }
+                    ShotUtils.shareCustom(TaskActivity.this,shotPath);
                     break;
                 case R.id.bottom_view_alarm:
                     clickAlarm();

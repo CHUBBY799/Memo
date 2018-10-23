@@ -165,12 +165,12 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             isTextEdit = false;
             animationTranslate(findViewById(R.id.bottom_recording_textedit),findViewById(R.id.bottom_recording_edit));
         }else if(noteID != -1 && !isView){
+            clickCancel();
             isView = true;
             initData();
             adapter.presenter.onStop();
             animationTranslate(findViewById(R.id.bottom_recording_edit),findViewById(R.id.bottom_recording_view));
         }else {
-            clickConfirm();
             finish();
             adapter.presenter.onStop();
             overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
@@ -966,15 +966,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     break;
                 case R.id.bottom_share:
                     shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
-                    if(ShotUtils.isAppAvilible(NoteActivity.this,"com.tencent.mm")){
-                        ShotUtils.share(NoteActivity.this,shotPath,"com.tencent.mm",
-                                "com.tencent.mm.ui.tools.ShareImgUI");
-                    }else if(ShotUtils.isAppAvilible(NoteActivity.this,"com.tencent.mobileqq")){
-                        ShotUtils.share(NoteActivity.this,shotPath,"com.tencent.mobileqq",
-                                "com.tencent.mobileqq.activity.JumpActivity");
-                    }else {
-                        ShotUtils.shareLocal(NoteActivity.this,shotPath);
-                    }
+                    ShotUtils.shareCustom(NoteActivity.this,shotPath);
                     break;
             }
         }
