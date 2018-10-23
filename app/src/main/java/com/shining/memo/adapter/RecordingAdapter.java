@@ -299,7 +299,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 textChanged.updateEditIcon(list);
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(editTitle,0);
-                CurrentIndex = 0;
+                CurrentIndex = -1;
                 CurrentType = "title";
             }else {
                 CurrentIndex = -1;
