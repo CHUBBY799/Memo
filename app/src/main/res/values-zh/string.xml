@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <!-- common string -->
+        <string name="cancel">取消</string>
+        <string name="confirm">Confirm</string>
+        <string name="state">state</string>
+        <string name="title">title</string>
+        <string name="item">item</string>
+
+        <!--guide string -->
+        <string name="guide_image">guide image</string>
+        <string name="guide_title_1">强大的任务设置功能</string>
+        <string name="guide_title_2">方便的清单列表</string>
+        <string name="guide_title_3">多种记录方式</string>
+        <string name="guide_content_1">让您应对工作游刃有余</string>
+        <string name="guide_content_2">让您的工作和生活井井有条</string>
+        <string name="guide_content_3">让您可以随心所欲地进行记录</string>
+        <string name="guide_button">立即体验</string>
+
+        <!--main string-->
+        <string name="app_name">Memo</string>
+        <string name="task">Task</string>
+        <string name="note">Note</string>
+        <string name="list">List</string>
+        <string name="main_add_task">Add a new task</string>
+        <string name="main_add_list">Add a new list</string>
+        <string name="main_add_note">Add a new note</string>
+        <string name="main_finish_dialog_message">Do you want to finish the task ?</string>
+        <string name="main_finish_dialog_title">Finish</string>
+
+        <!-- list string -->
+        <string name="list_hint_title">Please input title of list</string>
+        <string name="expand_icon">expand icon</string>
+        <string name="start_default">start default</string>
+        <string name="list_add_item">Add a item</string>
+
+        <!-- task string -->
+        <string name="edit_title_hint">请输入标题内容</string>
+        <string name="view_title_hint">无标题</string>
+        <string name="item_text_hint">请输入正文内容</string>
+        <string name="save_successful_notice">保存成功</string>
+        <string name="save_failed_notice">保存失败</string>
+        <string name="empty_text_notice">内容为空保存失败</string>
+        <string name="no_selectd_text">没有选中文本</string>
+
+        <!-- alarm string -->
+        <string name="alarm_clock">闹钟</string>
+        <string name="set_alarm_clock">设定一个闹钟</string>
+        <string name="ringtone_reminder">闹铃提醒</string>
+        <string name="pop_ups_reminder">弹窗提醒</string>
+        <string name="alarm_confirm">完成</string>
+        <string name="alarm_update">闹钟更新</string>
+        <string name="alarm_delete">闹钟删除</string>
+        <string name="alarm_set_notice">设置闹钟成功</string>
+        <string name="alarm_updated_notice">更新闹钟成功</string>
+        <string name="alarm_set_failed">设置闹钟失败</string>
+        <string name="alarm_update_failed">更新闹钟失败</string>
+        <string name="alarm_deleted_failed">删除闹钟失败</string>
+        <string name="alarm_deleted_notice">删除闹钟成功</string>
+
+        <!-- calendar string -->
+        <string name="calendar">calendar</string>
+        <string name="calendar_year">2018</string>
+        <string name="calendar_sunday">Sun</string>
+        <string name="calendar_monday">Mon</string>
+        <string name="calendar_tuesday">Tues</string>
+        <string name="calendar_wednesday">Wed</string>
+        <string name="calendar_thursday">Thur</string>
+        <string name="calendar_friday">Fri</string>
+        <string name="calendar_saturday">Sat</string>
+        <string name="back_top">back to the top</string>
+
+        <!-- audio string -->
+        <string name="audio">audio</string>
+        <string name="audio_finish">完成</string>
+        <string name="audio_time_length">00:00:00</string>
+        <string name="audio_delete_title">删除录音</string>
+        <string name="audio_delete_tip">你确定删除该录音?</string>
+        <string name="audio_length_limit">录音时长小于1秒，请重新录制</string>
+        <string name="audio_prepare">录音尚未开始</string>
+        <string name="audio_play_failed">播放录音失败</string>
+
+        <!-- photo string -->
+        <string name="photo_gallery">图库</string>
+        <string name="photo_camera">相机</string>
+        <string name="photo_recording_btnText">photo</string>
+        <string name="list_launches_icon">List launches Icon</string>
+        <string name="no_sdcard">设备没有sd卡!</string>
+        <string name="no_memory_dir">没有找到存储目录！</string>
+
+        <!-- ImageButton contentDescription -->
+        <string name="close_icon">close icon</string>
+        <string name="calendar_icon">calendar icon</string>
+        <string name="last_month_icon">last month icon</string>
+        <string name="next_month_icon">next month icon</string>
+        <string name="back_icon">back icon</string>
+        <string name="delete_icon">delete icon</string>
+        <string name="share_icon">share icon</string>
+        <string name="save_icon">save icon</string>
+
+</resources>

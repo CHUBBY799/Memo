@@ -6,6 +6,7 @@ import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.Handler;
 
+import com.shining.memo.R;
 import com.shining.memo.utils.ToastUtils;
 import com.shining.memo.view.ViewRecord;
 
@@ -87,7 +88,7 @@ public class AudioRecordPresenter {
                 File file = new File(filePath);
                 if (file.exists())
                     file.delete();
-                ToastUtils.showFailedShort(context, "The recording time is less than 1S. Please rerecord it.");
+                ToastUtils.showFailedShort(context, context.getResources().getString(R.string.audio_length_limit));
             } else {
                 viewAudioRecording.onStop(filePath, "audio");
             }
@@ -128,7 +129,7 @@ public class AudioRecordPresenter {
                 file.delete();
             filePath = "";
         } else {
-            ToastUtils.showFailedShort(context, "Recording has not started yet!");
+            ToastUtils.showFailedShort(context, context.getResources().getString(R.string.audio_prepare));
             viewAudioRecording.onStopActivateRecording();
             long startTime = 0;
         }

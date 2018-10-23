@@ -82,7 +82,7 @@ import java.util.TimeZone;
 
 public class TaskActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged,
         Switch.OnCheckedChangeListener {
-    private final static  String TAG = "TaskActivity";
+
     private static final int REQUEST_AUDIO_PERMISSION = 0xc1;
     private static final int REQUEST_CAMERA_PERMISSION = 0xc2;
     private static final int MSG_RECORDING = 0x110;
@@ -116,7 +116,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -128,7 +127,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume: ");
         super.onResume();
         if(isRecording && !requestPermission) {
             if(volumePopWindow != null){
@@ -145,7 +143,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     protected void onStop() {
-        Log.d(TAG, "onStop: ");
         super.onStop();
         if(presenter.stopRecord() > 0)
             isRecording = true;
@@ -162,7 +159,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed: ");
         if(isPhotoChoosing){
             isPhotoChoosing = false;
             animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit));
@@ -196,7 +192,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void init(){
-        Log.d(TAG, "init: ");
         View view =  (View)findViewById(R.id.bottom_recording_edit);
         mBtnCancel = (ImageButton)view.findViewById(R.id.bottom_cancel);
         mBtnConfirm = (ImageButton)view.findViewById(R.id.bottom_confirm);
@@ -326,7 +321,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     public static Boolean hideInputMethod(Context context, View v) {
-        Log.d(TAG, "hideInputMethod: ");
         InputMethodManager imm = (InputMethodManager) context
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null && v!= null) {
@@ -388,7 +382,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
     @Override
     public void onClick(View view) {
-        Log.d(TAG, "onClick: ");
         switch (view.getId()){
             case R.id.bottom_cancel:
                 clickCancel();
@@ -463,8 +456,17 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
 
     private void clickCancel(){
-        Log.d(TAG, "clickCancel: ");
         adapter.presenter.onStop();
+//        if(taskId == -1){
+//            for(int i = 0; i < mMap.size(); i++){
+//                if((mMap.get(i).getType().equals("audio"))||(mMap.get(i).getType().equals("photo")
+//                        && mMap.get(i).getContent().contains(Environment.getExternalStorageDirectory()+"/OhMemo/photo/"))){
+//                    File file = new File(mMap.get(i).getContent());
+//                    if (file.exists())
+//                        file.delete();
+//                }
+//            }
+//        }
 //        if(taskId == -1){
 //            for(int i = 0; i < mMap.size(); i++){
 //                if((mMap.get(i).getType().equals("audio"))||(mMap.get(i).getType().equals("photo")
@@ -482,20 +484,9 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 //            isView = true;
 //            initData();
 //        }
-        if(taskId == -1){
-            for(int i = 0; i < mMap.size(); i++){
-                if((mMap.get(i).getType().equals("audio"))||(mMap.get(i).getType().equals("photo")
-                        && mMap.get(i).getContent().contains(Environment.getExternalStorageDirectory()+"/OhMemo/photo/"))){
-                        File file = new File(mMap.get(i).getContent());
-                        if (file.exists())
-                            file.delete();
-                }
-            }
-        }
         clickConfirm();
     }
     private void clickConfirm(){
-        Log.d(TAG, "clickConfirm: ");
         if(!(mMap.get(0).getContent().equals("") && mMap.size() == 2 && mMap.get(1).getContent().equals(""))){
             adapter.presenter.onStop();
             Task task = new Task();
@@ -509,19 +500,19 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                 if( (id = recordingPresenter.saveRecording(task,mMap,alarmObject)) != -1){
                     if(alarmChanged)
                         alarmPresenter.setAlarmNotice((int)id);
-                    ToastUtils.showSuccessShort(this,"save successful");
+                    ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.save_successful_notice));
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else{
-                  ToastUtils.showSuccessShort(this,"save successful");
+                    ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.save_successful_notice));
                 }
             }else {
                 task.setId(taskId);
                 if(alarmObject != null)
                     alarmObject.setTaskId(taskId);
                 if(recordingPresenter.modifyRecording(task,mMap,alarmObject)){
-                    ToastUtils.showSuccessShort(this,"save successful");
+                    ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.save_successful_notice));
                     if(alarmChanged)
                         alarmPresenter.setAlarmNotice(taskId);
                     if(adapter.deletePath != null && adapter.deletePath.size() > 0){
@@ -537,23 +528,23 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     mRecyclerView.clearFocus();
                     initData();
                 }else{
-                    ToastUtils.showSuccessShort(this,"save failed");
+                    ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.save_failed_notice));
                 }
             }
         }else {
             if(taskId == -1){
-                ToastUtils.showFailedShort(this,"save failed for empty text");
+                ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.empty_text_notice));
                 setResult(RESULT_OK);
                 finish();
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
             }else {
                 if(recordingPresenter.deleteRecording(taskId)){
-                    ToastUtils.showFailedShort(this,"save failed for empty text");
+                    ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.empty_text_notice));
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else {
-                    ToastUtils.showFailedShort(this,"save failed");
+                    ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.save_failed_notice));
                 }
             }
         }
@@ -564,7 +555,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickAlarm(){
-        Log.d(TAG, "clickAlarm: ");
         Intent alarmIntent = new Intent(this, AlarmActivity.class);
         if(isView){
             alarmIntent.putExtra("taskId",taskId);
@@ -583,7 +573,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
-        Log.d(TAG, "onActivityResult: ");
         switch (requestCode){
             case REQUEST_ALARM:
                 if (resultCode == RESULT_OK){
@@ -659,7 +648,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
-        Log.d(TAG,"onRequestPermissionsResult");
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode){
             case REQUEST_AUDIO_PERMISSION:
@@ -683,7 +671,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        Log.d(TAG, "onCheckedChanged: ");
         if (b){
             urgent = 1;
         }else {
@@ -694,7 +681,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickRerecording(){
-        Log.d(TAG, "clickRerecording: "+ adapter.getCurrentIndex());
         try {
             if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -770,7 +756,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickAudioCancel(){
-        Log.d(TAG, "clickAudioCancel: ");
         presenter.cancelRecord();
         isRecording = false;
         mTvTime.setText("00:00:00");
@@ -783,7 +768,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickFinish(){
-        Log.d(TAG, "clickFinish: ");
         presenter.stopRecord();
         isRecording = false;
         mTvTime.setText("00:00:00");
@@ -798,7 +782,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
 
     public void animationTranslate(final View oldView, final View newView){
-        Log.d(TAG, "animationTranslate: ");
         final int duration = 300;
         Animator animator = ViewAnimationUtils.createCircularReveal(oldView,0,oldView.getHeight()/2,oldView.getWidth(),0);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -824,7 +807,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void cliclPhotoRecording(){
-        Log.d(TAG, "cliclPhotoRecording: ");
         if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                 ||checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED
                 ||checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
@@ -845,7 +827,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     public void onUpdate(double db, long time) {
         if(volumeImage != null)
             volumeImage.getDrawable().setLevel((int)db);
-        Log.d(TAG, "onUpdate: "+time);
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         mTvTime.setText(sdf.format(new Date(time)));
@@ -853,7 +834,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     public void onStop(String filePath, String type){
-        Log.d(TAG, "onStop: " + adapter.getCurrentIndex()+ "--"+adapter.getCurrentType());
         int index = adapter.getCurrentIndex();
         String currentType = adapter.getCurrentType();
         if( index != -1){
@@ -887,9 +867,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void checkDefaultEditTex(){
-        Log.d(TAG, "checkDefaultEditTex: ");
         if(mMap.size() -1 >= 1){
-            Log.d(TAG, "checkDefaultEditTex: "+ mMap.get(mMap.size() - 1));
             if(!mMap.get(mMap.size() - 1).getType().equals("text")){
                 RecordingContent content = new RecordingContent();
                 content.setType("text");
@@ -902,7 +880,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     public int getCurrentFirstIndex() {
-        Log.d(TAG, "getCurrentFirstIndex: ");
         RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
         LinearLayoutManager linearManager = (LinearLayoutManager) layoutManager;
         return linearManager.findFirstVisibleItemPosition();
@@ -910,7 +887,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     public int getCurrentLastIndex() {
-        Log.d(TAG, "getCurrentLastIndex: ");
         RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
         LinearLayoutManager linearManager = (LinearLayoutManager) layoutManager;
         return linearManager.findLastVisibleItemPosition();
@@ -918,13 +894,11 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     public HashMap<Integer, RecordingContent> getMap() {
-        Log.d(TAG, "getMap: ");
         return mMap;
     }
 
     @Override
     public void deleteEditText(HashMap<Integer, RecordingContent> map,int index,int position,String type) {
-        Log.d(TAG, "deleteEditText: index"+index+ mMap.toString());
         adapter.notifyItemRemoved(index);
         checkDefaultEditTex();
         if (index - 1 >= 1) {
@@ -939,32 +913,27 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     @Override
     public void updateAdapter(int index) {
-        Log.d(TAG, "updateAdapter: "+ mMap.toString());
         adapter.notifyItemRangeChanged(index,mMap.size() - index);
         updateRecyclerView(adapter.requestFocusableIndex);
     }
 
     @Override
     public void recyclerViewFocusable() {
-        Log.d(TAG, "recyclerViewFocusable: ");
         mRecyclerView.requestFocus();
     }
 
     @Override
     public void recyclerViewClearFocusable() {
-        Log.d(TAG, "recyclerViewClearFocusable: ");
         mRecyclerView.clearFocus();
     }
 
     @Override
     public RecyclerView getRecyclerView() {
-        Log.d(TAG, "getRecyclerView: ");
         return mRecyclerView;
     }
 
     @Override
     public void updateRecyclerView(int position) {
-        Log.d("updateRecyclerView",adapter.getRequestFocusableIndex()+"");
         if(position >= 0)
             mRecyclerView.scrollToPosition(position);
         else{
@@ -979,7 +948,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         if(html.length() > 0)
             html = html.substring(0,html.length() -1);
         mMap.get(index).setContent(RecordingAdapter.parseUnicodeToStr(html));
-        Log.d(TAG, "TextChanged: "+mMap.toString());
     }
 
     @Override
@@ -988,7 +956,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private String taskType(){
-        Log.d(TAG, "taskType: ");
         for(int i = 0; i < mMap.size(); i++){
             if(mMap.get(i).getType().equals("audio"))
                 return "audio";
