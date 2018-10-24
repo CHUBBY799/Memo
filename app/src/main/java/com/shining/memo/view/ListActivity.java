@@ -1,13 +1,14 @@
 package com.shining.memo.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -23,6 +24,10 @@ import org.json.JSONObject;
 
 public class ListActivity extends AppCompatActivity implements View.OnClickListener,ViewList{
 
+    private final static int CANCEL = 1;
+    private final static int DELETE = 2;
+    private final static int CONFIRM = 3;
+
     private ImageButton listCancel;
     private ImageButton listConfirm;
     private ImageButton listDelete;
@@ -34,6 +39,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private int selected;
     private String title;
     private JSONArray itemArr;
+    private String initItemArr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +60,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             title = "";
             itemArr = new JSONArray();
         }
+        initItemArr = itemArr.toString();
 
         initView();
         initComponent();
@@ -99,38 +106,44 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      * 退出
      */
     private void listCancel(){
-        finish();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        buttonFocus(CANCEL, true);
+        if (title.equals(listTitle.getText().toString())&& initItemArr.equals(itemArr.toString())){
+            finish();
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        }else {
+            buildDialog(CANCEL);
+        }
+        buttonFocus(CANCEL, false);
     }
 
     /**
      * 删除
      */
     private void listDelete(){
-        ListPresenter listPresenter = new ListPresenter(ListActivity.this);
-        if(id != -1){
-            listPresenter.deletePresenter(String.valueOf(id));
-        }
-        finish();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        buttonFocus(DELETE, true);
+        buildDialog(DELETE);
+        buttonFocus(DELETE, false);
     }
 
     /**
-     * 保存并向数据库中插入数据
+     * 保存
      */
     private void listConfirm(){
-        listConfirm.setFocusable(true);
-        listConfirm.setFocusableInTouchMode(true);
-        listConfirm.requestFocus();
+        buttonFocus(CONFIRM, true);
+        buildDialog(CONFIRM);
+        buttonFocus(CONFIRM, false);
     }
 
+    /**
+     * 添加
+     */
     private void addItem(){
         try {
             JSONObject itemInfo = new JSONObject();
             itemInfo.put("state", false);
             itemInfo.put("content", "");
             listItemAdapter.addInfo(itemInfo);
-            listContent.scrollToPosition(listItemAdapter.getItemCount()-1);
+            listContent.scrollToPosition(itemArr.length());
         }catch (JSONException e){
             e.printStackTrace();
         }
@@ -166,32 +179,141 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         listCancel.setOnClickListener(this);
         listConfirm.setOnClickListener(this);
         listDelete.setOnClickListener(this);
+    }
 
-        listConfirm.setOnFocusChangeListener(new android.view.View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    title = listTitle.getText().toString();
-                    if(title.equals("")){
-                        Toast.makeText(ListActivity.this, "Please input title", Toast.LENGTH_SHORT).show();
-                        listTitle.setFocusable(true);
-                        listTitle.setFocusableInTouchMode(true);
-                        listTitle.requestFocus();
-                    }else {
-                        itemArr = listItemAdapter.getItemArr();
+    /**
+     * 建立确认弹窗
+     * @param buttonType 点击的button类型
+     */
+    private void buildDialog(int buttonType){
+        AlertDialog dialog;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialog);
+        switch (buttonType){
+            case CANCEL:
+                builder.setTitle("Back");
+                builder.setMessage("Do you want to discard changes");
+                builder.setNegativeButton("Cancel", null);
+                builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    }
+                });
+                dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
+                break;
+
+            case DELETE:
+                builder.setTitle("Delete");
+                builder.setMessage("Do you want to delete the list");
+                builder.setNegativeButton("Cancel", null);
+                builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
                         ListPresenter listPresenter = new ListPresenter(ListActivity.this);
-
-                        if(id == -1){
-                            listPresenter.insertPresenter(formatData());
-                        }else {
-                            listPresenter.updatePresenter(formatData());
+                        if(id != -1){
+                            listPresenter.deletePresenter(String.valueOf(id));
                         }
                         finish();
                         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                     }
+                });
+                dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
+                break;
+
+            case CONFIRM:
+                title = listTitle.getText().toString();
+                if(title.equals("")){
+                    Toast.makeText(ListActivity.this, "Please input title", Toast.LENGTH_SHORT).show();
+                    listTitle.setFocusable(true);
+                    listTitle.setFocusableInTouchMode(true);
+                    listTitle.requestFocus();
+                }else{
+                    builder.setTitle("Save");
+                    builder.setMessage("Do you want to save the list");
+                    builder.setNegativeButton("Cancel", null);
+                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+
+                            if(id == -1){
+                                listPresenter.insertPresenter(formatData());
+                            }else {
+                                listPresenter.updatePresenter(formatData());
+                            }
+                            finish();
+                            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                        }
+                    });
+                    dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
                 }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    /**
+     * button 得到和失去焦点
+     * @param buttonType button的类型
+     * @param focusType true为得到焦点， false为失去焦点
+     */
+    private void buttonFocus(int buttonType, boolean focusType){
+        if (focusType){
+            switch (buttonType){
+                case CANCEL:
+                    listCancel.setFocusable(true);
+                    listCancel.setFocusableInTouchMode(true);
+                    listCancel.requestFocus();
+                    break;
+
+                case DELETE:
+                    listDelete.setFocusable(true);
+                    listDelete.setFocusableInTouchMode(true);
+                    listDelete.requestFocus();
+                    break;
+
+                case CONFIRM:
+                    listConfirm.setFocusable(true);
+                    listConfirm.setFocusableInTouchMode(true);
+                    listConfirm.requestFocus();
+                    break;
+
+                default:
+                    break;
             }
-        });
+        }else {
+            switch (buttonType){
+                case CANCEL:
+                    listCancel.setFocusable(false);
+                    listCancel.setFocusableInTouchMode(false);
+                    listCancel.requestFocus();
+                    break;
+
+                case DELETE:
+                    listDelete.setFocusable(false);
+                    listDelete.setFocusableInTouchMode(false);
+                    listDelete.requestFocus();
+                    break;
+
+                case CONFIRM:
+                    listConfirm.setFocusable(false);
+                    listConfirm.setFocusableInTouchMode(false);
+                    listConfirm.requestFocus();
+                    break;
+
+                default:
+                    break;
+            }
+        }
     }
 
     /**
@@ -203,6 +325,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         listContent.setAdapter(listItemAdapter);
     }
 
+    /**
+     * 添加返回动画
+     */
     @Override
     public void onBackPressed(){
         super.onBackPressed();

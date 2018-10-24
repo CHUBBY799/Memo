@@ -169,10 +169,6 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
         notifyItemRangeChanged(length-1,length);
     }
 
-    public JSONArray getItemArr(){
-        return itemArr;
-    }
-
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView itemState;
         EditText itemContent;

@@ -7,6 +7,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- dialog theme -->
+    <style name="MyDialog" parent="Base.V7.Theme.AppCompat.Light.Dialog">
+        <item name="android:textColorPrimary">@color/guide_title</item>
+        <item name="android:colorAccent">@color/guide_button</item>
+    </style>
+
     <!-- MyEditText -->
     <style name="MyEditText" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@color/underline_background</item>
