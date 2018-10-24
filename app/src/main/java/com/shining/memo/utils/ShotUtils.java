@@ -13,6 +13,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.util.LruCache;
 import android.view.View;
@@ -21,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -125,17 +127,6 @@ public class ShotUtils {
     }
 
 
-    public static void shareLocal(Context context,String sharePath){
-        if(sharePath != null){
-            Uri imageUri = Uri.fromFile(new File(sharePath));
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
-            shareIntent.setType("image/*");
-            ((Activity)context).startActivityForResult(Intent.createChooser(shareIntent, "分享图片"),0xa4);
-        }
-    }
-
     public static boolean isAppAvilible(Context context,String packName){
         final PackageManager packageManager = context.getPackageManager();
         List<PackageInfo> packageInfos = packageManager.getInstalledPackages(0);
@@ -144,6 +135,48 @@ public class ShotUtils {
                 return true;
         }
         return false;
+    }
+
+    public static void shareCustom(Context context,String sharePath){
+        List<Intent> targetIntents = new ArrayList<>();
+        if(isAppAvilible(context,"com.tencent.mm")){
+            Intent target = new Intent();
+            ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");
+            target.setComponent(comp);
+            target.setAction(Intent.ACTION_SEND);
+            target.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(sharePath)));
+            target.setType("image/*");
+            targetIntents.add(target);
+            target = new Intent();
+            comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
+            target.setComponent(comp);
+            target.setAction(Intent.ACTION_SEND);
+            target.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(sharePath)));
+            target.setType("image/*");
+            targetIntents.add(target);
+        }else if(isAppAvilible(context,"com.tencent.mobileqq")){
+            Intent target = new Intent();
+            ComponentName comp = new ComponentName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");
+            target.setComponent(comp);
+            target.setAction(Intent.ACTION_SEND);
+            target.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(sharePath)));
+            target.setType("image/*");
+            targetIntents.add(target);
+        }
+        if(targetIntents.size() > 0){
+            Intent chooserIntent = Intent.createChooser(targetIntents.remove(0),"分享图片");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,targetIntents.toArray(new Parcelable[]{}));
+            ((Activity)context).startActivityForResult(chooserIntent,0xa4);
+        }else {
+            if(sharePath != null){
+                Uri imageUri = Uri.fromFile(new File(sharePath));
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                shareIntent.setType("image/*");
+                ((Activity)context).startActivityForResult(Intent.createChooser(shareIntent, "分享图片"),0xa4);
+            }
+        }
     }
 
 }

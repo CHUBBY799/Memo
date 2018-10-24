@@ -35,12 +35,13 @@
     <string name="list_add_item">Add a item</string>
 
     <!-- task string -->
-    <string name="edit_title_hint">Please input title of recording</string>
-    <string name="edit_title_hint_zh">请输入标题内容</string>
-    <string name="view_title_hint">None title of recording</string>
-    <string name="view_title_hint_zh">无标题</string>
-    <string name="edit_content_hint">Please input content of recording</string>
-    <string name="item_text_hint">请输入正文内容</string>
+    <string name="edit_title_hint">Please input content of title</string>
+    <string name="view_title_hint">No title</string>
+    <string name="item_text_hint">Please input content of text</string>
+    <string name="save_successful_notice">save successful</string>
+    <string name="save_failed_notice">save failed</string>
+    <string name="empty_text_notice">save failed for empty text</string>
+    <string name="no_selectd_text">no select text!</string>
 
     <!-- alarm string -->
     <string name="alarm_clock">Alarm Clock</string>
@@ -50,6 +51,12 @@
     <string name="alarm_confirm">OK</string>
     <string name="alarm_update">Update the Alarm Clock</string>
     <string name="alarm_delete">Delete the Alarm Clock</string>
+    <string name="alarm_set_notice">Set the Alarm successfully</string>
+    <string name="alarm_updated_notice">Update the Alarm successfully</string>
+    <string name="alarm_updated_failed">failed to update the alarm</string>
+    <string name="alarm_set_failed">failed to set the alarm</string>
+    <string name="alarm_deleted_failed">failed to delete the alarm</string>
+    <string name="alarm_deleted_notice">Delete the Alarm successfully</string>
 
     <!-- calendar string -->
     <string name="calendar">calendar</string>
@@ -65,22 +72,21 @@
 
     <!-- audio string -->
     <string name="audio">audio</string>
-    <string name="edit_title_hint_audio">Please input title of audio</string>
-    <string name="audio_rerecording">rerecording</string>
-    <string name="audio_recording">recording</string>
-    <string name="audio_recording_initTime">00:00</string>
-    <string name="audio_recording_btnText">press here to record</string>
     <string name="audio_finish">OK</string>
     <string name="audio_time_length">00:00:00</string>
     <string name="audio_delete_title">Delete Audio</string>
     <string name="audio_delete_tip">Do you want to delete the audio?</string>
-
+    <string name="audio_length_limit">The recording time is less than 1S. Please rerecord it.</string>
+    <string name="audio_prepare">Recording has not started yet!</string>
+    <string name="audio_play_failed">failed to play audio</string>
 
     <!-- photo string -->
     <string name="photo_gallery">GALLERY</string>
     <string name="photo_camera">CAMERA</string>
     <string name="photo_recording_btnText">photo</string>
     <string name="list_launches_icon">List launches Icon</string>
+    <string name="no_sdcard">device has not SDcard!</string>
+    <string name="no_memory_dir">no find file directory</string>
 
     <!-- ImageButton contentDescription -->
     <string name="close_icon">close icon</string>

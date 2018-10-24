@@ -1,7 +1,9 @@
 package com.shining.memo.home.adapter;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 
 import com.shining.memo.R;
 import com.shining.memo.model.Task;
+import com.shining.memo.view.NoteActivity;
 
 import java.util.List;
 
@@ -32,13 +35,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder>{
     }
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public ViewHolder onCreateViewHolder(@NonNull final ViewGroup viewGroup, int i) {
         View view= LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.main_noteitem,viewGroup,false);
-        ViewHolder holder= new ViewHolder(view);
+        final ViewHolder holder= new ViewHolder(view);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                int id=(int)mNotes.get(holder.getLayoutPosition()).getId();
+                Log.d("helo", "onClick: "+id);
+                Intent intent=new Intent(viewGroup.getContext(), NoteActivity.class);
+                intent.putExtra("noteId",id);
+                viewGroup.getContext().startActivity(intent);
             }
         });
         return holder;

@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 
+import com.shining.memo.R;
 import com.shining.memo.utils.ToastUtils;
 
 import java.io.File;
@@ -60,11 +61,11 @@ public class PhotoPresenter {
                 return filePath;
             }catch (Exception e){
                 e.printStackTrace();
-                ToastUtils.showFailedShort(context, "没有找到储存目录！");
+                ToastUtils.showFailedShort(context, context.getResources().getString(R.string.no_memory_dir));
                 return null;
             }
         }else {
-            ToastUtils.showFailedShort(context, "设备没有SD卡！");
+            ToastUtils.showFailedShort(context, context.getResources().getString(R.string.no_sdcard));
             return null;
         }
     }

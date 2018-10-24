@@ -37,7 +37,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.shining.memo.R;
 import com.shining.memo.model.RecordingContent;
@@ -65,7 +64,7 @@ import static android.text.Html.FROM_HTML_MODE_COMPACT;
 
 
 public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayPresenter.onStopPlay {
-    private String TAG ="RecordingAdapter";
+
     private HashMap<Integer,RecordingContent> map;
     private Activity activity;
     private Context context;
@@ -255,7 +254,6 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         btnIndex = -1;
         isPlaying = false;
         changedBtnDrawable(0,button);
-        Log.d(TAG, "onStopPlay: btnIndex"+btnIndex);
     }
 
     @Override
@@ -283,7 +281,6 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
 
         public TitleViewHolder(@NonNull View itemView) {
             super(itemView);
-            Log.d(TAG,"TitleViewHolder");
             editTitle = itemView.findViewById(R.id.recording_title);
             this.itemView = itemView;
             editTitle.setOnFocusChangeListener(this);
@@ -302,9 +299,8 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 textChanged.updateEditIcon(list);
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(editTitle,0);
-                CurrentIndex = 0;
+                CurrentIndex = -1;
                 CurrentType = "title";
-                Log.d(TAG, "onFocusChange: " + CurrentIndex + CurrentType);
             }else {
                 CurrentIndex = -1;
             }
@@ -365,7 +361,6 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             if(hasFocus){
                 CurrentIndex = (int)itemView.getTag();
                 CurrentType = "text";
-                Log.d(TAG, "onFocusChange: " + CurrentIndex + CurrentType);
                 if(isView){
                     textChanged.viewToEdit();
                 }
@@ -565,7 +560,6 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                     CurrentType = "audio_end";
                     textChangedId = R.id.btn_edit;
                 }
-                Log.d(TAG, "onFocusChange: " + CurrentIndex);
             }else {
                 CurrentIndex = -1;
             }
@@ -916,7 +910,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 textChanged.TextChanged(spannableString,index);
                 return true;
             }else {
-                ToastUtils.showFailedShort(context,"no select text!");
+                ToastUtils.showFailedShort(context,context.getResources().getString(R.string.no_selectd_text));
                 return false;
             }
         }
@@ -965,7 +959,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 textViewHolder.editText.setSelection(startIndex,endIndex);
                 textChanged.TextChanged(spannableString,index);
             }else{
-                ToastUtils.showFailedShort(context,"no select text!");
+                ToastUtils.showFailedShort(context,context.getResources().getString(R.string.no_selectd_text));
             }
         }
     }

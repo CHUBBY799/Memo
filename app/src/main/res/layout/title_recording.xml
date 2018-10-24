@@ -17,7 +17,7 @@
         android:background="@null"
         android:maxEms="14"
         android:maxLines="4"
-        android:hint="@string/edit_title_hint_zh"
+        android:hint="@string/edit_title_hint"
         android:imeOptions="actionNext"
         android:ellipsize="end"
         android:minHeight="40dp"

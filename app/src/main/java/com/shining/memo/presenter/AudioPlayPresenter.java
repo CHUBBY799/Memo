@@ -8,6 +8,7 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.shining.memo.R;
 import com.shining.memo.utils.ToastUtils;
 
 import java.text.SimpleDateFormat;
@@ -83,7 +84,7 @@ public class AudioPlayPresenter {
                     mHandlerProgress.sendEmptyMessage(MSG_PROGRESS_UPDATE);
                 }catch (Exception e){
                     e.printStackTrace();
-                    ToastUtils.showFailedShort(context,"failed to play audio");
+                    ToastUtils.showFailedShort(context,context.getResources().getString(R.string.audio_play_failed));
                     //提示用户
                     mMediaPlayer.reset();
                     mMediaPlayer.release();
