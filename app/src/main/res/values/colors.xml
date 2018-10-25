@@ -61,6 +61,7 @@
     <color name="photo_divider">#EEEEEE</color>
     <color name="photo_shelter">#88000000</color>
     <color name="toast_background">#EAFF8833</color>
+    <color name="urgent_ripple">#f9f901</color>
 
     <!-- calendar color -->
     <color name="calendar_select">#FF8833</color>

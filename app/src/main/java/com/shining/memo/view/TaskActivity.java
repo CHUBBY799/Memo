@@ -286,9 +286,9 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             }
             urgent = task_recording.getTask().getUrgent();
             if(urgent == 0)
-                mBtnViewUrgent.setBackground(getDrawable(R.drawable.no_urgent_bg));
+                mBtnViewUrgent.setBackground(getDrawable(R.drawable.no_urgent_ripple));
             else
-                mBtnViewUrgent.setBackground(getDrawable(R.drawable.urgent_bg));
+                mBtnViewUrgent.setBackground(getDrawable(R.drawable.urgent_ripple));
             mMap = task_recording.getRecording().getRecordingMap();
         }
         adapter = new RecordingAdapter(mMap,this,this);
@@ -950,11 +950,11 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     private void clickUrgent(Button btn){
         if(urgent == 1){
-            btn.setBackground(getDrawable(R.drawable.no_urgent_bg));
+            btn.setBackground(getDrawable(R.drawable.no_urgent_ripple));
             urgent = 0;
         }
         else{
-            btn.setBackground(getDrawable(R.drawable.urgent_bg));
+            btn.setBackground(getDrawable(R.drawable.urgent_ripple));
             urgent = 1;
         }
     }
@@ -1077,9 +1077,9 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         alarmChanged = false;
         adapter.setView(false);
         if(urgent == 1)
-            mSwitchUrgent.setBackground(getDrawable(R.drawable.urgent_bg));
+            mSwitchUrgent.setBackground(getDrawable(R.drawable.urgent_ripple));
         else
-            mSwitchUrgent.setBackground(getDrawable(R.drawable.no_urgent_bg));
+            mSwitchUrgent.setBackground(getDrawable(R.drawable.no_urgent_ripple));
     }
 
     @Override
