@@ -111,6 +111,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
         }
     }
 
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {

@@ -27,12 +27,16 @@ import java.util.Date;
 import java.util.List;
 
 public class ShotUtils {
-    public static Bitmap shotRecyclerView(RecyclerView view) {
+
+    public static Bitmap shotRecyclerView(RecyclerView view,View title) {
         RecyclerView.Adapter adapter = view.getAdapter();
         Bitmap bigBitmap = null;
         if (adapter != null) {
             int size = adapter.getItemCount();
             int height = 0;
+            if(title != null){
+                height = title.getHeight();
+            }
             Paint paint = new Paint();
             int iHeight = 0;
             final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
@@ -65,15 +69,59 @@ public class ShotUtils {
                 int lColor = lColorDrawable.getColor();
                 bigCanvas.drawColor(lColor);
             }
-
+            if(title != null){
+                Bitmap bitmap = getViewBitmap(title);
+                if(bitmap != null){
+                    bigCanvas.drawBitmap(bitmap, 0f, iHeight, paint);
+                    iHeight += bitmap.getHeight();
+                    bitmap.recycle();
+                }
+            }
             for (int i = 0; i < size; i++) {
-                Bitmap bitmap = bitmaCache.get(String.valueOf(i));
-                bigCanvas.drawBitmap(bitmap, 0f, iHeight, paint);
-                iHeight += bitmap.getHeight();
-                bitmap.recycle();
+                try {
+                    Bitmap bitmap = bitmaCache.get(String.valueOf(i));
+                    if(bitmap != null){
+                        bigCanvas.drawBitmap(bitmap, 0f, iHeight, paint);
+                        iHeight += bitmap.getHeight();
+                        bitmap.recycle();
+                    }else {
+                        RecyclerView.ViewHolder holder = adapter.createViewHolder(view, adapter.getItemViewType(i));
+                        adapter.onBindViewHolder(holder, i);
+                        holder.itemView.measure(
+                                View.MeasureSpec.makeMeasureSpec(view.getWidth(), View.MeasureSpec.EXACTLY),
+                                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                        holder.itemView.layout(0, 0, holder.itemView.getMeasuredWidth(),
+                                holder.itemView.getMeasuredHeight());
+                        bitmap = getBitmap(holder.itemView);
+                        bigCanvas.drawBitmap(bitmap, 0f, iHeight, paint);
+                        iHeight += bitmap.getHeight();
+                        bitmap.recycle();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
         return bigBitmap;
+    }
+
+    public static Bitmap getViewBitmap(View view){
+        view.measure(
+                View.MeasureSpec.makeMeasureSpec(view.getWidth(), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        return  view.getDrawingCache();
+    }
+
+
+    public static Bitmap getBitmap(View view)
+    {
+        Bitmap bitmap= Bitmap.createBitmap(view.getWidth(), view.getHeight(),Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
     }
 
 
@@ -138,44 +186,48 @@ public class ShotUtils {
     }
 
     public static void shareCustom(Context context,String sharePath){
-        List<Intent> targetIntents = new ArrayList<>();
-        if(isAppAvilible(context,"com.tencent.mm")){
-            Intent target = new Intent();
-            ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");
-            target.setComponent(comp);
-            target.setAction(Intent.ACTION_SEND);
-            target.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(sharePath)));
-            target.setType("image/*");
-            targetIntents.add(target);
-            target = new Intent();
-            comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
-            target.setComponent(comp);
-            target.setAction(Intent.ACTION_SEND);
-            target.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(sharePath)));
-            target.setType("image/*");
-            targetIntents.add(target);
-        }else if(isAppAvilible(context,"com.tencent.mobileqq")){
-            Intent target = new Intent();
-            ComponentName comp = new ComponentName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");
-            target.setComponent(comp);
-            target.setAction(Intent.ACTION_SEND);
-            target.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(sharePath)));
-            target.setType("image/*");
-            targetIntents.add(target);
-        }
-        if(targetIntents.size() > 0){
-            Intent chooserIntent = Intent.createChooser(targetIntents.remove(0),"分享图片");
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,targetIntents.toArray(new Parcelable[]{}));
-            ((Activity)context).startActivityForResult(chooserIntent,0xa4);
-        }else {
-            if(sharePath != null){
-                Uri imageUri = Uri.fromFile(new File(sharePath));
-                Intent shareIntent = new Intent();
-                shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
-                shareIntent.setType("image/*");
-                ((Activity)context).startActivityForResult(Intent.createChooser(shareIntent, "分享图片"),0xa4);
+        try{
+            List<Intent> targetIntents = new ArrayList<>();
+            if(isAppAvilible(context,"com.tencent.mm")){
+                Intent target = new Intent();
+                ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");
+                target.setComponent(comp);
+                target.setAction(Intent.ACTION_SEND);
+                target.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(sharePath)));
+                target.setType("image/*");
+                targetIntents.add(target);
+                target = new Intent();
+                comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
+                target.setComponent(comp);
+                target.setAction(Intent.ACTION_SEND);
+                target.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(sharePath)));
+                target.setType("image/*");
+                targetIntents.add(target);
+            }else if(isAppAvilible(context,"com.tencent.mobileqq")){
+                Intent target = new Intent();
+                ComponentName comp = new ComponentName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");
+                target.setComponent(comp);
+                target.setAction(Intent.ACTION_SEND);
+                target.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(sharePath)));
+                target.setType("image/*");
+                targetIntents.add(target);
             }
+            if(targetIntents.size() > 0){
+                Intent chooserIntent = Intent.createChooser(targetIntents.remove(0),"分享图片");
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,targetIntents.toArray(new Parcelable[]{}));
+                ((Activity)context).startActivityForResult(chooserIntent,0xa4);
+            }else {
+                if(sharePath != null){
+                    Uri imageUri = Uri.fromFile(new File(sharePath));
+                    Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                    shareIntent.setType("image/*");
+                    ((Activity)context).startActivityForResult(Intent.createChooser(shareIntent, "分享图片"),0xa4);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

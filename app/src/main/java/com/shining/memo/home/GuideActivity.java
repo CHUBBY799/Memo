@@ -82,7 +82,6 @@ public class GuideActivity extends AppCompatActivity {
         guideButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                guideButton.setTextColor(R.color.colorWhite);
                 Intent intent = new Intent(GuideActivity.this, MemoActivity.class);
                 startActivity(intent);
                 finish();

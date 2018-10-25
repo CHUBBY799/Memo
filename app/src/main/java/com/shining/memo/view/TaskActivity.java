@@ -622,8 +622,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     photoPresenter.openAlbum(this,REQUEST_GALLERY);
                 }
                 break;
-            default:
-                break;
             case REQUEST_SHARE:
                 if(!shotPath.equals("")){
                     File file = new File(shotPath);
@@ -632,6 +630,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     }
                     shotPath = "";
                 }
+                break;
+            default:
                 break;
         }
     }
@@ -1040,7 +1040,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_share:
-                    shotPath = ShotUtils.saveBitmap(TaskActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
+                    shotPath = ShotUtils.saveBitmap(TaskActivity.this,ShotUtils.shotRecyclerView(mRecyclerView,null));
                     ShotUtils.shareCustom(TaskActivity.this,shotPath);
                     break;
                 case R.id.bottom_view_alarm:
