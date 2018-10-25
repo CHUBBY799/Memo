@@ -47,19 +47,21 @@
     <color name="alarm_btn_no_delete">#E5E5E5</color>
     <color name="alarm_save_shadow">#77FF8833</color>
     <color name="alarm_window_shadow">#9AFF8833</color>
+    <color name="divider">#FFDCC5</color>
 
     <!-- task color -->
     <color name="recording_title">#666666</color>
     <color name="content_background">#FAFAFA</color>
     <color name="underline_background">#EEEEEE</color>
     <color name="hint_color">#AAAAAA</color>
-    <color name="item_btn_background">#FFF6F0</color>
+    <color name="item_btn_background">#FFEEE3</color>
     <color name="item_btn_text">#FF8833</color>
-    <color name="half_transparent_orange">#8EFF8833 </color>
-    <color name="seek_bar_transparent_orange">#1EFF8833 </color>
+    <color name="half_transparent_orange">#8EFF8833</color>
+    <color name="seek_bar_transparent_orange">#FFC8A3</color>
     <color name="photo_divider">#EEEEEE</color>
     <color name="photo_shelter">#88000000</color>
     <color name="toast_background">#EAFF8833</color>
+    <color name="urgent_ripple">#ffffff</color>
 
     <!-- calendar color -->
     <color name="calendar_select">#FF8833</color>

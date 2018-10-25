@@ -2,13 +2,12 @@ package com.shining.memo.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageButton;
 
 import com.shining.memo.R;
 
@@ -46,12 +45,11 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-        final TextView itemState = holder.itemState;
+        final ImageButton itemState = holder.itemState;
         final EditText itemContent = holder.itemContent;
-        final ConstraintLayout listItem = holder.listItem;
 
         if (position == length){
-            itemState.setBackground(context.getDrawable(R.drawable.add_new_item_icon));
+            itemState.setImageResource(R.drawable.add_new_item_icon);
             itemContent.setTextColor(context.getColor(R.color.main_add_item));
             itemContent.setText(context.getString(R.string.list_add_item));
             itemContent.setFocusable(false);
@@ -61,7 +59,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
                     mOnItemClickListener.onClick(holder.getAdapterPosition());
                 }
             });
-            listItem.setOnClickListener( new View.OnClickListener() {
+            itemState.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mOnItemClickListener.onClick(holder.getAdapterPosition());
@@ -70,10 +68,10 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
 
         }else {
             if (state[position]){
-                itemState.setBackground(context.getDrawable(R.drawable.group));
+                itemState.setImageResource(R.drawable.group);
                 itemContent.setTextColor(context.getColor(R.color.calendar_unselected));
             }else {
-                itemState.setBackground(context.getDrawable(R.drawable.group_2));
+                itemState.setImageResource(R.drawable.group_2);
                 itemContent.setTextColor(context.getColor(R.color.recording_title));
             }
             itemContent.setText(content[position]);
@@ -84,11 +82,11 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
                 public void onClick(View v) {
                     int stateIndex = holder.getLayoutPosition();
                     if (state[stateIndex]){
-                        itemState.setBackground(context.getDrawable(R.drawable.group_2));
+                        itemState.setImageResource(R.drawable.group_2);
                         itemContent.setTextColor(context.getColor(R.color.recording_title));
                         state[stateIndex] = false;
                     }else {
-                        itemState.setBackground(context.getDrawable(R.drawable.group));
+                        itemState.setImageResource(R.drawable.group);
                         itemContent.setTextColor(context.getColor(R.color.calendar_unselected));
                         state[stateIndex] = true;
                     }
@@ -170,14 +168,12 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView itemState;
+        ImageButton itemState;
         EditText itemContent;
-        ConstraintLayout listItem;
         public MyViewHolder(View itemView) {
             super(itemView);
             itemState = itemView.findViewById(R.id.item_state);
             itemContent = itemView.findViewById(R.id.item_content);
-            listItem = itemView.findViewById(R.id.list_item);
         }
     }
 }

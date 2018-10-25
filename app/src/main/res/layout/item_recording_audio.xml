@@ -25,7 +25,7 @@
 
         <RelativeLayout
             android:layout_width="300dp"
-            android:layout_height="35dp"
+            android:layout_height="40dp"
             android:background="@drawable/audio_rerecording_shape"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btn_edit"
@@ -36,8 +36,8 @@
                 android:id="@+id/item_btn_play"
                 android:layout_width="45dp"
                 android:layout_height="match_parent"
-                android:paddingTop="7.5dp"
-                android:paddingBottom="7.5dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:paddingStart="10dp"
                 android:layout_gravity="center_vertical"
                 android:background="@android:color/transparent"
@@ -49,7 +49,7 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_toRightOf="@id/item_btn_play"
-                android:background="@color/half_transparent_orange" />
+                android:background="@color/divider" />
 
             <SeekBar
                 android:id="@+id/audio_seekbar"
@@ -61,7 +61,6 @@
                 android:layout_marginStart="5dp"
                 android:paddingStart="0dp"
                 android:paddingEnd="0dp"
-                android:splitTrack="false"
                 android:thumbOffset="0dp"
                 android:progress="0"
                 android:maxHeight="5dp"
@@ -84,13 +83,13 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_toLeftOf="@id/item_btn_delete"
-                android:background="@color/half_transparent_orange" />
+                android:background="@color/divider" />
             <ImageButton
                 android:id="@+id/item_btn_delete"
                 android:layout_width="45dp"
                 android:layout_height="match_parent"
-                android:paddingTop="7.5dp"
-                android:paddingBottom="7.5dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:paddingEnd="10dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/delete_audio_icon"

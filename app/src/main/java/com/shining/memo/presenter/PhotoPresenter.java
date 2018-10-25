@@ -17,9 +17,7 @@ import java.util.Date;
 
 public class PhotoPresenter {
 
-    private static final String TAG = "PhotoPresenter";
     private String FolderPath = "";     //文件夹路径
-
     private Uri imageUri;
     private Context context;
 

@@ -45,6 +45,7 @@
         <string name="save_failed_notice">保存失败</string>
         <string name="empty_text_notice">内容为空保存失败</string>
         <string name="no_selectd_text">没有选中文本</string>
+        <string name="urgent">紧急</string>
 
         <!-- alarm string -->
         <string name="alarm_clock">闹钟</string>

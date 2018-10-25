@@ -44,6 +44,7 @@
     <string name="save_failed_notice">save failed</string>
     <string name="empty_text_notice">save failed for empty text</string>
     <string name="no_selectd_text">no select text!</string>
+    <string name="urgent">urgent</string>
 
     <!-- alarm string -->
     <string name="alarm_clock">Alarm Clock</string>
@@ -99,5 +100,6 @@
     <string name="delete_icon">delete icon</string>
     <string name="share_icon">share icon</string>
     <string name="save_icon">save icon</string>
+    <string name="group_icon">group icon</string>
 
 </resources>

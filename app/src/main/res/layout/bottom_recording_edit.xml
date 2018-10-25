@@ -37,15 +37,18 @@
             android:layout_toRightOf="@+id/bottom_cancel"/>
 
 
-        <Switch
+        <Button
+            style="?android:attr/borderlessButtonStyle"
             android:id="@+id/bottom_urgent"
             android:layout_width="44dp"
-            android:layout_height="22dp"
-            android:checked="false"
+            android:layout_height="match_parent"
+            android:text="@string/urgent"
+            android:textSize="12dp"
+            android:textColor="@color/alarm_btn_delete_border"
+            android:textAllCaps="false"
+            android:background="@drawable/no_urgent_ripple"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
-            android:thumb="@drawable/rect_thumb_selector"
-            android:track="@drawable/urgent_track_selector"
             android:layout_toRightOf="@+id/bottom_alarm"/>
 
         <ImageButton
