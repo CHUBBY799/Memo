@@ -20,7 +20,7 @@ public class ListFragment extends Fragment {
 
     private Context context;
     private RecyclerView listFragment;
-    private ListAdapter listContent;
+    private ListAdapter listAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -36,7 +36,7 @@ public class ListFragment extends Fragment {
             listFragment = getActivity().findViewById(R.id.list_fragment);
         }
         listFragment.setLayoutManager(new LinearLayoutManager(context));
-        listContent = new ListAdapter(context, getActivity());
+        listAdapter = new ListAdapter(context, getActivity());
     }
 
     @Override
@@ -45,8 +45,8 @@ public class ListFragment extends Fragment {
         ListModel listModel = new ListImpl(context);
         ListBean[] listBeans = listModel.queryAllData();
         if (listBeans != null){
-            listContent.setInfo(listBeans);
-            listFragment.setAdapter(listContent);
+            listAdapter.setInfo(listBeans);
+            listFragment.setAdapter(listAdapter);
         }
     }
 
@@ -55,8 +55,9 @@ public class ListFragment extends Fragment {
      * 解除 Fragment 与 Activity 的关联
      */
     @Override
-    public void onDetach() {
-        ListBean[] listBeans = listContent.getInfo();
+    public void onPause() {
+        super.onPause();
+        ListBean[] listBeans = listAdapter.getInfo();
         if (listBeans != null){
             ListModel listModel = new ListImpl(context);
             listModel.updateAllDataById(listBeans);

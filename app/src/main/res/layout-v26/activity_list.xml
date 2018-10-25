@@ -17,6 +17,7 @@
         android:layout_marginEnd="25dp"
         android:layout_marginStart="25dp"
         android:layout_marginTop="32dp"
+        android:ems="10"
         android:inputType="textMultiLine"
         android:hint="@string/list_hint_title"
         android:paddingBottom="12dp"
@@ -26,8 +27,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:importantForAutofill="no"
-        tools:targetApi="p"/>
+        android:autofillHints="" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_content"

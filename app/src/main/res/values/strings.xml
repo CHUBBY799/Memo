@@ -97,5 +97,6 @@
     <string name="delete_icon">delete icon</string>
     <string name="share_icon">share icon</string>
     <string name="save_icon">save icon</string>
+    <string name="group_icon">group icon</string>
 
 </resources>
