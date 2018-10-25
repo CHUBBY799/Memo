@@ -130,7 +130,7 @@ public class ShotUtils {
         File file;
         if (Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
-            savePath = Environment.getExternalStorageDirectory()+"/OhMemo/shot/";
+            savePath = Environment.getExternalStorageDirectory()+"/OhMemo/photo/";
             file = new File(savePath);
             if (!file.exists()) {
                 file.mkdir();

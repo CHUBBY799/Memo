@@ -502,12 +502,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                                   map.remove(map.size() - 1);
                                   textChanged.deleteEditText(map, index, 0, "end");
                               }
-                          }, new DialogInterface.OnClickListener() {
-                              @Override
-                              public void onClick(DialogInterface dialogInterface, int i) {
-                                  ToastUtils.showShort(context,context.getResources().getString(R.string.cancel));
-                              }
-                          });
+                          }, null);
 
                   break;
               case R.id.item_btn_play:
