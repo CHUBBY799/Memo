@@ -564,6 +564,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     }
                     shotPath = "";
                 }
+                break;
             default:
                 break;
         }
@@ -964,7 +965,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_share:
-                    shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView));
+                    shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView,null));
                     ShotUtils.shareCustom(NoteActivity.this,shotPath);
                     break;
             }
