@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
 
@@ -67,10 +68,10 @@ public class ShotUtils {
             }
 
             for (int i = 0; i < size; i++) {
-                Bitmap bitmap = bitmaCache.get(String.valueOf(i));
-                bigCanvas.drawBitmap(bitmap, 0f, iHeight, paint);
-                iHeight += bitmap.getHeight();
-                bitmap.recycle();
+//                Bitmap bitmap = bitmaCache.get(String.valueOf(i));
+//                bigCanvas.drawBitmap(bitmap, 0f, iHeight, paint);
+//                iHeight += bitmap.getHeight();
+//                bitmap.recycle();
             }
         }
         return bigBitmap;
