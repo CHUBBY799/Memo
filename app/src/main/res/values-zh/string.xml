@@ -23,8 +23,9 @@
         <string name="note">笔记</string>
         <string name="list">清单</string>
         <string name="main_add_task">添加一个任务</string>
-        <string name="main_add_list">添加一个笔记</string>
-        <string name="main_add_note">添加一个清单</string>
+        <string name="main_add_list">添加一个清单</string>
+        <string name="main_add_note">添加一个笔记
+        </string>
         <string name="main_finish_dialog_message">你想完成任务吗?在完成后,你会在日历上看到它.</string>
         <string name="main_finish_dialog_title">完成</string>
         <string name="main_task_no_title">无标题</string>
