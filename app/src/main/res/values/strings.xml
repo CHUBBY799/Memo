@@ -25,8 +25,10 @@
     <string name="main_add_task">Add a new task</string>
     <string name="main_add_list">Add a new list</string>
     <string name="main_add_note">Add a new note</string>
-    <string name="main_finish_dialog_message">Do you want to finish the task ?</string>
+    <string name="main_finish_dialog_message">Do you want to finish the task ? \nAfter finishing, you will see it in the calendar.</string>
     <string name="main_finish_dialog_title">Finish</string>
+    <string name="main_task_no_title">No title</string>
+    <string name="main_task_no_alarm">no alarm</string>
 
     <!-- list string -->
     <string name="list_hint_title">Please input title of list</string>

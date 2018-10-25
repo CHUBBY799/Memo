@@ -30,7 +30,7 @@ public class NoteFragment extends Fragment{
         mRecycler=view.findViewById(R.id.main_note_recycler);
         LinearLayoutManager manager=new LinearLayoutManager(getActivity());
         mRecycler.setLayoutManager(manager);
-        mAdapter=new NoteAdapter(mNotes);
+        mAdapter=new NoteAdapter(getActivity(),mNotes);
         mRecycler.setAdapter(mAdapter);
         return view;
     }

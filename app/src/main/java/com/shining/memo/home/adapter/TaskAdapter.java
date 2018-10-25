@@ -185,17 +185,27 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
         try{
             holder.confirm.setVisibility(View.INVISIBLE);
             JSONObject task=tasks.get(p);
-            if(task.getString("type").equalsIgnoreCase("audio")){
-                holder.type.setImageResource(R.drawable.audio_type_icon);
+            if(task.getString("type").equalsIgnoreCase("audio") && (task.getString("title")==null
+                    ||task.getString("title").equals(""))){
                 holder.title.setVisibility(View.INVISIBLE);
                 holder.audioTitle1.setVisibility(View.VISIBLE);
                 holder.audioTitle2.setVisibility(View.VISIBLE);
-            }else {
-                holder.type.setVisibility(View.VISIBLE);
+            }else if(task.getString("type").equalsIgnoreCase("text") && (task.getString("title")==null
+                    ||task.getString("title").equals(""))){
                 holder.audioTitle1.setVisibility(View.INVISIBLE);
                 holder.audioTitle2.setVisibility(View.INVISIBLE);
-                holder.type.setImageResource(R.drawable.text_type_icon);
+                holder.title.setVisibility(View.VISIBLE);
+                holder.title.setText(mContext.getString(R.string.main_task_no_title));
+            } else {
+                holder.audioTitle1.setVisibility(View.INVISIBLE);
+                holder.audioTitle2.setVisibility(View.INVISIBLE);
+                holder.title.setVisibility(View.VISIBLE);
                 holder.title.setText(task.getString("title"));
+            }
+            if(task.getString("type").equalsIgnoreCase("audio")){
+                holder.type.setImageResource(R.drawable.audio_type_icon);
+            }else {
+                holder.type.setImageResource(R.drawable.text_type_icon);
             }
             if(task.getInt("urgent")==0){
                 holder.urgent.setVisibility(View.INVISIBLE);
@@ -203,7 +213,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
                 holder.urgent.setVisibility(View.VISIBLE);
             }
             if(task.getInt("alarm")==0){
-                holder.alarm.setText("no alarm");
+                holder.alarm.setText(mContext.getString(R.string.main_task_no_alarm));
             }else {
 //                String alarmHelp= Utils.formatToMain(task.getString("alarmDate")
 //                        ,task.getString("alarmTime"));
@@ -226,4 +236,5 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
     public void setCallback(Callback callback){
         this.callback=callback;
     }
+
 }

@@ -2,7 +2,7 @@
 <resources>
         <!-- common string -->
         <string name="cancel">取消</string>
-        <string name="confirm">Confirm</string>
+        <string name="confirm">确认</string>
         <string name="state">state</string>
         <string name="title">title</string>
         <string name="item">item</string>
@@ -19,17 +19,19 @@
 
         <!--main string-->
         <string name="app_name">Memo</string>
-        <string name="task">Task</string>
-        <string name="note">Note</string>
-        <string name="list">List</string>
-        <string name="main_add_task">Add a new task</string>
-        <string name="main_add_list">Add a new list</string>
-        <string name="main_add_note">Add a new note</string>
-        <string name="main_finish_dialog_message">Do you want to finish the task ?</string>
-        <string name="main_finish_dialog_title">Finish</string>
+        <string name="task">任务</string>
+        <string name="note">笔记</string>
+        <string name="list">清单</string>
+        <string name="main_add_task">添加一个任务</string>
+        <string name="main_add_list">添加一个笔记</string>
+        <string name="main_add_note">添加一个清单</string>
+        <string name="main_finish_dialog_message">你想完成任务吗?在完成后,你会在日历上看到它.</string>
+        <string name="main_finish_dialog_title">完成</string>
+        <string name="main_task_no_title">无标题</string>
+        <string name="main_task_no_alarm">无闹钟</string>
 
         <!-- list string -->
-        <string name="list_hint_title">Please input title of list</string>
+        <string name="list_hint_title">请输入清单的标题</string>
         <string name="expand_icon">expand icon</string>
         <string name="start_default">start default</string>
         <string name="list_add_item">Add a item</string>
