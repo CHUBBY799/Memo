@@ -16,8 +16,8 @@ public class DialogUtils {
         .setTitle(title)
         .setMessage(message)
         .setCancelable(true)
-        .setPositiveButton("OK", positive)
-                .setNegativeButton("Cancel",negative).create();
+        .setPositiveButton(R.string.confirm,positive)
+                .setNegativeButton(R.string.cancel,negative).create();
         dialog.show();
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(context.getColor(R.color.item_btn_text));
         dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(context.getColor(R.color.item_btn_text));

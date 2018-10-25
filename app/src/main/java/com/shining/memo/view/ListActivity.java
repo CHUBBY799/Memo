@@ -3,6 +3,7 @@ package com.shining.memo.view;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,20 +18,25 @@ import com.shining.memo.R;
 import com.shining.memo.adapter.ListItemAdapter;
 import com.shining.memo.bean.ListBean;
 import com.shining.memo.presenter.ListPresenter;
+import com.shining.memo.utils.ShotUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
 
 public class ListActivity extends AppCompatActivity implements View.OnClickListener,ViewList{
 
     private final static int CANCEL = 1;
     private final static int DELETE = 2;
     private final static int CONFIRM = 3;
+    private static final int REQUEST_SHARE=0xa4;
 
     private ImageButton listCancel;
     private ImageButton listConfirm;
     private ImageButton listDelete;
+    private ImageButton listShare;
     private EditText listTitle;
     private RecyclerView listContent;
     private ListItemAdapter listItemAdapter;
@@ -39,13 +45,15 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private int finished;
     private String title;
     private JSONArray itemArr;
-    private String initItemArr;
+    private String initItemArr,shotPath="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+        builder.detectFileUriExposure();
         Intent intent = getIntent();
         id = intent.getIntExtra("id", -1);
         finished = intent.getIntExtra("finished", 0);
@@ -78,6 +86,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.list_delete:
                 listDelete();
+            case R.id.list_share:
+                listShare();
             default:
                 break;
         }
@@ -133,6 +143,13 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         buildDialog(CONFIRM);
         buttonFocus(CONFIRM, false);
     }
+    /**
+     * 分享
+     */
+    private void listShare(){
+        shotPath = ShotUtils.saveBitmap(ListActivity.this,ShotUtils.shotRecyclerView(listContent,findViewById(R.id.list_title_layout)));
+        ShotUtils.shareCustom(ListActivity.this,shotPath);
+    }
 
     /**
      * 添加
@@ -159,6 +176,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         listCancel = findViewById(R.id.list_cancel);
         listConfirm = findViewById(R.id.list_confirm);
         listDelete = findViewById(R.id.list_delete);
+        listShare = findViewById(R.id.list_share);
         listTitle = findViewById(R.id.list_title);
 
         listContent = findViewById(R.id.list_content);
@@ -178,6 +196,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private void initComponent(){
         listCancel.setOnClickListener(this);
         listConfirm.setOnClickListener(this);
+        listShare.setOnClickListener(this);
         listDelete.setOnClickListener(this);
     }
 
@@ -332,5 +351,19 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed(){
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_SHARE:
+                if(!shotPath.equals("")){
+                    File file = new File(shotPath);
+                    if(file.exists()){
+                        file.delete();
+                    }
+                    shotPath = "";
+                }
+                break;
+        }
     }
 }

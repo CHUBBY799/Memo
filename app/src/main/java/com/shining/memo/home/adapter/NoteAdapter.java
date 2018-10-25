@@ -1,5 +1,6 @@
 package com.shining.memo.home.adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import com.shining.memo.view.NoteActivity;
 import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder>{
+    private Context mContext;
     private List<Task> mNotes;
     static class ViewHolder extends RecyclerView.ViewHolder{
         View mView;
@@ -30,7 +32,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder>{
             mAudio=mView.findViewById(R.id.main_note_audio);
         }
     }
-    public NoteAdapter(List<Task> notes){
+    public NoteAdapter(Context context,List<Task> notes){
+        mContext = context;
         mNotes=notes;
     }
     @NonNull
@@ -56,9 +59,15 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder>{
         Task task = mNotes.get(i);
         String type=task.getType();
         String title=task.getTitle();
-        if(type.equalsIgnoreCase("audio") && (title==null || title.equals(""))){
-            holder.mAudio.setVisibility(View.VISIBLE);
-            holder.mTitle.setVisibility(View.GONE);
+        if( title==null || title.equals("")){
+            if(type.equalsIgnoreCase("audio")){
+                holder.mAudio.setVisibility(View.VISIBLE);
+                holder.mTitle.setVisibility(View.GONE);
+            }else {
+                holder.mTitle.setVisibility(View.VISIBLE);
+                holder.mAudio.setVisibility(View.GONE);
+                holder.mTitle.setText(mContext.getString(R.string.main_task_no_title));
+            }
         }else {
             holder.mTitle.setVisibility(View.VISIBLE);
             holder.mAudio.setVisibility(View.GONE);

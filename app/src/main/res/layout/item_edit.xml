@@ -5,9 +5,9 @@
     android:id="@+id/list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="25dp"
-    android:layout_marginEnd="25dp"
-    android:layout_marginBottom="24.5dp"
+    android:paddingStart="25dp"
+    android:paddingEnd="25dp"
+    android:paddingBottom="24.5dp"
     android:background="@drawable/bg_rect05_white">
 
     <ImageButton

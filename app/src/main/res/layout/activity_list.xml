@@ -10,25 +10,37 @@
     android:focusableInTouchMode="true"
     tools:layout_editor_absoluteY="25dp">
 
-    <EditText
-        android:id="@+id/list_title"
-        android:layout_width="0dp"
+    <RelativeLayout
+        android:id="@+id/list_title_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="25dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="32dp"
-        android:inputType="textMultiLine"
-        android:hint="@string/list_hint_title"
-        android:paddingBottom="12dp"
-        android:textColor="@color/recording_title"
-        android:textSize="20sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:importantForAutofill="no"
-        tools:targetApi="p"/>
-
+        app:layout_constraintTop_toTopOf="parent">
+        <EditText
+            android:id="@+id/list_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="25dp"
+            android:paddingStart="25dp"
+            android:paddingTop="25dp"
+            android:ems="10"
+            android:hint="@string/list_hint_title"
+            android:inputType="textMultiLine"
+            android:paddingBottom="12dp"
+            android:textColor="@color/recording_title"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:background="@null" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="20dp"
+            android:background="@color/recording_title"
+            android:layout_below="@+id/list_title"/>
+    </RelativeLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_content"
         android:layout_width="0dp"
