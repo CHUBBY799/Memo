@@ -136,7 +136,6 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
-        Log.d("onBindViewHolder","onBindViewHolder" + requestFocusableIndex);
         TextViewHolder textViewHolder = null;
         AudioViewHolder audioViewHolder = null;
         PhotoViewHolder photoViewHolder = null;

@@ -54,16 +54,20 @@
             android:src="@drawable/alarm_clock_icon"
             android:layout_marginEnd="10dp"
             android:layout_toLeftOf="@+id/bottom_view_urgent"/>
-        <Switch
+        <Button
+            style="?android:attr/borderlessButtonStyle"
             android:id="@+id/bottom_view_urgent"
             android:layout_width="44dp"
             android:layout_height="22dp"
-            android:checked="true"
-            android:thumb="@drawable/rect_thumb_selector"
-            android:track="@drawable/urgent_track_selector"
+            android:text="urgent"
+            android:textSize="12dp"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:background="@drawable/no_urgent_bg"
             android:layout_marginEnd="25dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"/>
+
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

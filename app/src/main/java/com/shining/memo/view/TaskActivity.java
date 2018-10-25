@@ -71,8 +71,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 
-public class TaskActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged,
-        Switch.OnCheckedChangeListener {
+public class TaskActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged{
 
     private static final int REQUEST_AUDIO_PERMISSION = 0xc1;
     private static final int REQUEST_CAMERA_PERMISSION = 0xc2;
@@ -86,7 +85,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     private ImageButton mBtnBold,mBtnUnderLine,mBtnDeleteLine,mBtnColor,mBtnTextBack;
     private ImageButton mBtnColBack,mBtnColRed,mBtnColOrange,mBtnColBlue,mBtnColPurple,mBtnColGray,mBtnColBlack;
     private ImageButton mBtnViewBack,mBtnViewDelete,mBtnViewShare,mBtnViewAlarm;
-    private Switch mSwitchUrgent,mBtnViewUrgent;
+    private Button mSwitchUrgent,mBtnViewUrgent;
     private TextView mTvTime,dialogTv;
     private AlertDialog dialog;
     private PopupWindow volumePopWindow;
@@ -135,7 +134,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     @Override
     protected void onStop() {
         super.onStop();
-        if(presenter.stopRecord() > 0)
+        if(presenter != null && presenter.stopRecord() > 0)
             isRecording = true;
         else
             isRecording = false;
@@ -188,7 +187,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         mBtnConfirm = (ImageButton)view.findViewById(R.id.bottom_confirm);
         mBtnAlarm = (ImageButton)view.findViewById(R.id.bottom_alarm);
         mBtnEdit = (ImageButton)view.findViewById(R.id.bottom_textedit);
-        mSwitchUrgent = (Switch)view.findViewById(R.id.bottom_urgent);
+        mSwitchUrgent = (Button) view.findViewById(R.id.bottom_urgent);
         mBtnRecord = (ImageButton)view.findViewById(R.id.bottom_audio);
         mBtnPhoto = (ImageButton)view.findViewById(R.id.bottom_photo);
         view =  (View)findViewById(R.id.bottom_recording_audio);
@@ -212,7 +211,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         mBtnColBlue = (ImageButton)view.findViewById(R.id.colorpick_blue);
         mBtnColPurple = (ImageButton)view.findViewById(R.id.colorpick_purple);
         mBtnColGray = (ImageButton)view.findViewById(R.id.colorpick_gray);
-
         mRecyclerView = (RecyclerView)findViewById(R.id.recording_recyclerView);
 
         mBtnCancel.setOnClickListener(this);
@@ -225,7 +223,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         mBtnFinish.setOnClickListener(this);
         mBtnCamera.setOnClickListener(this);
         mBtnGallery.setOnClickListener(this);
-        mSwitchUrgent.setOnCheckedChangeListener(this);
+        mSwitchUrgent.setOnClickListener(this);
         mBtnTextBack.setOnClickListener(this);
         mBtnBold.setOnClickListener(this);
         mBtnUnderLine.setOnClickListener(this);
@@ -238,8 +236,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         mBtnColBlue.setOnClickListener(this);
         mBtnColPurple.setOnClickListener(this);
         mBtnColGray.setOnClickListener(this);
-        presenter = new AudioRecordPresenter(this);
-        photoPresenter = new PhotoPresenter(this);
         recordingPresenter = new RecordingPresenter(this);
         alarmPresenter = new AlarmPresenter(this);
         taskId = getIntent().getIntExtra("taskId",-1);
@@ -253,13 +249,13 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             mBtnViewDelete = (ImageButton)v.findViewById(R.id.bottom_delete);
             mBtnViewShare = (ImageButton)v.findViewById(R.id.bottom_share);
             mBtnViewAlarm = (ImageButton)v.findViewById(R.id.bottom_view_alarm);
-            mBtnViewUrgent = (Switch)v.findViewById(R.id.bottom_view_urgent);
+            mBtnViewUrgent = (Button) v.findViewById(R.id.bottom_view_urgent);
             onClickView = new OonClickView();
             mBtnViewBack.setOnClickListener(onClickView);
             mBtnViewDelete.setOnClickListener(onClickView);
             mBtnViewShare.setOnClickListener(onClickView);
             mBtnViewAlarm.setOnClickListener(onClickView);
-            mBtnViewUrgent.setOnCheckedChangeListener(this);
+            mBtnViewUrgent.setOnClickListener(onClickView);
         }
         TelephonyManager tmgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         tmgr.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
@@ -290,9 +286,9 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             }
             urgent = task_recording.getTask().getUrgent();
             if(urgent == 0)
-                mBtnViewUrgent.setChecked(false);
+                mBtnViewUrgent.setBackground(getDrawable(R.drawable.no_urgent_bg));
             else
-                mBtnViewUrgent.setChecked(true);
+                mBtnViewUrgent.setBackground(getDrawable(R.drawable.urgent_bg));
             mMap = task_recording.getRecording().getRecordingMap();
         }
         adapter = new RecordingAdapter(mMap,this,this);
@@ -399,9 +395,11 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                 cliclPhotoRecording();
                 break;
             case R.id.photo_gallery:
+                photoPresenter = new PhotoPresenter(this);
                 photoPresenter.openAlbum(this,REQUEST_GALLERY);
                 break;
             case R.id.photo_camera:
+                photoPresenter = new PhotoPresenter(this);
                 photoPath = photoPresenter.takePicture(this,REQUEST_CAMERA);
                 break;
             case R.id.bottom_textedit_back:
@@ -441,6 +439,9 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                 break;
             case R.id.colorpick_black:
                 clickColorChanged(getColor(R.color.text_color_black),true);
+                break;
+            case R.id.bottom_urgent:
+                clickUrgent(mSwitchUrgent);
                 break;
         }
     }
@@ -660,16 +661,6 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         }
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        if (b){
-            urgent = 1;
-        }else {
-            urgent = 0;
-        }
-        if(isView)
-            recordingPresenter.modifyUrgent(taskId,urgent);
-    }
 
     private void clickRerecording(){
         try {
@@ -700,6 +691,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
             if (startTime == 4) {
                 handler.removeMessages(MSG_RECORDING);
                 startTime = 0;
+                presenter = new AudioRecordPresenter(TaskActivity.this);
                 presenter.startRecord();
                 if(dialog != null)
                     dialog.dismiss();
@@ -747,7 +739,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickAudioCancel(){
-        presenter.cancelRecord();
+        if(presenter != null)
+            presenter.cancelRecord();
         isRecording = false;
         mTvTime.setText("00:00:00");
         if(volumePopWindow != null){
@@ -759,7 +752,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickFinish(){
-        presenter.stopRecord();
+        if(presenter != null)
+            presenter.stopRecord();
         isRecording = false;
         mTvTime.setText("00:00:00");
         if(volumePopWindow != null){
@@ -954,6 +948,16 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         return "text";
     }
 
+    private void clickUrgent(Button btn){
+        if(urgent == 1){
+            btn.setBackground(getDrawable(R.drawable.no_urgent_bg));
+            urgent = 0;
+        }
+        else{
+            btn.setBackground(getDrawable(R.drawable.urgent_bg));
+            urgent = 1;
+        }
+    }
 
     private void clickBold(){
         if(adapter.getCurrentIndex() != 0)
@@ -1046,6 +1050,10 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                 case R.id.bottom_view_alarm:
                     clickAlarm();
                     break;
+                case R.id.bottom_view_urgent:
+                    clickUrgent(mBtnViewUrgent);
+                    recordingPresenter.modifyUrgent(taskId,urgent);
+                    break;
             }
         }
     }
@@ -1069,9 +1077,9 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         alarmChanged = false;
         adapter.setView(false);
         if(urgent == 1)
-            mSwitchUrgent.setChecked(true);
+            mSwitchUrgent.setBackground(getDrawable(R.drawable.urgent_bg));
         else
-            mSwitchUrgent.setChecked(false);
+            mSwitchUrgent.setBackground(getDrawable(R.drawable.no_urgent_bg));
     }
 
     @Override
@@ -1109,7 +1117,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     if(AudioPlayPresenter.mMediaPlayer.isPlaying()){
                         adapter.presenter.onPausePlay();
                     }
-                    if(presenter.mMediaRecorder != null)
+                    if(presenter != null && presenter.mMediaRecorder != null)
                         presenter.stopRecord();
                 }
             }
