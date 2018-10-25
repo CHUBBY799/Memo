@@ -129,7 +129,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     @Override
     protected void onStop() {
         super.onStop();
-        if(presenter.stopRecord() > 0)
+        if(presenter != null && presenter.stopRecord() > 0)
             isRecording = true;
         else
             isRecording = false;
@@ -227,8 +227,6 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
         mBtnColBlue.setOnClickListener(this);
         mBtnColPurple.setOnClickListener(this);
         mBtnColGray.setOnClickListener(this);
-        presenter = new AudioRecordPresenter(this);
-        photoPresenter = new PhotoPresenter(this);
         notePresenter = new NotePresenter(this);
         recordingPresenter = new RecordingPresenter(this);
         noteID = getIntent().getIntExtra("noteId",-1);
@@ -369,9 +367,11 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                 cliclPhotoRecording();
                 break;
             case R.id.photo_gallery:
+                photoPresenter = new PhotoPresenter(this);
                 photoPresenter.openAlbum(this,REQUEST_GALLERY);
                 break;
             case R.id.photo_camera:
+                photoPresenter = new PhotoPresenter(this);
                 photoPath = photoPresenter.takePicture(this,REQUEST_CAMERA);
                 break;
             case R.id.bottom_textedit_back:
@@ -624,6 +624,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             if (startTime == 4) {
                 handler.removeMessages(MSG_RECORDING);
                 startTime = 0;
+                presenter = new AudioRecordPresenter(NoteActivity.this);
                 presenter.startRecord();
                 if(dialog != null)
                     dialog.dismiss();
@@ -671,7 +672,8 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickAudioCancel(){
-        presenter.cancelRecord();
+        if(presenter != null)
+            presenter.cancelRecord();
         isRecording = false;
         mTvTime.setText("00:00:00");
         if(volumePopWindow != null){
@@ -683,7 +685,8 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     }
 
     private void clickFinish(){
-        presenter.stopRecord();
+        if(presenter != null)
+            presenter.stopRecord();
         isRecording = false;
         mTvTime.setText("00:00:00");
         if(volumePopWindow != null){
@@ -1019,7 +1022,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     if(AudioPlayPresenter.mMediaPlayer.isPlaying()){
                         adapter.presenter.onPausePlay();
                     }
-                    if(presenter.mMediaRecorder != null)
+                    if(presenter != null && presenter.mMediaRecorder != null)
                         presenter.stopRecord();
                 }
             }

@@ -158,22 +158,6 @@ public class ShotUtils {
         return file.getAbsolutePath();
     }
 
-    //发送图片给好友。"com.tencent.mm","com.tencent.mm.ui.tools.ShareImgUI";
-    //发送图片到朋友圈。"com.tencent.mm"，"com.tencent.mm.ui.tools.ShareToTimeLineUI"
-    //发送图片到qq。"com.tencent.mobileqq"，"com.tencent.mobileqq.activity.JumpActivity"
-    public static void share(Context context,String sharePath,String packName,String cls){
-        if(sharePath != null){
-            Uri imageUri = Uri.fromFile(new File(sharePath));
-            Intent shareIntent = new Intent();
-            ComponentName comp = new ComponentName(packName, cls);
-            shareIntent.setComponent(comp);
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
-            shareIntent.setType("image/*");
-            ((Activity)context).startActivityForResult(Intent.createChooser(shareIntent, "分享图片"),0xa4);
-        }
-    }
-
 
     public static boolean isAppAvilible(Context context,String packName){
         final PackageManager packageManager = context.getPackageManager();
@@ -203,7 +187,8 @@ public class ShotUtils {
                 target.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(sharePath)));
                 target.setType("image/*");
                 targetIntents.add(target);
-            }else if(isAppAvilible(context,"com.tencent.mobileqq")){
+            }
+            if(isAppAvilible(context,"com.tencent.mobileqq")){
                 Intent target = new Intent();
                 ComponentName comp = new ComponentName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");
                 target.setComponent(comp);

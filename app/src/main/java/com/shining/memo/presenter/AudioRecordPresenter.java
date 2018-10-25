@@ -17,7 +17,6 @@ import java.util.Date;
 
 public class AudioRecordPresenter {
 
-    private String TAG = "AudioRecordPresenter";
     private static String filePath = "";     //录音文件路径
     private String FolderPath = "";     //文件夹路径
     public MediaRecorder mMediaRecorder;   //音频录制API
