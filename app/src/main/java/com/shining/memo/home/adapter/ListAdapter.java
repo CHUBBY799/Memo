@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,7 +29,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
     private FragmentActivity listFragment;
     private int length;
     private int id[];
-    private int selected[];
+    private int finished[];
     private String[] list_title;
     private Boolean[] expandState;
     private Boolean[][] itemState;
@@ -46,9 +47,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-        final ImageView expandIcon = holder.expandIcon;
+        final ImageButton expandIcon = holder.expandIcon;
         TextView listTitle = holder.listTitle;
-        final ImageView startIcon = holder.startIcon;
+        final ImageView finishedIcon = holder.finishedIcon;
         final LinearLayout listItem = holder.listItem;
 
         for(int i = 0 ; i < itemContent[position].length ; i ++){
@@ -63,20 +64,19 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
             listItem.addView(layout);
 
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
-            layoutParams.setMargins(0, 10, 0, 40);
+            layoutParams.setMargins(0, 0, 0, 30);
             layout.setLayoutParams(layoutParams);
+            layout.setPadding(0, 10, 0, 10);
 
-            content.setPadding(40,0,0,0);
-            content.setTextSize(17);
-            content.setGravity(CENTER);
+            content.setPadding(40,-6,0,0);
+            content.setTextSize(16);
             content.setText(itemContent[position][i]);
 
             LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)state.getLayoutParams();
-            lp.width = 40;
-            lp.height= 40;
-            lp.topMargin = 4;
+            lp.width = 44;
+            lp.height= 44;
+            lp.gravity = CENTER;
             state.setLayoutParams(lp);
-            state.setGravity(CENTER);
             if (itemState[holder.getAdapterPosition()][index]){
                 state.setBackground(context.getDrawable(R.drawable.group));
                 content.setTextColor(context.getColor(R.color.calendar_unselected));
@@ -92,10 +92,27 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
                         state.setBackground(context.getDrawable(R.drawable.group_2));
                         content.setTextColor(context.getColor(R.color.recording_title));
                         itemState[holder.getAdapterPosition()][index] = false;
+                        if (finished[holder.getAdapterPosition()] == 1){
+                            finished[holder.getAdapterPosition()] = 0;
+                            finishedIcon.setImageResource(R.color.white);
+                        }
+
                     }else {
                         state.setBackground(context.getDrawable(R.drawable.group));
                         content.setTextColor(context.getColor(R.color.calendar_unselected));
                         itemState[holder.getAdapterPosition()][index] = true;
+                        finished[holder.getAdapterPosition()] = 1;
+                        for (int j = 0 ; j < itemState[holder.getAdapterPosition()].length ; j++){
+                            if (!itemState[holder.getAdapterPosition()][j]){
+                                finished[holder.getAdapterPosition()] = 0;
+                                break;
+                            }
+                        }
+                        if (finished[holder.getAdapterPosition()] == 1){
+                            finishedIcon.setImageResource(R.drawable.finish_icon);
+                        }else {
+                            finishedIcon.setImageResource(R.color.white);
+                        }
                     }
                 }
             });
@@ -108,7 +125,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
             public void onClick(View v) {
                 Intent intent = new Intent(context, ListActivity.class);
                 intent.putExtra("id", id[holder.getAdapterPosition()]);
-                intent.putExtra("selected", selected[holder.getAdapterPosition()]);
+                intent.putExtra("finished", finished[holder.getAdapterPosition()]);
                 intent.putExtra("title", list_title[holder.getAdapterPosition()]);
 
                 JSONArray itemArr = new JSONArray();
@@ -128,53 +145,26 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
             }
         });
 
-//        final TranslateAnimation showAnim = new TranslateAnimation(
-//                Animation.RELATIVE_TO_SELF, 1.0f,
-//                Animation.RELATIVE_TO_SELF, 0.0f,
-//                Animation.RELATIVE_TO_SELF, 0.0f,
-//                Animation.RELATIVE_TO_SELF, 0.0f);
-//        showAnim.setDuration(500);
-
-//        final TranslateAnimation hideAnim = new TranslateAnimation(
-//                Animation.RELATIVE_TO_SELF, 0.0f,
-//                Animation.RELATIVE_TO_SELF, 1.0f,
-//                Animation.RELATIVE_TO_SELF, 0.0f,
-//                Animation.RELATIVE_TO_SELF, 0.0f);
-//        hideAnim.setDuration(500);
-
-
         expandIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(expandState[holder.getAdapterPosition()]){
-//                    listItem.startAnimation(hideAnim);
                     listItem.setVisibility(View.GONE);
-                    expandIcon.setBackground(context.getDrawable(R.drawable.fold_icon));
+                    expandIcon.setImageResource(R.drawable.fold_icon);
                     expandState[holder.getAdapterPosition()] = false;
                 }else{
-//                    listItem.startAnimation(showAnim);
                     listItem.setVisibility(View.VISIBLE);
-                    expandIcon.setBackground(context.getDrawable(R.drawable.expand_icon));
+                    expandIcon.setImageResource(R.drawable.expand_icon);
                     expandState[holder.getAdapterPosition()] = true;
                 }
             }
         });
 
-        if (selected[holder.getAdapterPosition()] == 1){
-            startIcon.setBackground(context.getDrawable(R.drawable.star_selected_icon));
+        if (finished[holder.getAdapterPosition()] == 1){
+            finishedIcon.setImageResource(R.drawable.finish_icon);
+        }else {
+            finishedIcon.setImageResource(R.color.white);
         }
-        startIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(selected[holder.getAdapterPosition()] == 1){
-                    startIcon.setBackground(context.getDrawable(R.drawable.star_default_icon));
-                    selected[holder.getAdapterPosition()] = 0;
-                }else{
-                    startIcon.setBackground(context.getDrawable(R.drawable.star_selected_icon));
-                    selected[holder.getAdapterPosition()] = 1;
-                }
-            }
-        });
     }
 
     @Override
@@ -185,7 +175,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
     public void setInfo(ListBean[] listBeans){
         this.length = listBeans.length;
         id = new int[length];
-        selected = new int[length];
+        finished = new int[length];
         list_title = new String[length];
         expandState = new Boolean[length];
         itemState = new Boolean[length][];
@@ -193,7 +183,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
         JSONArray itemArr;
         for (int i = 0 ; i < length ; i++){
             id[i] = (int)listBeans[i].getId();
-            selected[i] = listBeans[i].getSelected();
+            finished[i] = listBeans[i].getFinished();
             list_title[i] = listBeans[i].getTitle();
             expandState[i] = false;
             try{
@@ -217,7 +207,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
         for (int i = 0 ; i < length ; i++){
             ListBean listBean = new ListBean();
             listBean.setId(id[i]);
-            listBean.setSelected(selected[i]);
+            listBean.setFinished(finished[i]);
             JSONArray itemArr = new JSONArray();
             try{
                 for (int j = 0 ; j < itemState[i].length ; j++){
@@ -238,16 +228,16 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        ImageView expandIcon;
+        ImageButton expandIcon;
         TextView listTitle;
-        ImageView startIcon;
+        ImageView finishedIcon;
         LinearLayout listItem;
 
         public MyViewHolder(View contentView) {
             super(contentView);
             listTitle = contentView.findViewById(R.id.list_title);
             expandIcon = contentView.findViewById(R.id.expand_icon);
-            startIcon = contentView.findViewById(R.id.start_default);
+            finishedIcon = contentView.findViewById(R.id.finished_icon);
             listItem = contentView.findViewById(R.id.list_item);
         }
     }

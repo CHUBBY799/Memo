@@ -42,7 +42,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private ListItemAdapter listItemAdapter;
 
     private int id;
-    private int selected;
+    private int finished;
     private String title;
     private JSONArray itemArr;
     private String initItemArr,shotPath="";
@@ -56,7 +56,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         builder.detectFileUriExposure();
         Intent intent = getIntent();
         id = intent.getIntExtra("id", -1);
-        selected = intent.getIntExtra("selected", 0);
+        finished = intent.getIntExtra("finished", 0);
         if(id != -1){
             title = intent.getStringExtra("title");
             try{
@@ -106,7 +106,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     public ListBean formatData(){
         ListBean listBean = new ListBean();
         listBean.setId(id);
-        listBean.setSelected(selected);
+        listBean.setFinished(finished);
         listBean.setTitle(title);
         listBean.setItemArr(itemArr.toString());
         return listBean;
