@@ -285,10 +285,14 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                 alarmObject = alarmPresenter.getAlarm(taskId);
             }
             urgent = task_recording.getTask().getUrgent();
-            if(urgent == 0)
+            if(urgent == 0){
                 mBtnViewUrgent.setBackground(getDrawable(R.drawable.no_urgent_ripple));
-            else
+                mBtnViewUrgent.setTextColor(getColor(R.color.alarm_btn_delete_border));
+            }
+            else{
                 mBtnViewUrgent.setBackground(getDrawable(R.drawable.urgent_ripple));
+                mBtnViewUrgent.setTextColor(getColor(R.color.white));
+            }
             mMap = task_recording.getRecording().getRecordingMap();
         }
         adapter = new RecordingAdapter(mMap,this,this);
@@ -951,10 +955,12 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     private void clickUrgent(Button btn){
         if(urgent == 1){
             btn.setBackground(getDrawable(R.drawable.no_urgent_ripple));
+            btn.setTextColor(getColor(R.color.alarm_btn_delete_border));
             urgent = 0;
         }
         else{
             btn.setBackground(getDrawable(R.drawable.urgent_ripple));
+            btn.setTextColor(getColor(R.color.white));
             urgent = 1;
         }
     }
@@ -1076,10 +1082,13 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
         isView = false;
         alarmChanged = false;
         adapter.setView(false);
-        if(urgent == 1)
+        if(urgent == 1){
             mSwitchUrgent.setBackground(getDrawable(R.drawable.urgent_ripple));
-        else
+            mSwitchUrgent.setTextColor(getColor(R.color.white));
+        }else{
+            mSwitchUrgent.setTextColor(getColor(R.color.alarm_btn_delete_border));
             mSwitchUrgent.setBackground(getDrawable(R.drawable.no_urgent_ripple));
+        }
     }
 
     @Override
