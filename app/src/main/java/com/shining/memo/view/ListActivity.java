@@ -9,7 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -31,6 +33,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private final static int CANCEL = 1;
     private final static int DELETE = 2;
     private final static int CONFIRM = 3;
+    private final static int SHARE = 4;
     private static final int REQUEST_SHARE=0xa4;
 
     private ImageButton listCancel;
@@ -45,12 +48,13 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private int finished;
     private String title;
     private JSONArray itemArr;
-    private String initItemArr,shotPath="";
+    private String shotPath="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         builder.detectFileUriExposure();
@@ -68,7 +72,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             title = "";
             itemArr = new JSONArray();
         }
-        initItemArr = itemArr.toString();
 
         initView();
         initComponent();
@@ -117,11 +120,26 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void listCancel(){
         buttonFocus(CANCEL, true);
-        if (title.equals(listTitle.getText().toString())&& initItemArr.equals(itemArr.toString())){
+        title = listTitle.getText().toString();
+        if(title.equals("")){
+            Toast.makeText(ListActivity.this, "Please input title", Toast.LENGTH_SHORT).show();
+            listTitle.setFocusable(true);
+            listTitle.setFocusableInTouchMode(true);
+            listTitle.requestFocus();
+            InputMethodManager inputManager = (InputMethodManager) listTitle.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (inputManager != null){
+                inputManager.showSoftInput(listTitle, 0);
+            }
+        }else{
+            ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+
+            if(id == -1){
+                listPresenter.insertPresenter(formatData());
+            }else {
+                listPresenter.updatePresenter(formatData());
+            }
             finish();
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-        }else {
-            buildDialog(CANCEL);
         }
         buttonFocus(CANCEL, false);
     }
@@ -131,7 +149,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void listDelete(){
         buttonFocus(DELETE, true);
-        buildDialog(DELETE);
+        buildDialog();
         buttonFocus(DELETE, false);
     }
 
@@ -140,15 +158,38 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void listConfirm(){
         buttonFocus(CONFIRM, true);
-        buildDialog(CONFIRM);
+        title = listTitle.getText().toString();
+        if(title.equals("")){
+            Toast.makeText(ListActivity.this, "Please input title", Toast.LENGTH_SHORT).show();
+            listTitle.setFocusable(true);
+            listTitle.setFocusableInTouchMode(true);
+            listTitle.requestFocus();
+            InputMethodManager inputManager = (InputMethodManager) listTitle.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (inputManager != null){
+                inputManager.showSoftInput(listTitle, 0);
+            }
+        }else{
+            ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+
+            if(id == -1){
+                listPresenter.insertPresenter(formatData());
+            }else {
+                listPresenter.updatePresenter(formatData());
+            }
+            finish();
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        }
         buttonFocus(CONFIRM, false);
     }
+
     /**
      * 分享
      */
     private void listShare(){
+        buttonFocus(SHARE, true);
         shotPath = ShotUtils.saveBitmap(ListActivity.this,ShotUtils.shotRecyclerView(listContent,findViewById(R.id.list_title_layout)));
         ShotUtils.shareCustom(ListActivity.this,shotPath);
+        buttonFocus(SHARE, false);
     }
 
     /**
@@ -201,83 +242,28 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * 建立确认弹窗
-     * @param buttonType 点击的button类型
+     * 建立删除确认弹窗
      */
-    private void buildDialog(int buttonType){
+    private void buildDialog(){
         AlertDialog dialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialog);
-        switch (buttonType){
-            case CANCEL:
-                builder.setTitle("Back");
-                builder.setMessage("Do you want to discard changes");
-                builder.setNegativeButton("Cancel", null);
-                builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                    }
-                });
-                dialog = builder.create();
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.show();
-                break;
-
-            case DELETE:
-                builder.setTitle("Delete");
-                builder.setMessage("Do you want to delete the list");
-                builder.setNegativeButton("Cancel", null);
-                builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ListPresenter listPresenter = new ListPresenter(ListActivity.this);
-                        if(id != -1){
-                            listPresenter.deletePresenter(String.valueOf(id));
-                        }
-                        finish();
-                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                    }
-                });
-                dialog = builder.create();
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.show();
-                break;
-
-            case CONFIRM:
-                title = listTitle.getText().toString();
-                if(title.equals("")){
-                    Toast.makeText(ListActivity.this, "Please input title", Toast.LENGTH_SHORT).show();
-                    listTitle.setFocusable(true);
-                    listTitle.setFocusableInTouchMode(true);
-                    listTitle.requestFocus();
-                }else{
-                    builder.setTitle("Save");
-                    builder.setMessage("Do you want to save the list");
-                    builder.setNegativeButton("Cancel", null);
-                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ListPresenter listPresenter = new ListPresenter(ListActivity.this);
-
-                            if(id == -1){
-                                listPresenter.insertPresenter(formatData());
-                            }else {
-                                listPresenter.updatePresenter(formatData());
-                            }
-                            finish();
-                            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                        }
-                    });
-                    dialog = builder.create();
-                    dialog.setCanceledOnTouchOutside(false);
-                    dialog.show();
+        builder.setTitle("Delete");
+        builder.setMessage("Do you want to delete the list");
+        builder.setNegativeButton("Cancel", null);
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+                if(id != -1){
+                    listPresenter.deletePresenter(String.valueOf(id));
                 }
-                break;
-
-            default:
-                break;
-        }
+                finish();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
+        });
+        dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 
     /**
@@ -306,6 +292,12 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                     listConfirm.requestFocus();
                     break;
 
+                case SHARE:
+                    listShare.setFocusable(true);
+                    listShare.setFocusableInTouchMode(true);
+                    listShare.requestFocus();
+                    break;
+
                 default:
                     break;
             }
@@ -327,6 +319,12 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                     listConfirm.setFocusable(false);
                     listConfirm.setFocusableInTouchMode(false);
                     listConfirm.requestFocus();
+                    break;
+
+                case SHARE:
+                    listShare.setFocusable(false);
+                    listShare.setFocusableInTouchMode(false);
+                    listShare.requestFocus();
                     break;
 
                 default:
@@ -359,7 +357,10 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 if(!shotPath.equals("")){
                     File file = new File(shotPath);
                     if(file.exists()){
-                        file.delete();
+                        boolean result = file.delete();
+                        if (result){
+                            Log.d("ListActivity", "Deleted files successfully");
+                        }
                     }
                     shotPath = "";
                 }

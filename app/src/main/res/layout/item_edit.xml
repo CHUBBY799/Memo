@@ -2,12 +2,12 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/list_item"
+    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingStart="25dp"
     android:paddingEnd="25dp"
-    android:paddingBottom="24.5dp"
+    android:paddingBottom="16dp"
     android:background="@drawable/bg_rect05_white">
 
     <ImageButton
@@ -25,13 +25,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText xmlns:tools="http://schemas.android.com/tools"
+    <EditText
         android:id="@+id/item_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="7dp"
-        android:layout_marginEnd="0dp"
+        android:layout_marginEnd="16dp"
         android:background="@null"
+        android:ems="10"
+        android:hint="@null"
+        android:importantForAutofill="no"
         android:inputType="textMultiLine"
         android:textColor="@color/recording_title"
         android:textSize="16sp"
@@ -39,6 +42,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/item_state"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="all" />
+        tools:targetApi="o" />
 
 </android.support.constraint.ConstraintLayout>
