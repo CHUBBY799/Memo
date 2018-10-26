@@ -150,7 +150,8 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             isPhotoChoosing = false;
             animationTranslate(findViewById(R.id.bottom_recording_photo),findViewById(R.id.bottom_recording_edit));
         }else if(isRecording){
-            presenter.cancelRecord();
+            if(presenter != null)
+                presenter.cancelRecord();
             mTvTime.setText("00:00:00");
             if(volumePopWindow != null){
                 volumePopWindow.dismiss();
