@@ -1,9 +1,12 @@
 package com.shining.memo.view;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,7 +38,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private final static int CONFIRM = 3;
     private final static int SHARE = 4;
     private static final int REQUEST_SHARE=0xa4;
-
+    private static final int REQUEST_SHARE_PERMISSION=0xa1;
     private ImageButton listCancel;
     private ImageButton listConfirm;
     private ImageButton listDelete;
@@ -186,10 +189,16 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      * 分享
      */
     private void listShare(){
-        buttonFocus(SHARE, true);
-        shotPath = ShotUtils.saveBitmap(ListActivity.this,ShotUtils.shotRecyclerView(listContent,findViewById(R.id.list_title_layout)));
-        ShotUtils.shareCustom(ListActivity.this,shotPath);
-        buttonFocus(SHARE, false);
+        if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED
+                ||checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_SHARE_PERMISSION);
+        }else {
+            buttonFocus(SHARE, true);
+            shotPath = ShotUtils.saveBitmap(ListActivity.this,ShotUtils.shotRecyclerView(listContent,findViewById(R.id.list_title_layout)));
+            ShotUtils.shareCustom(ListActivity.this,shotPath);
+            buttonFocus(SHARE, false);
+        }
     }
 
     /**
@@ -363,6 +372,21 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                     shotPath = "";
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_SHARE_PERMISSION:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    buttonFocus(SHARE, true);
+                    shotPath = ShotUtils.saveBitmap(ListActivity.this,ShotUtils.shotRecyclerView(listContent,findViewById(R.id.list_title_layout)));
+                    ShotUtils.shareCustom(ListActivity.this,shotPath);
+                    buttonFocus(SHARE, false);
                 }
                 break;
         }

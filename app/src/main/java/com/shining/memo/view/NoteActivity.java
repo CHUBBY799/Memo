@@ -72,6 +72,7 @@ import java.util.TimeZone;
 public class NoteActivity extends Activity implements View.OnClickListener,ViewRecord, RecordingAdapter.TextChanged{
     private static final int REQUEST_AUDIO_PERMISSION = 0xc1;
     private static final int REQUEST_CAMERA_PERMISSION = 0xc2;
+    private static final int REQUEST_SHARE_PERMISSION=0xc3;
     private static final int MSG_RECORDING = 0x110;
     private static final int REQUEST_CAMERA=0xa1;
     private static final int REQUEST_GALLERY=0xa3;
@@ -591,6 +592,12 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     isPhotoChoosing = true;
                 }
                 break;
+            case REQUEST_SHARE_PERMISSION:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView,null));
+                    ShotUtils.shareCustom(NoteActivity.this,shotPath);
+                }
+                break;
         }
     }
 
@@ -968,8 +975,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_share:
-                    shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView,null));
-                    ShotUtils.shareCustom(NoteActivity.this,shotPath);
+                    taskShare();
                     break;
             }
         }
@@ -978,6 +984,17 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
     private void returnHomePage(){
         finish();
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+    }
+
+    private void taskShare(){
+        if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED
+                ||checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_SHARE_PERMISSION);
+        }else {
+            shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView,null));
+            ShotUtils.shareCustom(NoteActivity.this,shotPath);
+        }
     }
 
     @Override
