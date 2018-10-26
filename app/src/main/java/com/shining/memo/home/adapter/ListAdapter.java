@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static android.view.Gravity.CENTER;
+import static android.view.Gravity.END;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
 
@@ -74,9 +76,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
             content.setText(itemContent[position][i]);
 
             LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)state.getLayoutParams();
-            lp.width = 44;
-            lp.height= 44;
-            lp.gravity = CENTER;
+            lp.width = 50;
+            lp.height= 50;
+            lp.topMargin = 6;
             state.setLayoutParams(lp);
             if (itemState[holder.getAdapterPosition()][index]){
                 state.setBackground(context.getDrawable(R.drawable.group));

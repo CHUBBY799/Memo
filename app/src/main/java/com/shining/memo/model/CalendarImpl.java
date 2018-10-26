@@ -77,13 +77,14 @@ public class  CalendarImpl implements CalendarModel{
         switch (type){
             case "list":
                 for(int i = 0 ; i < length ; i++){
-                    cursor = db.query("tb_list", new String[]{"id", "title"},"date = ? and finished = ?", new String[]{dateList.get(i).toString(), "1"},null,null,null);
+                    cursor = db.query("tb_list", new String[]{"id", "title", "itemArr"},"date = ? and finished = ?", new String[]{dateList.get(i).toString(), "1"},null,null,null);
                     if(cursor.moveToFirst()){
                         do{
                             try{
                                 JSONObject taskData = new JSONObject();
                                 taskData.put("id", cursor.getInt(cursor.getColumnIndex("id")));
                                 taskData.put("title", cursor.getString(cursor.getColumnIndex("title")));
+                                taskData.put("itemArr", cursor.getString(cursor.getColumnIndex("itemArr")));
                                 taskData.put("day", Utils.formatTimeUnit(dateList.get(i).getDayOfMonth()));
                                 taskData.put("month", Utils.formatMonthSimUS(dateList.get(i).getMonthOfYear()));
                                 taskDataArr.put(taskData);
