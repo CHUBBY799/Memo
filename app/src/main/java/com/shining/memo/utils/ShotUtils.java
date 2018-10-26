@@ -74,7 +74,6 @@ public class ShotUtils {
                 if(bitmap != null){
                     bigCanvas.drawBitmap(bitmap, 0f, iHeight, paint);
                     iHeight += bitmap.getHeight();
-                    bitmap.recycle();
                 }
             }
             for (int i = 0; i < size; i++) {
@@ -128,12 +127,11 @@ public class ShotUtils {
     public static String saveBitmap(Context context, Bitmap mBitmap) {
         String savePath = "";
         File file;
-        if (Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED)) {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             savePath = Environment.getExternalStorageDirectory()+"/OhMemo/photo/";
             file = new File(savePath);
             if (!file.exists()) {
-                file.mkdir();
+                file.mkdirs();
             }
         }else {
             return null;
