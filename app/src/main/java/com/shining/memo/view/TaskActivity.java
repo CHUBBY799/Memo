@@ -57,6 +57,7 @@ import com.shining.memo.presenter.AudioPlayPresenter;
 import com.shining.memo.presenter.AudioRecordPresenter;
 import com.shining.memo.presenter.PhotoPresenter;
 import com.shining.memo.presenter.RecordingPresenter;
+import com.shining.memo.utils.DialogUtils;
 import com.shining.memo.utils.ShotUtils;
 import com.shining.memo.utils.ToastUtils;
 
@@ -1051,8 +1052,7 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_delete:
-                    recordingPresenter.modifyDeleted(taskId,1);
-                    returnHomePage();
+                    taskDelete();
                     break;
                 case R.id.bottom_share:
                     taskShare();
@@ -1066,6 +1066,23 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     break;
             }
         }
+    }
+
+    private void taskDelete(){
+        DialogUtils.showDialog(this, getString(R.string.task_delete_title), getString(R.string.task_delete_tip),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(recordingPresenter.modifyDeleted(taskId,1))
+                            ToastUtils.showSuccessShort(TaskActivity.this,
+                                    getString(R.string.delete_success_notice));
+                        else
+                            ToastUtils.showSuccessShort(TaskActivity.this,
+                                    getString(R.string.delete_failed_notice));
+                        returnHomePage();
+
+                    }
+                },null);
     }
 
     private void returnHomePage(){

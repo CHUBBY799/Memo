@@ -57,6 +57,7 @@ import com.shining.memo.presenter.AudioRecordPresenter;
 import com.shining.memo.presenter.NotePresenter;
 import com.shining.memo.presenter.PhotoPresenter;
 import com.shining.memo.presenter.RecordingPresenter;
+import com.shining.memo.utils.DialogUtils;
 import com.shining.memo.utils.ShotUtils;
 import com.shining.memo.utils.ToastUtils;
 
@@ -971,14 +972,30 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     returnHomePage();
                     break;
                 case R.id.bottom_delete:
-                    recordingPresenter.modifyDeleted(noteID,1);
-                    returnHomePage();
+                    taskDelete();
                     break;
                 case R.id.bottom_share:
                     taskShare();
                     break;
             }
         }
+    }
+
+    private void taskDelete(){
+        DialogUtils.showDialog(this, getString(R.string.note_delete_title), getString(R.string.note_delete_tip),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(recordingPresenter.modifyDeleted(noteID,1))
+                            ToastUtils.showSuccessShort(NoteActivity.this,
+                                    getString(R.string.delete_success_notice));
+                        else
+                            ToastUtils.showSuccessShort(NoteActivity.this,
+                                    getString(R.string.delete_failed_notice));
+                        returnHomePage();
+
+                    }
+                },null);
     }
 
     private void returnHomePage(){

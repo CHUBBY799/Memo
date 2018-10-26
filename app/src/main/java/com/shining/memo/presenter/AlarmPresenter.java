@@ -48,6 +48,7 @@ public class AlarmPresenter {
             return null;
         }finally {
             db.endTransaction();
+            db.close();
         }
         return alarm;
     }
@@ -64,6 +65,7 @@ public class AlarmPresenter {
             return false;
         }finally {
             db.endTransaction();
+            db.close();
         }
         return true;
     }
@@ -80,6 +82,7 @@ public class AlarmPresenter {
             return false;
         }finally {
             db.endTransaction();
+            db.close();
         }
         return true;
     }
@@ -97,6 +100,7 @@ public class AlarmPresenter {
             return false;
         }finally {
             db.endTransaction();
+            db.close();
         }
         return true;
     }
@@ -113,6 +117,7 @@ public class AlarmPresenter {
             return "";
         }finally {
             db.endTransaction();
+            db.close();
         }
         return title;
     }
@@ -130,6 +135,7 @@ public class AlarmPresenter {
             e.printStackTrace();
         }finally {
             db.endTransaction();
+            db.close();
         }
         if(alarmObject != null){
             if(alarmObject.getRingtone() != 0 || alarmObject.getPop() != 0){
