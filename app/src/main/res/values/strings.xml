@@ -9,13 +9,13 @@
 
     <!--guide string -->
     <string name="guide_image">guide image</string>
-    <string name="guide_title_1">强大的任务设置功能</string>
-    <string name="guide_title_2">方便的清单列表</string>
-    <string name="guide_title_3">多种记录方式</string>
-    <string name="guide_content_1">让您应对工作游刃有余</string>
-    <string name="guide_content_2">让您的工作和生活井井有条</string>
-    <string name="guide_content_3">让您可以随心所欲地进行记录</string>
-    <string name="guide_button">立即体验</string>
+    <string name="guide_title_1">Powerful task setting function</string>
+    <string name="guide_title_2">Convenient list of list</string>
+    <string name="guide_title_3">Multiple recording modes</string>
+    <string name="guide_content_1">Make you work well</string>
+    <string name="guide_content_2">Make your work and life in good order</string>
+    <string name="guide_content_3">Make you can record as you like</string>
+    <string name="guide_button">Try now</string>
 
     <!--main string-->
     <string name="app_name">Memo</string>

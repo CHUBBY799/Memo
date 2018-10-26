@@ -51,7 +51,8 @@ public class TaskFragment extends Fragment{
         return view;
     }
     public void initData(){
-        mTasks=mPresenter.returnTaskList();
+        if(mPresenter != null)
+            mTasks=mPresenter.returnTaskList();
     }
     public void refreshData(){
         Log.d(TAG, "refreshData: ");

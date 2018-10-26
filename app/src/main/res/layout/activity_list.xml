@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -26,10 +27,11 @@
             android:ems="10"
             android:hint="@string/list_hint_title"
             android:inputType="textMultiLine"
-            android:paddingBottom="12dp"
+            android:paddingBottom="6dp"
             android:textColor="@color/recording_title"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:textCursorDrawable="@drawable/text_cursor_drawable"
             android:background="@null"
             android:importantForAutofill="no" tools:targetApi="o"/>
         <TextView
@@ -37,8 +39,8 @@
             android:layout_height="1dp"
             android:layout_marginStart="25dp"
             android:layout_marginEnd="25dp"
-            android:layout_marginBottom="20dp"
-            android:background="@color/recording_title"
+            android:layout_marginBottom="35dp"
+            android:background="@color/underline_background"
             android:layout_below="@+id/list_title"/>
     </RelativeLayout>
 
@@ -48,10 +50,21 @@
         android:layout_height="0dp"
         android:background="@color/white"
         android:descendantFocusability="afterDescendants"
-        app:layout_constraintBottom_toTopOf="@+id/list_menu"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/list_title_layout" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginStart="25dp"
+        android:background="@color/underline_background"
+        app:layout_constraintBottom_toTopOf="@+id/list_menu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/list_menu"
@@ -60,8 +73,7 @@
         android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/list_content">
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageButton
             android:id="@+id/list_cancel"
@@ -73,7 +85,7 @@
             android:paddingBottom="11dp"
             android:paddingTop="11dp"
             android:scaleType="centerInside"
-            android:src="@drawable/delete_icon"
+            android:src="@drawable/back_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -82,12 +94,12 @@
             android:id="@+id/list_delete"
             android:layout_width="44dp"
             android:layout_height="44dp"
-            android:paddingTop="11dp"
+            android:background="@drawable/button_ripple"
+            android:contentDescription="@string/delete_icon"
             android:paddingBottom="11dp"
+            android:paddingTop="11dp"
             android:scaleType="centerInside"
             android:src="@drawable/delete_icon"
-            android:contentDescription="@string/delete_icon"
-            android:background="@drawable/button_ripple"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/list_share"
             app:layout_constraintTop_toTopOf="parent"
@@ -97,12 +109,12 @@
             android:id="@+id/list_share"
             android:layout_width="44dp"
             android:layout_height="44dp"
-            android:paddingTop="11dp"
+            android:background="@drawable/button_ripple"
+            android:contentDescription="@string/share_icon"
             android:paddingBottom="11dp"
+            android:paddingTop="11dp"
             android:scaleType="centerInside"
             android:src="@drawable/share_icon"
-            android:contentDescription="@string/share_icon"
-            android:background="@drawable/button_ripple"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/list_confirm"
             app:layout_constraintTop_toTopOf="parent"

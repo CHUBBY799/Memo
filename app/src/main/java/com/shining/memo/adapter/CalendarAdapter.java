@@ -94,7 +94,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         TextView taskMonth;
         ConstraintLayout calendarItem;
 
-        public MyViewHolder(View itemView) {
+        MyViewHolder(View itemView) {
             super(itemView);
             taskTitle = itemView.findViewById(R.id.task_title);
             taskDate = itemView.findViewById(R.id.task_date);
