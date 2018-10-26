@@ -461,17 +461,17 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             task.setTitle(mMap.get(0).getContent());
             if(noteID == -1){
                 if(notePresenter.saveNote(task,mMap)){
-                    ToastUtils.showSuccessShort(NoteActivity.this,getString(R.string.save_successful_notice));
+                    ToastUtils.showShort(NoteActivity.this,getString(R.string.save_successful_notice));
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else{
-                    ToastUtils.showSuccessShort(NoteActivity.this,getString(R.string.save_successful_notice));
+                    ToastUtils.showShort(NoteActivity.this,getString(R.string.save_successful_notice));
                 }
             }else {
                 task.setId(noteID);
                 if(notePresenter.modifyRecording(task,mMap)){
-                    ToastUtils.showSuccessShort(NoteActivity.this,getString(R.string.save_successful_notice));
+                    ToastUtils.showShort(NoteActivity.this,getString(R.string.save_successful_notice));
                     if(adapter.deletePath != null && adapter.deletePath.size() > 0){
                         for(int i=0; i < adapter.deletePath.size(); i++){
                             File file = new File(adapter.deletePath.get(i));
@@ -485,23 +485,23 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     mRecyclerView.clearFocus();
                     initData();
                 }else{
-                    ToastUtils.showSuccessShort(NoteActivity.this,getString(R.string.save_failed_notice));
+                    ToastUtils.showShort(NoteActivity.this,getString(R.string.save_failed_notice));
                 }
             }
         }else {
             if(noteID == -1){
-                ToastUtils.showSuccessShort(NoteActivity.this,getString(R.string.empty_text_notice));
+                ToastUtils.showShort(NoteActivity.this,getString(R.string.empty_text_notice));
                 setResult(RESULT_OK);
                 finish();
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
             }else {
                 if(notePresenter.deleteRecording(noteID)){
-                    ToastUtils.showSuccessShort(NoteActivity.this,getString(R.string.empty_text_notice));
+                    ToastUtils.showShort(NoteActivity.this,getString(R.string.empty_text_notice));
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else {
-                    ToastUtils.showSuccessShort(NoteActivity.this,getString(R.string.save_failed_notice));
+                    ToastUtils.showShort(NoteActivity.this,getString(R.string.save_failed_notice));
                 }
             }
         }
@@ -988,10 +988,10 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if(recordingPresenter.modifyDeleted(noteID,1))
-                            ToastUtils.showSuccessShort(NoteActivity.this,
+                            ToastUtils.showShort(NoteActivity.this,
                                     getString(R.string.delete_success_notice));
                         else
-                            ToastUtils.showSuccessShort(NoteActivity.this,
+                            ToastUtils.showShort(NoteActivity.this,
                                     getString(R.string.delete_failed_notice));
                         returnHomePage();
 

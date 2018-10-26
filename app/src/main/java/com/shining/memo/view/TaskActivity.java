@@ -358,6 +358,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                             return super.dispatchTouchEvent(ev);
                         }else {
                             RecordingAdapter.TextViewHolder holder = adapter.getTextViewHolder(mRecyclerView);
+                            if(holder == null)
+                                return false;
                             holder.editText.requestFocus();
                             holder.editText.setSelection(holder.editText.getText().length());
                             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -497,19 +499,19 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                 if( (id = recordingPresenter.saveRecording(task,mMap,alarmObject)) != -1){
                     if(alarmChanged)
                         alarmPresenter.setAlarmNotice((int)id);
-                    ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.save_successful_notice));
+                    ToastUtils.showShort(TaskActivity.this,getString(R.string.save_successful_notice));
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else{
-                    ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.save_successful_notice));
+                    ToastUtils.showShort(TaskActivity.this,getString(R.string.save_successful_notice));
                 }
             }else {
                 task.setId(taskId);
                 if(alarmObject != null)
                     alarmObject.setTaskId(taskId);
                 if(recordingPresenter.modifyRecording(task,mMap,alarmObject)){
-                    ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.save_successful_notice));
+                    ToastUtils.showShort(TaskActivity.this,getString(R.string.save_successful_notice));
                     if(alarmChanged)
                         alarmPresenter.setAlarmNotice(taskId);
                     if(adapter.deletePath != null && adapter.deletePath.size() > 0){
@@ -525,23 +527,23 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     mRecyclerView.clearFocus();
                     initData();
                 }else{
-                    ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.save_failed_notice));
+                    ToastUtils.showShort(TaskActivity.this,getString(R.string.save_failed_notice));
                 }
             }
         }else {
             if(taskId == -1){
-                ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.empty_text_notice));
+                ToastUtils.showShort(TaskActivity.this,getString(R.string.empty_text_notice));
                 setResult(RESULT_OK);
                 finish();
                 overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
             }else {
                 if(recordingPresenter.deleteRecording(taskId)){
-                    ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.empty_text_notice));
+                    ToastUtils.showShort(TaskActivity.this,getString(R.string.empty_text_notice));
                     setResult(RESULT_OK);
                     finish();
                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                 }else {
-                    ToastUtils.showSuccessShort(TaskActivity.this,getString(R.string.save_failed_notice));
+                    ToastUtils.showShort(TaskActivity.this,getString(R.string.save_failed_notice));
                 }
             }
         }
@@ -1075,10 +1077,10 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if(recordingPresenter.modifyDeleted(taskId,1))
-                            ToastUtils.showSuccessShort(TaskActivity.this,
+                            ToastUtils.showShort(TaskActivity.this,
                                     getString(R.string.delete_success_notice));
                         else
-                            ToastUtils.showSuccessShort(TaskActivity.this,
+                            ToastUtils.showShort(TaskActivity.this,
                                     getString(R.string.delete_failed_notice));
                         returnHomePage();
 

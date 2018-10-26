@@ -59,11 +59,11 @@ public class PhotoPresenter {
                 return filePath;
             }catch (Exception e){
                 e.printStackTrace();
-                ToastUtils.showFailedShort(context, context.getResources().getString(R.string.no_memory_dir));
+                ToastUtils.showShort(context, context.getResources().getString(R.string.no_memory_dir));
                 return null;
             }
         }else {
-            ToastUtils.showFailedShort(context, context.getResources().getString(R.string.no_sdcard));
+            ToastUtils.showShort(context, context.getResources().getString(R.string.no_sdcard));
             return null;
         }
     }

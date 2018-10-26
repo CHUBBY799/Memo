@@ -176,11 +176,11 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             }else {
                 listPresenter.updatePresenter(formatData());
             }
-            ToastUtils.showSuccessShort(ListActivity.this, getString(R.string.save_successful_notice));
+            ToastUtils.showShort(ListActivity.this, getString(R.string.save_successful_notice));
             finish();
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }else {
-            ToastUtils.showFailedShort(ListActivity.this, getString(R.string.empty_list));
+            ToastUtils.showShort(ListActivity.this, getString(R.string.empty_list));
 
         }
     }
