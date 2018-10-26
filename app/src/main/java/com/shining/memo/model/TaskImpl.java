@@ -233,7 +233,7 @@ public class TaskImpl implements TaskModel {
         SQLiteDatabase db=dbHelper.getReadableDatabase();
         List<Task> notes=new ArrayList<>();
         Cursor cursor=db.rawQuery("select * from task " +
-                "where category = ? " +
+                "where category = ? and deleted = 0 " +
                 "order by date desc , time desc",new String[]{"note"});
         while (cursor.moveToNext()){
             Task task=new Task();

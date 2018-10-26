@@ -52,6 +52,13 @@
         <string name="empty_text_notice">内容为空保存失败</string>
         <string name="no_selectd_text">没有选中文本</string>
         <string name="urgent">紧急</string>
+        <string name="task_delete_title">删除任务</string>
+        <string name="task_delete_tip">你想删除此任务?</string>
+        <string name="note_delete_title">删除笔记</string>
+        <string name="note_delete_tip">你想删除此笔记?</string>
+        <string name="delete_success_notice">删除成功</string>
+        <string name="delete_failed_notice">删除失败</string>
+
 
         <!-- alarm string -->
         <string name="alarm_clock">闹钟</string>
@@ -85,7 +92,7 @@
         <string name="audio_finish">完成</string>
         <string name="audio_time_length">00:00:00</string>
         <string name="audio_delete_title">删除录音</string>
-        <string name="audio_delete_tip">你确定删除该录音?</string>
+        <string name="audio_delete_tip">你想删除此录音?</string>
         <string name="audio_length_limit">录音时长小于1秒，请重新录制</string>
         <string name="audio_prepare">录音尚未开始</string>
         <string name="audio_play_failed">播放录音失败</string>
