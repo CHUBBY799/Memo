@@ -119,7 +119,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
         }
 
 
-        listTitle.setText(list_title[holder.getAdapterPosition()]);
+        if (list_title[holder.getAdapterPosition()].equals("")){
+            listTitle.setText(context.getString(R.string.main_task_no_title));
+        }else {
+            listTitle.setText(list_title[holder.getAdapterPosition()]);
+        }
         listTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -233,7 +237,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
         ImageView finishedIcon;
         LinearLayout listItem;
 
-        public MyViewHolder(View contentView) {
+        MyViewHolder(View contentView) {
             super(contentView);
             listTitle = contentView.findViewById(R.id.list_title);
             expandIcon = contentView.findViewById(R.id.expand_icon);

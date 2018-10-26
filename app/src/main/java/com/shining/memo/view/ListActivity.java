@@ -11,10 +11,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.shining.memo.R;
 import com.shining.memo.adapter.ListItemAdapter;
@@ -121,26 +119,14 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private void listCancel(){
         buttonFocus(CANCEL, true);
         title = listTitle.getText().toString();
-        if(title.equals("")){
-            Toast.makeText(ListActivity.this, "Please input title", Toast.LENGTH_SHORT).show();
-            listTitle.setFocusable(true);
-            listTitle.setFocusableInTouchMode(true);
-            listTitle.requestFocus();
-            InputMethodManager inputManager = (InputMethodManager) listTitle.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (inputManager != null){
-                inputManager.showSoftInput(listTitle, 0);
-            }
-        }else{
-            ListPresenter listPresenter = new ListPresenter(ListActivity.this);
-
-            if(id == -1){
-                listPresenter.insertPresenter(formatData());
-            }else {
-                listPresenter.updatePresenter(formatData());
-            }
-            finish();
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+        if(id == -1){
+            listPresenter.insertPresenter(formatData());
+        }else {
+            listPresenter.updatePresenter(formatData());
         }
+        finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         buttonFocus(CANCEL, false);
     }
 
@@ -159,26 +145,14 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private void listConfirm(){
         buttonFocus(CONFIRM, true);
         title = listTitle.getText().toString();
-        if(title.equals("")){
-            Toast.makeText(ListActivity.this, "Please input title", Toast.LENGTH_SHORT).show();
-            listTitle.setFocusable(true);
-            listTitle.setFocusableInTouchMode(true);
-            listTitle.requestFocus();
-            InputMethodManager inputManager = (InputMethodManager) listTitle.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (inputManager != null){
-                inputManager.showSoftInput(listTitle, 0);
-            }
-        }else{
-            ListPresenter listPresenter = new ListPresenter(ListActivity.this);
-
-            if(id == -1){
-                listPresenter.insertPresenter(formatData());
-            }else {
-                listPresenter.updatePresenter(formatData());
-            }
-            finish();
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+        if(id == -1){
+            listPresenter.insertPresenter(formatData());
+        }else {
+            listPresenter.updatePresenter(formatData());
         }
+        finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         buttonFocus(CONFIRM, false);
     }
 

@@ -167,10 +167,10 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.MyView
         notifyItemRangeChanged(length-1,length);
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder {
         ImageButton itemState;
         EditText itemContent;
-        public MyViewHolder(View itemView) {
+        MyViewHolder(View itemView) {
             super(itemView);
             itemState = itemView.findViewById(R.id.item_state);
             itemContent = itemView.findViewById(R.id.item_content);

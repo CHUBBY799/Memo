@@ -30,6 +30,7 @@
             android:textColor="@color/recording_title"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:textCursorDrawable="@drawable/text_cursor_drawable"
             android:background="@null"
             android:importantForAutofill="no" tools:targetApi="o"/>
         <TextView
