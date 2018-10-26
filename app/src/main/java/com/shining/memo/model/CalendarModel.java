@@ -7,6 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 
 public interface CalendarModel {
-    JSONArray queryData(List<LocalDate> dateList);
-    HashSet<String> queryData(String year_month);
+    JSONArray queryData(List<LocalDate> dateList, String type);
+    HashSet<String> queryData(String year_month, String type);
 }

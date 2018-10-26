@@ -40,6 +40,7 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
     private TaskPresenter taskPresenter;
     private AlarmPresenter alarmPresenter;
 
+    private String calendarType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,7 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
     }
 
     public void initData(){
+        calendarType = "task";
         taskPresenter=new TaskPresenter(this,new TaskImpl(this));
         alarmPresenter=new AlarmPresenter(this);
         task.setOnClickListener(this);
@@ -105,12 +107,14 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.main_titlebar_task:
+                calendarType = "task";
                 onClickTitle((TextView)v);
                 switchFragment(taskFragment).commit();
                 add.setTag(currentFragment);
                 addText.setText(getResources().getString(R.string.main_add_task));
                 break;
             case R.id.main_titlebar_list:
+                calendarType = "list";
                 onClickTitle((TextView)v);
                 if(listFragment == null){
                     listFragment = new ListFragment();
@@ -119,6 +123,7 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
                 addText.setText(getResources().getString(R.string.main_add_list));
                 break;
             case R.id.main_titlebar_note:
+                calendarType = "note";
                 onClickTitle((TextView)v);
                 if(noteFragment == null){
                     noteFragment = new NoteFragment();
@@ -132,6 +137,7 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
                 break;
             case R.id.main_titlebar_calendar:
                 Intent calendarIntent = new Intent(this,CalendarActivity.class);
+                calendarIntent.putExtra("calendarType", calendarType);
                 startActivity(calendarIntent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;

@@ -5,6 +5,7 @@ public class ListBean {
     private int finished;
     private String title;
     private String itemArr;
+    private String date;
 
     public long getId() {
         return id;
@@ -36,5 +37,13 @@ public class ListBean {
 
     public void setItemArr(String itemArr) {
         this.itemArr = itemArr;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

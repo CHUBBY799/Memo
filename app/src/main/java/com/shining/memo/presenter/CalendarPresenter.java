@@ -17,12 +17,12 @@ public class CalendarPresenter {
         this.calendarModel = new CalendarImpl(calendarView.getContext());
     }
 
-    public HashSet<String> queryData(String year_month){
-        return calendarModel.queryData(year_month);
+    public HashSet<String> queryData(String year_month, String type){
+        return calendarModel.queryData(year_month, type);
     }
 
-    public JSONArray queryData(List<LocalDate> dateList){
-        return calendarModel.queryData(dateList);
+    public JSONArray queryData(List<LocalDate> dateList, String type){
+        return calendarModel.queryData(dateList, type);
     }
 
 }
