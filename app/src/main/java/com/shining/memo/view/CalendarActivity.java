@@ -78,7 +78,7 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         //根据选择的日期集合查询数据库
         Collections.reverse(dateList);
         taskDataArr = calendarPresenter.queryData(dateList, calendarType);
-        calendarAdapter.setInfo(taskDataArr, taskDataArr.length());
+        calendarAdapter.setInfo(taskDataArr, taskDataArr.length(), calendarType);
         calendar_event.setAdapter(calendarAdapter);
     }
 

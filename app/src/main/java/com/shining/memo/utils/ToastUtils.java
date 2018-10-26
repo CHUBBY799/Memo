@@ -2,6 +2,7 @@ package com.shining.memo.utils;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.text.Html;
 import android.view.Gravity;
 import android.view.View;
@@ -24,49 +25,15 @@ public class ToastUtils
 		throw new UnsupportedOperationException("cannot be instantiated");
 	}
 
-	public static boolean isShow = true;
-
-	/**
-	 * 短时间显示Toast
-	 * 
-	 * @param context
-	 * @param message
-	 */
-	public static void showSuccessShort(Context context, CharSequence message)
-	{
-		Toast toast = new Toast(context);
-		toast.setDuration(Toast.LENGTH_SHORT);
-		View layout = View.inflate(context, R.layout.toast_notice,null);
-		TextView textView = layout.findViewById(R.id.toast_info);
-		textView.setText(message);
-		toast.setView(layout);
-		toast.setGravity(Gravity.CENTER|Gravity.BOTTOM,0,110);
-		toast.show();
-	}
-
-	public static void showFailedShort(Context context, CharSequence message)
-	{
-		Toast toast = new Toast(context);
-		toast.setDuration(Toast.LENGTH_SHORT);
-		View layout = View.inflate(context, R.layout.toast_notice,null);
-		ImageView imageView = layout.findViewById(R.id.toast_image);
-		TextView textView = layout.findViewById(R.id.toast_info);
-		imageView.setImageDrawable(context.getDrawable(R.drawable.cancel_icon));
-		textView.setText(message);
-		toast.setView(layout);
-		toast.setGravity(Gravity.CENTER|Gravity.BOTTOM,0,110);
-		toast.show();
-	}
-
 	public static void showShort(Context context, CharSequence message){
 
-		Toast toast = Toast.makeText(context,  message, Toast.LENGTH_SHORT);
-		toast.setDuration(Toast.LENGTH_SHORT);
+		Toast toast = Toast.makeText(context,  "		"+message+"		", Toast.LENGTH_SHORT);
 		View view = toast.getView();
 		view.setBackground(context.getDrawable(R.drawable.toast_background));
 		TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
 		v.setTextColor(Color.WHITE);
 		v.setTextSize(16);
+		v.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 		toast.setView(view);
 		toast.show();
 	}

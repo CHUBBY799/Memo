@@ -87,7 +87,7 @@ public class AudioRecordPresenter {
                 File file = new File(filePath);
                 if (file.exists())
                     file.delete();
-                ToastUtils.showFailedShort(context, context.getResources().getString(R.string.audio_length_limit));
+                ToastUtils.showShort(context, context.getResources().getString(R.string.audio_length_limit));
             } else {
                 viewAudioRecording.onStop(filePath, "audio");
             }
@@ -128,7 +128,7 @@ public class AudioRecordPresenter {
                 file.delete();
             filePath = "";
         } else {
-            ToastUtils.showFailedShort(context, context.getResources().getString(R.string.audio_prepare));
+            ToastUtils.showShort(context, context.getResources().getString(R.string.audio_prepare));
             viewAudioRecording.onStopActivateRecording();
             long startTime = 0;
         }

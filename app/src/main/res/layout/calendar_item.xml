@@ -20,12 +20,15 @@
 
     <TextView
         android:id="@+id/task_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"
         android:textColor="@color/recording_title"
         android:textSize="16sp"
+        android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/task_month"
         app:layout_constraintStart_toEndOf="@+id/task_finished"
         app:layout_constraintTop_toTopOf="parent" />
 

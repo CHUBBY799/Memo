@@ -38,6 +38,7 @@
             android:textColor="@color/recording_title"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:singleLine="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/finished_icon"
             app:layout_constraintStart_toEndOf="@+id/expand_icon"

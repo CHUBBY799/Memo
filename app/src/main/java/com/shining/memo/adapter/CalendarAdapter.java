@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.shining.memo.R;
 import com.shining.memo.view.CalendarActivity;
+import com.shining.memo.view.ListActivity;
+import com.shining.memo.view.NoteActivity;
 import com.shining.memo.view.TaskActivity;
 
 import org.json.JSONArray;
@@ -29,7 +31,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
     private String[] task_title;
     private String[] task_day;
     private String[] task_month;
+    private String[] itemArr;
     private int length;
+    private String type;
 
     public CalendarAdapter(Context context, CalendarActivity calendarActivity) {
         this.context = context;
@@ -57,15 +61,41 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         taskDate.setText(task_day[position]);
         taskMonth.setText(task_month[position]);
 
-        calendarItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, TaskActivity.class);
-                intent.putExtra("taskId", task_id[holder.getAdapterPosition()]);
-                context.startActivity(intent);
-                calendarActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-            }
-        });
+        if(type.equals("task")){
+            calendarItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, TaskActivity.class);
+                    intent.putExtra("taskId", task_id[holder.getAdapterPosition()]);
+                    context.startActivity(intent);
+                    calendarActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
+            });
+        }
+        if (type.equals("note")){
+            calendarItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, NoteActivity.class);
+                    intent.putExtra("noteId", task_id[holder.getAdapterPosition()]);
+                    context.startActivity(intent);
+                    calendarActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
+            });
+        }
+        if (type.equals("list")){
+            calendarItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, ListActivity.class);
+                    intent.putExtra("id", task_id[holder.getAdapterPosition()]);
+                    intent.putExtra("title", task_title[holder.getAdapterPosition()]);
+                    intent.putExtra("itemArr", itemArr[holder.getAdapterPosition()]);
+                    context.startActivity(intent);
+                    calendarActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
+            });
+        }
     }
 
     @Override
@@ -73,10 +103,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         return length;
     }
 
-    public void setInfo(JSONArray taskDataArr, int length){
+    public void setInfo(JSONArray taskDataArr, int length, String type){
         this.length = length;
+        this.type = type;
         task_id = new int[length];
         task_title = new String[length];
+        itemArr = new String[length];
         task_day = new String[length];
         task_month = new String[length];
         for (int i = 0 ; i < length ; i++){
@@ -84,6 +116,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
                 JSONObject taskData = taskDataArr.getJSONObject(i);
                 task_id[i] = taskData.getInt("id");
                 task_title[i] = taskData.getString("title");
+                if (type.equals("list")){
+                    itemArr[i] = taskData.getString("itemArr");
+                }
                 task_day[i] = taskData.getString("day");
                 task_month[i] = taskData.getString("month");
             }catch (JSONException e){

@@ -811,15 +811,20 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     }
 
     public TextViewHolder getTextViewHolder(RecyclerView mRecycleRView){
-        HashMap<Integer,RecordingContent> map = textChanged.getMap();
-        TextViewHolder holder = null;
-        for(int i = textChanged.getCurrentLastIndex(); i >= textChanged.getCurrentFirstIndex(); i--) {
-            if (map.get(i).getType().equals("text")) {
-                holder = (TextViewHolder) mRecycleRView.getChildViewHolder(mRecycleRView.getChildAt(i));
-                break;
+        try{
+            HashMap<Integer,RecordingContent> map = textChanged.getMap();
+            TextViewHolder holder = null;
+            for(int i = textChanged.getCurrentLastIndex(); i >= textChanged.getCurrentFirstIndex(); i--) {
+                if (map.get(i).getType().equals("text")) {
+                    holder = (TextViewHolder) mRecycleRView.getChildViewHolder(mRecycleRView.getChildAt(i));
+                    break;
+                }
             }
+            return holder;
+        }catch (Exception e){
+            ToastUtils.showShort(context,context.getString(R.string.error));
         }
-        return holder;
+        return null;
     }
 
     public int getCurrentIndex(){
@@ -894,20 +899,25 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
     }
 
     public boolean setTextColor(int index,RecyclerView recyclerView,int color){
-        if(index != -1 && (index - textChanged.getCurrentFirstIndex() >= 0)){
-            TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(index - textChanged.getCurrentFirstIndex()));
-            int startIndex = textViewHolder.editText.getSelectionStart(),endIndex = textViewHolder.editText.getSelectionEnd();
-            if(startIndex != endIndex){
-                SpannableString spannableString = new SpannableString(textViewHolder.editText.getText());
-                spannableString = updateTextColor(spannableString,startIndex,endIndex,color);
-                textViewHolder.editText.setText(spannableString);
-                textViewHolder.editText.setSelection(startIndex,endIndex);
-                textChanged.TextChanged(spannableString,index);
-                return true;
-            }else {
-                ToastUtils.showFailedShort(context,context.getResources().getString(R.string.no_selectd_text));
-                return false;
+        try {
+            if(index != -1 && (index - textChanged.getCurrentFirstIndex() >= 0)){
+                TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(index - textChanged.getCurrentFirstIndex()));
+                int startIndex = textViewHolder.editText.getSelectionStart(),endIndex = textViewHolder.editText.getSelectionEnd();
+                if(startIndex != endIndex){
+                    SpannableString spannableString = new SpannableString(textViewHolder.editText.getText());
+                    spannableString = updateTextColor(spannableString,startIndex,endIndex,color);
+                    textViewHolder.editText.setText(spannableString);
+                    textViewHolder.editText.setSelection(startIndex,endIndex);
+                    textChanged.TextChanged(spannableString,index);
+                    return true;
+                }else {
+                    ToastUtils.showShort(context,context.getResources().getString(R.string.no_selectd_text));
+                    return false;
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
+            ToastUtils.showShort(context,context.getResources().getString(R.string.error));
         }
         return false;
     }
@@ -944,18 +954,22 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
 
 
     public void setText(int index,RecyclerView recyclerView,Object object){
-        if(index != -1 && (index - textChanged.getCurrentFirstIndex() >= 0)){
-            TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(index - textChanged.getCurrentFirstIndex()));
-            int startIndex = textViewHolder.editText.getSelectionStart(),endIndex = textViewHolder.editText.getSelectionEnd();
-            if(startIndex != endIndex){
-                Spannable spannableString = new SpannableString(textViewHolder.editText.getText());
-                spannableString = updateText(spannableString,startIndex,endIndex,object);
-                textViewHolder.editText.setText(spannableString);
-                textViewHolder.editText.setSelection(startIndex,endIndex);
-                textChanged.TextChanged(spannableString,index);
-            }else{
-                ToastUtils.showFailedShort(context,context.getResources().getString(R.string.no_selectd_text));
+        try{
+            if(index != -1 && (index - textChanged.getCurrentFirstIndex() >= 0)){
+                TextViewHolder textViewHolder = (TextViewHolder)recyclerView.getChildViewHolder(recyclerView.getChildAt(index - textChanged.getCurrentFirstIndex()));
+                int startIndex = textViewHolder.editText.getSelectionStart(),endIndex = textViewHolder.editText.getSelectionEnd();
+                if(startIndex != endIndex){
+                    Spannable spannableString = new SpannableString(textViewHolder.editText.getText());
+                    spannableString = updateText(spannableString,startIndex,endIndex,object);
+                    textViewHolder.editText.setText(spannableString);
+                    textViewHolder.editText.setSelection(startIndex,endIndex);
+                    textChanged.TextChanged(spannableString,index);
+                }else{
+                    ToastUtils.showShort(context,context.getResources().getString(R.string.no_selectd_text));
+                }
             }
+        }catch (Exception e){
+            ToastUtils.showShort(context,context.getResources().getString(R.string.error));
         }
     }
 

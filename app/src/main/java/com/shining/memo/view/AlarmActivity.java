@@ -135,12 +135,12 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
 
     private void alarmDelete(){
         if(alarmPresenter.deleteAlarm(taskId)){
-            ToastUtils.showSuccessShort(this, getString(R.string.alarm_deleted_notice));
+            ToastUtils.showShort(this, getString(R.string.alarm_deleted_notice));
             Intent intent = new Intent();
             intent.putExtra("alarm",0);
             setResult(RESULT_OK,intent);
         }else {
-            ToastUtils.showSuccessShort(this, getString(R.string.alarm_deleted_failed));
+            ToastUtils.showShort(this, getString(R.string.alarm_deleted_failed));
             setResult(RESULT_CANCELED);
         }
         finish();
@@ -163,15 +163,15 @@ public class AlarmActivity extends AppCompatActivity implements View.OnClickList
             if(alarm == 1){
                 if( alarmPresenter.modifyAlarm(alarmObject)){
                     alarmPresenter.setAlarmNotice(taskId);
-                    ToastUtils.showSuccessShort(this,getString(R.string.alarm_updated_notice));
+                    ToastUtils.showShort(this,getString(R.string.alarm_updated_notice));
                 }else
-                    ToastUtils.showSuccessShort(this,getString(R.string.alarm_set_failed));
+                    ToastUtils.showShort(this,getString(R.string.alarm_set_failed));
             }else {
                 if( alarmPresenter.addAlarm(alarmObject)){
                     alarmPresenter.setAlarmNotice(taskId);
-                    ToastUtils.showSuccessShort(this,getString(R.string.alarm_set_notice));
+                    ToastUtils.showShort(this,getString(R.string.alarm_set_notice));
                 }else
-                    ToastUtils.showSuccessShort(this,getString(R.string.alarm_set_failed));
+                    ToastUtils.showShort(this,getString(R.string.alarm_set_failed));
             }
         }
         textIntent.putExtra("date",date);

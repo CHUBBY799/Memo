@@ -6,6 +6,7 @@
     <string name="state">state</string>
     <string name="title">title</string>
     <string name="item">item</string>
+    <string name="error">Error</string>
 
     <!--guide string -->
     <string name="guide_image">guide image</string>

@@ -26,6 +26,7 @@
             android:paddingTop="25dp"
             android:ems="10"
             android:hint="@string/list_hint_title"
+            android:textColorHint="@color/main_task_not_click"
             android:inputType="textMultiLine"
             android:paddingBottom="6dp"
             android:textColor="@color/recording_title"
