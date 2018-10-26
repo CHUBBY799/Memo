@@ -30,6 +30,12 @@
         <string name="main_finish_dialog_title">完成</string>
         <string name="main_task_no_title">无标题</string>
         <string name="main_task_no_alarm">无闹钟</string>
+        <string name="main_no_data_task_top">无任务</string>
+        <string name="main_no_data_task_bottom">任务将会在这里展示</string>
+        <string name="main_no_data_note_top">无日记</string>
+        <string name="main_no_data_note_bottom">日记将会在这里展示</string>
+        <string name="main_no_data_list_top">无列表</string>
+        <string name="main_no_data_list_bottom">列表将会在这里展示</string>
 
         <!-- list string -->
         <string name="list_hint_title">请输入清单的标题</string>

@@ -152,6 +152,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
                                                     public void run() {
                                                         notifyItemRemoved(position);
                                                         notifyItemRangeRemoved(position, tasks.size());
+                                                        callback.checkShowNoData();
                                                         click = false;
                                                     }
                                                 }, 500);
@@ -231,6 +232,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
 
     public interface Callback{
         void finishTaskById(int id);
+        void checkShowNoData();
     }
     private Callback callback;
     public void setCallback(Callback callback){

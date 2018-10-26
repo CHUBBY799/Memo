@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.shining.memo.R;
 import com.shining.memo.home.adapter.ListAdapter;
@@ -21,11 +23,20 @@ public class ListFragment extends Fragment {
     private Context context;
     private RecyclerView listFragment;
     private ListAdapter listAdapter;
+    private View mNodata;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_list, container, false);
+        mNodata = view.findViewById(R.id.main_no_data);
+        ImageView mNodataIv = mNodata.findViewById(R.id.main_no_data_iv);
+        mNodataIv.setImageResource(R.drawable.list_icon);
+        TextView mNodataTvTop = mNodata.findViewById(R.id.main_no_data_tv_top);
+        mNodataTvTop.setText(getResources().getString(R.string.main_no_data_list_top));
+        TextView mNodataTvBottom = mNodata.findViewById(R.id.main_no_data_tv_bottom);
+        mNodataTvBottom.setText(getResources().getString(R.string.main_no_data_list_bottom));
+        return  view;
     }
 
     @Override
@@ -48,6 +59,12 @@ public class ListFragment extends Fragment {
             listAdapter.setInfo(listBeans);
             listFragment.setAdapter(listAdapter);
         }
+        if(listBeans.length == 0){
+            mNodata.setVisibility(View.VISIBLE);
+        }else {
+            mNodata.setVisibility(View.INVISIBLE);
+        }
+
     }
 
 

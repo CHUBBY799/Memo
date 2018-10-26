@@ -29,6 +29,13 @@
     <string name="main_finish_dialog_title">Finish</string>
     <string name="main_task_no_title">No title</string>
     <string name="main_task_no_alarm">no alarm</string>
+    <string name="main_no_data_task_top">No Tasks</string>
+    <string name="main_no_data_task_bottom">Tasks will appear here</string>
+    <string name="main_no_data_note_top">No Notes</string>
+    <string name="main_no_data_note_bottom">Notes will appear here</string>
+    <string name="main_no_data_list_top">No Lists</string>
+    <string name="main_no_data_list_bottom">Lists will appear here</string>
+
 
     <!-- list string -->
     <string name="list_hint_title">Please input title of list</string>

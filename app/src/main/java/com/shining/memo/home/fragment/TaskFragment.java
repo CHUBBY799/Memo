@@ -10,11 +10,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.shining.memo.R;
 import com.shining.memo.home.adapter.TaskAdapter;
 import com.shining.memo.model.Task;
 import com.shining.memo.presenter.AlarmPresenter;
+import com.shining.memo.presenter.MemoContract;
 import com.shining.memo.presenter.TaskPresenter;
 
 import org.json.JSONObject;
@@ -28,6 +31,7 @@ public class TaskFragment extends Fragment{
     private TaskPresenter mPresenter;
     private AlarmPresenter alarmPresenter;
     private RecyclerView mRecycleView;
+    private View mNodata;
 
     @Nullable
     @Override
@@ -46,8 +50,24 @@ public class TaskFragment extends Fragment{
                 alarmPresenter.alarmCancel(id);
 //                refreshData();
             }
+
+            @Override
+            public void checkShowNoData() {
+                if(mTasks.size() == 0){
+                    mNodata.setVisibility(View.VISIBLE);
+                }else {
+                    mNodata.setVisibility(View.INVISIBLE);
+                }
+            }
         });
         mRecycleView.setAdapter(mAdapter);
+        mNodata = view.findViewById(R.id.main_no_data);
+        ImageView mNodataIv = mNodata.findViewById(R.id.main_no_data_iv);
+        mNodataIv.setImageResource(R.drawable.task_icon);
+        TextView mNodataTvTop = mNodata.findViewById(R.id.main_no_data_tv_top);
+        mNodataTvTop.setText(getResources().getString(R.string.main_no_data_task_top));
+        TextView mNodataTvBottom = mNodata.findViewById(R.id.main_no_data_tv_bottom);
+        mNodataTvBottom.setText(getResources().getString(R.string.main_no_data_task_bottom));
         return view;
     }
     public void initData(){
@@ -70,5 +90,10 @@ public class TaskFragment extends Fragment{
         Log.d(TAG, "onResume: ");
         super.onResume();
         refreshData();
+        if(mTasks.size() == 0){
+            mNodata.setVisibility(View.VISIBLE);
+        }else {
+            mNodata.setVisibility(View.INVISIBLE);
+        }
     }
 }
