@@ -58,6 +58,7 @@ public class RecordingPresenter {
             return -1;
         }finally {
             db.endTransaction();
+            db.close();
         }
         return taskId;
     }
@@ -76,6 +77,7 @@ public class RecordingPresenter {
             return null;
         }finally {
             db.endTransaction();
+            db.close();
         }
         return task_recording;
     }
@@ -105,6 +107,7 @@ public class RecordingPresenter {
             return false;
         }finally {
             db.endTransaction();
+            db.close();
         }
         return true;
     }
@@ -124,6 +127,7 @@ public class RecordingPresenter {
             return false;
         }finally {
             db.endTransaction();
+            db.close();
         }
         return true;
     }
@@ -139,6 +143,7 @@ public class RecordingPresenter {
             return false;
         }finally {
             db.endTransaction();
+            db.close();
         }
         return true;
     }
@@ -154,6 +159,7 @@ public class RecordingPresenter {
             return false;
         }finally {
             db.endTransaction();
+            db.close();
         }
         return true;
     }

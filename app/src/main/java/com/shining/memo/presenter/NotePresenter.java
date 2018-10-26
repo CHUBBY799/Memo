@@ -43,6 +43,7 @@ public class NotePresenter {
             return false;
         }finally {
             db.endTransaction();
+            db.close();
         }
         return true;
     }
@@ -62,6 +63,7 @@ public class NotePresenter {
             return false;
         }finally {
             db.endTransaction();
+            db.close();
         }
         return true;
     }
@@ -80,6 +82,7 @@ public class NotePresenter {
             return false;
         }finally {
             db.endTransaction();
+            db.close();
         }
         return true;
     }

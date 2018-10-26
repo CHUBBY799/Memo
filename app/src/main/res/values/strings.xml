@@ -46,6 +46,12 @@
     <string name="empty_text_notice">save failed for empty text</string>
     <string name="no_selectd_text">no select text!</string>
     <string name="urgent">urgent</string>
+    <string name="task_delete_title">Delete Task</string>
+    <string name="task_delete_tip">Do you wan to delete the task?</string>
+    <string name="note_delete_title">Delete Note</string>
+    <string name="note_delete_tip">Do you wan to delete the note?</string>
+    <string name="delete_success_notice">Delete successful</string>
+    <string name="delete_failed_notice">Delete failed</string>
 
     <!-- alarm string -->
     <string name="alarm_clock">Alarm Clock</string>
