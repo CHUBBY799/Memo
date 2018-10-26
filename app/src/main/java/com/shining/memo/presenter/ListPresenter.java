@@ -23,20 +23,6 @@ public class ListPresenter {
     }
 
     /**
-     * 查询全部数据控制逻辑单元
-     */
-    public ListBean[] queryPresenter(){
-        return queryDataAll();
-    }
-
-    /**
-     * 查询某一行数据控制逻辑单元
-     */
-    public ListBean queryPresenter(String title){
-        return queryDataByTitle(title);
-    }
-
-    /**
      * 删除数据控制逻辑单元
      */
     public void deletePresenter(String id){
@@ -52,14 +38,6 @@ public class ListPresenter {
 
     private void insertData(ListBean listBean){
         listModel.insertData(listBean);
-    }
-
-    private ListBean[] queryDataAll(){
-        return listModel.queryAllData();
-    }
-
-    private ListBean queryDataByTitle(String title){
-        return listModel.queryDataByTitle(title);
     }
 
     private void deleteDataById(String id){

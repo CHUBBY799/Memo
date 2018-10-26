@@ -22,7 +22,9 @@ import com.shining.memo.adapter.ListItemAdapter;
 import com.shining.memo.bean.ListBean;
 import com.shining.memo.presenter.ListPresenter;
 import com.shining.memo.utils.ShotUtils;
+import com.shining.memo.utils.ToastUtils;
 
+import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,15 +85,25 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view){
         switch (view.getId()){
             case R.id.list_cancel:
+                buttonFocus(CANCEL, true);
+                buttonFocus(CANCEL, false);
                 listCancel();
                 break;
             case R.id.list_confirm:
+                buttonFocus(CONFIRM, true);
+                buttonFocus(CONFIRM, false);
                 listConfirm();
                 break;
             case R.id.list_delete:
+                buttonFocus(DELETE, true);
+                buttonFocus(DELETE, false);
                 listDelete();
+                break;
             case R.id.list_share:
+                buttonFocus(SHARE, true);
+                buttonFocus(SHARE, false);
                 listShare();
+                break;
             default:
                 break;
         }
@@ -110,9 +122,21 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     public ListBean formatData(){
         ListBean listBean = new ListBean();
         listBean.setId(id);
-        listBean.setFinished(finished);
         listBean.setTitle(title);
         listBean.setItemArr(itemArr.toString());
+        finished = 1;
+        for (int i = 0 ; i < itemArr.length(); i++){
+            try{
+                if (!itemArr.getJSONObject(i).getBoolean("state")){
+                    finished = 0;
+                    break;
+                }
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+        listBean.setFinished(finished);
+        listBean.setDate(LocalDate.now().toString());
         return listBean;
     }
 
@@ -120,43 +144,45 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      * 退出
      */
     private void listCancel(){
-        buttonFocus(CANCEL, true);
         title = listTitle.getText().toString();
-        ListPresenter listPresenter = new ListPresenter(ListActivity.this);
-        if(id == -1){
-            listPresenter.insertPresenter(formatData());
-        }else {
-            listPresenter.updatePresenter(formatData());
+        if (!title.equals("") || itemArr.length() != 0){
+            ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+            if(id == -1){
+                listPresenter.insertPresenter(formatData());
+            }else {
+                listPresenter.updatePresenter(formatData());
+            }
         }
         finish();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-        buttonFocus(CANCEL, false);
     }
 
     /**
      * 删除
      */
     private void listDelete(){
-        buttonFocus(DELETE, true);
         buildDialog();
-        buttonFocus(DELETE, false);
     }
 
     /**
      * 保存
      */
     private void listConfirm(){
-        buttonFocus(CONFIRM, true);
         title = listTitle.getText().toString();
-        ListPresenter listPresenter = new ListPresenter(ListActivity.this);
-        if(id == -1){
-            listPresenter.insertPresenter(formatData());
+        if (!title.equals("") || itemArr.length() !=0){
+            ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+            if(id == -1){
+                listPresenter.insertPresenter(formatData());
+            }else {
+                listPresenter.updatePresenter(formatData());
+            }
+            ToastUtils.showSuccessShort(ListActivity.this, getString(R.string.save_successful_notice));
+            finish();
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }else {
-            listPresenter.updatePresenter(formatData());
+            ToastUtils.showFailedShort(ListActivity.this, getString(R.string.empty_list));
+
         }
-        finish();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-        buttonFocus(CONFIRM, false);
     }
 
     /**
@@ -168,10 +194,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_SHARE_PERMISSION);
         }else {
-            buttonFocus(SHARE, true);
             shotPath = ShotUtils.saveBitmap(ListActivity.this,ShotUtils.shotRecyclerView(listContent,findViewById(R.id.list_title_layout)));
             ShotUtils.shareCustom(ListActivity.this,shotPath);
-            buttonFocus(SHARE, false);
         }
     }
 
@@ -331,6 +355,15 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed(){
         super.onBackPressed();
+        title = listTitle.getText().toString();
+        if (!title.equals("") || itemArr.length() !=0){
+            ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+            if(id == -1){
+                listPresenter.insertPresenter(formatData());
+            }else {
+                listPresenter.updatePresenter(formatData());
+            }
+        }
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 

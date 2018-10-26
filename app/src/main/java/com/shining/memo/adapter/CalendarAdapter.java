@@ -49,7 +49,11 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         final TextView taskMonth = holder.taskMonth;
         final ConstraintLayout calendarItem = holder.calendarItem;
 
-        taskTitle.setText(task_title[position]);
+        if (task_title[position].equals("")){
+            taskTitle.setText(context.getString(R.string.main_task_no_title));
+        }else {
+            taskTitle.setText(task_title[position]);
+        }
         taskDate.setText(task_day[position]);
         taskMonth.setText(task_month[position]);
 

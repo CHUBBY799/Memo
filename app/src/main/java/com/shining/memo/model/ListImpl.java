@@ -10,7 +10,6 @@ import com.shining.memo.bean.ListBean;
 public class ListImpl implements ListModel {
 
     private SQLiteDatabase db;
-    private Cursor cursor;
 
     public ListImpl(Context context){
         MemoDatabaseHelper dbHelper = new MemoDatabaseHelper(context, "memo.db", null, 1);
@@ -23,12 +22,13 @@ public class ListImpl implements ListModel {
         values.put("finished", listBean.getFinished());
         values.put("title", listBean.getTitle());
         values.put("itemArr",listBean.getItemArr());
+        values.put("date", listBean.getDate());
         db.insert("tb_list", null, values);
     }
 
     @Override
     public ListBean[] queryAllData(){
-        cursor = db.query("tb_list",null,null,null,null,null,null);
+        Cursor cursor = db.query("tb_list",null,null,null,null,null,null);
         ListBean[] listBeans = new ListBean[cursor.getCount()];
         int m = 0;
         if(cursor.moveToFirst()){
@@ -37,35 +37,19 @@ public class ListImpl implements ListModel {
                 int finished = cursor.getInt(cursor.getColumnIndex("finished"));
                 String title = cursor.getString(cursor.getColumnIndex("title"));
                 String itemArr = cursor.getString(cursor.getColumnIndex("itemArr"));
+                String date = cursor.getString(cursor.getColumnIndex("date"));
 
                 ListBean listBean = new ListBean();
                 listBean.setId(id);
                 listBean.setFinished(finished);
                 listBean.setTitle(title);
                 listBean.setItemArr(itemArr);
+                listBean.setDate(date);
                 listBeans[m++] = listBean;
             }while (cursor.moveToNext());
         }
         cursor.close();
         return listBeans;
-    }
-
-    @Override
-    public ListBean queryDataByTitle(String title){
-        cursor = db.query("tb_list",null,"title = ?",new String[]{title},null,null,null);
-        ListBean listBean = new ListBean();
-        if(cursor.moveToFirst()){
-            do{
-                int id = cursor.getInt(cursor.getColumnIndex("id"));
-                String itemArr = cursor.getString(cursor.getColumnIndex("itemArr"));
-                listBean.setId(id);
-                listBean.setTitle(title);
-                listBean.setItemArr(itemArr);
-
-            }while (cursor.moveToNext());
-        }
-        cursor.close();
-        return listBean;
     }
 
     @Override
@@ -79,6 +63,7 @@ public class ListImpl implements ListModel {
         values.put("finished", listBean.getFinished());
         values.put("title", listBean.getTitle());
         values.put("itemArr", listBean.getItemArr());
+        values.put("date", listBean.getDate());
         db.update("tb_list", values, "id = ?", new String[]{String.valueOf(listBean.getId())});
     }
 
@@ -88,7 +73,9 @@ public class ListImpl implements ListModel {
             ContentValues values = new ContentValues();
             values.put("finished", listBean.getFinished());
             values.put("itemArr", listBean.getItemArr());
+            values.put("date", listBean.getDate());
             db.update("tb_list", values, "id = ?", new String[]{String.valueOf(listBean.getId())});
         }
     }
+
 }

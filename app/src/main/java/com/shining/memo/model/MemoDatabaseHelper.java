@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class MemoDatabaseHelper extends SQLiteOpenHelper{
-    public static final String CREATE_TASK="create table task("
+    private static final String CREATE_TASK="create table task("
             +"id integer primary key autoincrement, "
             +"category text, "
             +"type text, "
@@ -17,26 +17,29 @@ public class MemoDatabaseHelper extends SQLiteOpenHelper{
             +"title text, "
             +"deleted integer, "
             +"finished integer)";
-    public static final String CREATE_ALARM="create table alarm("
+    private static final String CREATE_ALARM="create table alarm("
             +"id integer primary key autoincrement,"
             +"taskId integer,"
             +"date text,"
             +"time text,"
             +"path integer,"
             +"pop integer)";
-    public static final String CREATE_RECORDING="create table recording("
+    private static final String CREATE_RECORDING="create table recording("
             +"id integer primary key autoincrement,"
             +"taskId integer,"
             +"recordingInfo text)";
-    public static final String CREATE_TB_LIST="create table tb_list("
+    private static final String CREATE_TB_LIST="create table tb_list("
             +"id integer primary key autoincrement,"
             +"finished integer,"
             +"title text,"
-            +"itemArr text)";
+            +"itemArr text,"
+            +"date text)";
+
     public MemoDatabaseHelper(Context context, String name,
                               SQLiteDatabase.CursorFactory factory, int version){
         super(context,name,factory,version);
     }
+
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 

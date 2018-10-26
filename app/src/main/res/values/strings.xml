@@ -35,6 +35,7 @@
     <string name="expand_icon">expand icon</string>
     <string name="start_default">start default</string>
     <string name="list_add_item">Add a item</string>
+    <string name="empty_list">Unable to save empty list</string>
 
     <!-- task string -->
     <string name="edit_title_hint">Please input content of title</string>
@@ -71,7 +72,7 @@
     <string name="calendar_thursday">Thur</string>
     <string name="calendar_friday">Fri</string>
     <string name="calendar_saturday">Sat</string>
-    <string name="back_top">back to the top</string>
+    <string name="month_year">%1$s %2$2s</string>
 
     <!-- audio string -->
     <string name="audio">audio</string>

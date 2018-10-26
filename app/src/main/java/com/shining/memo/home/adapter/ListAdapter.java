@@ -32,6 +32,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
     private int finished[];
     private String[] list_title;
     private Boolean[] expandState;
+    private String[] listDate;
     private Boolean[][] itemState;
     private String[][] itemContent;
 
@@ -182,6 +183,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
         finished = new int[length];
         list_title = new String[length];
         expandState = new Boolean[length];
+        listDate = new String[length];
         itemState = new Boolean[length][];
         itemContent = new String[length][];
         JSONArray itemArr;
@@ -189,6 +191,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
             id[i] = (int)listBeans[i].getId();
             finished[i] = listBeans[i].getFinished();
             list_title[i] = listBeans[i].getTitle();
+            listDate[i] = listBeans[i].getDate();
             expandState[i] = false;
             try{
                 itemArr = new JSONArray(listBeans[i].getItemArr());
@@ -212,6 +215,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
             ListBean listBean = new ListBean();
             listBean.setId(id[i]);
             listBean.setFinished(finished[i]);
+            listBean.setDate(listDate[i]);
             JSONArray itemArr = new JSONArray();
             try{
                 for (int j = 0 ; j < itemState[i].length ; j++){
