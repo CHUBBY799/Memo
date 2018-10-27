@@ -169,7 +169,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void listConfirm(){
         title = listTitle.getText().toString();
-        if (!title.equals("") || itemArr.length() !=0){
+        if (!title.equals("") || itemArr.length() != 0){
             ListPresenter listPresenter = new ListPresenter(ListActivity.this);
             if(id == -1){
                 listPresenter.insertPresenter(formatData());
@@ -355,6 +355,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed(){
         super.onBackPressed();
+        listTitle.setFocusable(true);
+        listTitle.setFocusableInTouchMode(true);
+        listTitle.requestFocus();
         title = listTitle.getText().toString();
         if (!title.equals("") || itemArr.length() !=0){
             ListPresenter listPresenter = new ListPresenter(ListActivity.this);

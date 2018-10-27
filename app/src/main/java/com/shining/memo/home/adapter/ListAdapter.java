@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +17,10 @@ import com.shining.memo.R;
 import com.shining.memo.bean.ListBean;
 import com.shining.memo.view.ListActivity;
 
+import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static android.view.Gravity.CENTER;
-import static android.view.Gravity.END;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
 
@@ -113,6 +110,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
                         }
                         if (finished[holder.getAdapterPosition()] == 1){
                             finishedIcon.setImageResource(R.drawable.finish_icon);
+                            listDate[holder.getAdapterPosition()] = LocalDate.now().toString();
                         }else {
                             finishedIcon.setImageResource(R.color.white);
                         }
