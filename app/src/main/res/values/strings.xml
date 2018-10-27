@@ -43,7 +43,6 @@
     <string name="expand_icon">expand icon</string>
     <string name="start_default">start default</string>
     <string name="list_add_item">Add a item</string>
-    <string name="empty_list">Unable to save empty list</string>
 
     <!-- task string -->
     <string name="edit_title_hint">Please input content of title</string>

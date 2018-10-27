@@ -43,7 +43,6 @@
         <string name="expand_icon">expand icon</string>
         <string name="start_default">start default</string>
         <string name="list_add_item">添加一个子项</string>
-        <string name="empty_list">不能保存空的清单</string>
 
         <!-- task string -->
         <string name="edit_title_hint">请输入标题内容</string>
@@ -73,7 +72,7 @@
         <string name="alarm_set_notice">设置闹钟成功</string>
         <string name="alarm_updated_notice">更新闹钟成功</string>
         <string name="alarm_set_failed">设置闹钟失败</string>
-        <string name="alarm_update_failed">更新闹钟失败</string>
+        <string name="alarm_updated_failed">更新闹钟失败</string>
         <string name="alarm_deleted_failed">删除闹钟失败</string>
         <string name="alarm_deleted_notice">删除闹钟成功</string>
 
@@ -116,5 +115,6 @@
         <string name="delete_icon">delete icon</string>
         <string name="share_icon">share icon</string>
         <string name="save_icon">save icon</string>
+        <string name="group_icon">group icon</string>
 
 </resources>

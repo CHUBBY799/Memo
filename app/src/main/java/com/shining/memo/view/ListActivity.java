@@ -22,6 +22,7 @@ import com.shining.memo.adapter.ListItemAdapter;
 import com.shining.memo.bean.ListBean;
 import com.shining.memo.presenter.ListPresenter;
 import com.shining.memo.utils.ShotUtils;
+import com.shining.memo.utils.ToastUtils;
 
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
@@ -178,13 +179,14 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             if (id != -1){
                 listPresenter.deletePresenter(String.valueOf(id));
             }
-
+            ToastUtils.showShort(ListActivity.this,getString(R.string.empty_text_notice));
         }else {
             if(id == -1){
                 listPresenter.insertPresenter(formatData());
             }else {
                 listPresenter.updatePresenter(formatData());
             }
+            ToastUtils.showShort(ListActivity.this,getString(R.string.save_successful_notice));
         }
         finish();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -269,6 +271,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 if(id != -1){
                     listPresenter.deletePresenter(String.valueOf(id));
                 }
+                ToastUtils.showShort(ListActivity.this,getString(R.string.delete_success_notice));
                 finish();
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
