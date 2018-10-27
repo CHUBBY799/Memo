@@ -21,11 +21,16 @@ import java.util.List;
 public class MonthCalendar extends CalendarPager implements OnClickMonthViewListener {
 
     private OnMonthCalendarChangedListener onMonthCalendarChangedListener;
+    private NCalendar nCalendar;
     private int lastPosition = -1;
     private boolean button;
 
     public MonthCalendar(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    public void setNCalendar(NCalendar nCalendar){
+        this.nCalendar = nCalendar;
     }
 
     @Override
@@ -145,9 +150,11 @@ public class MonthCalendar extends CalendarPager implements OnClickMonthViewList
 
     @Override
     public void onClickLastMonth(LocalDate date, boolean button){
-        int currentItem = getCurrentItem() - 1;
-        this.button = button;
-        dealClickEvent(date, currentItem);
+        if (nCalendar.getSTATE() == 100) {
+            int currentItem = getCurrentItem() - 1;
+            this.button = button;
+            dealClickEvent(date, currentItem);
+        }
     }
 
     @Override
@@ -158,9 +165,11 @@ public class MonthCalendar extends CalendarPager implements OnClickMonthViewList
 
     @Override
     public void onClickNextMonth(LocalDate date, boolean button) {
-        int currentItem = getCurrentItem() + 1;
-        this.button = button;
-        dealClickEvent(date, currentItem);
+        if (nCalendar.getSTATE() == 100) {
+            int currentItem = getCurrentItem() + 1;
+            this.button = button;
+            dealClickEvent(date, currentItem);
+        }
     }
 
     private void dealClickEvent(LocalDate date, int currentItem) {

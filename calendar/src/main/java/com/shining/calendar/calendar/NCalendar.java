@@ -82,6 +82,7 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
         addView(weekCalendar);
 
         monthCalendar.setOnMonthCalendarChangedListener(this);
+        monthCalendar.setNCalendar(this);
         weekCalendar.setOnWeekCalendarChangedListener(this);
 
         post(new Runnable() {
@@ -127,6 +128,10 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
             public void onAnimationRepeat(Animator animation) {
             }
         });
+    }
+
+    public int getSTATE(){
+        return STATE;
     }
 
     @Override
