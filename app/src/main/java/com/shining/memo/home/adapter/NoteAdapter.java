@@ -25,14 +25,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder>{
         View mView;
         TextView mTitle,mTime;
         LinearLayout mAudio;
-        ImageButton edit;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mView=itemView;
             mTitle=mView.findViewById(R.id.main_note_title);
             mTime=mView.findViewById(R.id.main_note_time);
             mAudio=mView.findViewById(R.id.main_note_audio);
-            edit= mView.findViewById(R.id.main_note_edit);
         }
     }
     public NoteAdapter(Context context,List<Task> notes){
@@ -45,16 +43,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder>{
         View view= LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.main_noteitem,viewGroup,false);
         final ViewHolder holder= new ViewHolder(view);
         holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int id=(int)mNotes.get(holder.getLayoutPosition()).getId();
-                Log.d("helo", "onClick: "+id);
-                Intent intent=new Intent(viewGroup.getContext(), NoteActivity.class);
-                intent.putExtra("noteId",id);
-                viewGroup.getContext().startActivity(intent);
-            }
-        });
-        holder.edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int id=(int)mNotes.get(holder.getLayoutPosition()).getId();
