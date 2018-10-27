@@ -145,8 +145,13 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void listCancel(){
         title = listTitle.getText().toString();
-        if (!title.equals("") || itemArr.length() != 0){
-            ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+        ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+        if (title.equals("") && itemArr.length() == 0){
+            if (id != -1){
+                listPresenter.deletePresenter(String.valueOf(id));
+            }
+
+        }else {
             if(id == -1){
                 listPresenter.insertPresenter(formatData());
             }else {
@@ -169,20 +174,21 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void listConfirm(){
         title = listTitle.getText().toString();
-        if (!title.equals("") || itemArr.length() != 0){
-            ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+        ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+        if (title.equals("") && itemArr.length() == 0){
+            if (id != -1){
+                listPresenter.deletePresenter(String.valueOf(id));
+            }
+
+        }else {
             if(id == -1){
                 listPresenter.insertPresenter(formatData());
             }else {
                 listPresenter.updatePresenter(formatData());
             }
-            ToastUtils.showShort(ListActivity.this, getString(R.string.save_successful_notice));
-            finish();
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-        }else {
-            ToastUtils.showShort(ListActivity.this, getString(R.string.empty_list));
-
         }
+        finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     /**
@@ -358,15 +364,22 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         listTitle.setFocusable(true);
         listTitle.setFocusableInTouchMode(true);
         listTitle.requestFocus();
+
         title = listTitle.getText().toString();
-        if (!title.equals("") || itemArr.length() !=0){
-            ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+        ListPresenter listPresenter = new ListPresenter(ListActivity.this);
+        if (title.equals("") && itemArr.length() == 0){
+            if (id != -1){
+                listPresenter.deletePresenter(String.valueOf(id));
+            }
+
+        }else {
             if(id == -1){
                 listPresenter.insertPresenter(formatData());
             }else {
                 listPresenter.updatePresenter(formatData());
             }
         }
+        finish();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
