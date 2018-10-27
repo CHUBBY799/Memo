@@ -22,7 +22,6 @@ import com.shining.memo.adapter.ListItemAdapter;
 import com.shining.memo.bean.ListBean;
 import com.shining.memo.presenter.ListPresenter;
 import com.shining.memo.utils.ShotUtils;
-import com.shining.memo.utils.ToastUtils;
 
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
