@@ -71,8 +71,8 @@ public abstract class CalendarPager extends ViewPager {
 
         mInitialDate = new LocalDate();
 
-        startDate = new LocalDate(startString == null ? "2018-01-01" : startString);
-        endDate = new LocalDate(endString == null ? "2099-12-31" : endString);
+        startDate = new LocalDate(startString == null ? "1994-02-08" : startString);
+        endDate = new LocalDate(endString == null ? "2094-12-31" : endString);
 
         setDateInterval(null, null);
 
