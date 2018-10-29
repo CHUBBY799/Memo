@@ -201,7 +201,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_SHARE_PERMISSION);
         }else {
-            shotPath = ShotUtils.saveBitmap(ListActivity.this,ShotUtils.shotRecyclerView(listContent,findViewById(R.id.list_title_layout)));
+            shotPath = ShotUtils.saveBitmap(ListActivity.this,ShotUtils.shotRecyclerView(this,listContent,findViewById(R.id.list_title_layout)));
             ShotUtils.shareCustom(ListActivity.this,shotPath);
         }
     }
@@ -409,7 +409,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             case REQUEST_SHARE_PERMISSION:
                 if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     buttonFocus(SHARE, true);
-                    shotPath = ShotUtils.saveBitmap(ListActivity.this,ShotUtils.shotRecyclerView(listContent,findViewById(R.id.list_title_layout)));
+                    shotPath = ShotUtils.saveBitmap(ListActivity.this,ShotUtils.shotRecyclerView(this,listContent,findViewById(R.id.list_title_layout)));
                     ShotUtils.shareCustom(ListActivity.this,shotPath);
                     buttonFocus(SHARE, false);
                 }

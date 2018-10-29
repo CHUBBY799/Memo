@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -15,8 +16,14 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
+
+import com.shining.memo.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,9 +35,11 @@ import java.util.List;
 
 public class ShotUtils {
 
-    public static Bitmap shotRecyclerView(RecyclerView view,View title) {
+    public static Bitmap shotRecyclerView(Context context,RecyclerView view,View title) {
+        Log.d("view",view.getHeight()+"");
         RecyclerView.Adapter adapter = view.getAdapter();
         Bitmap bigBitmap = null;
+        int stampHeight = 50;
         if (adapter != null) {
             int size = adapter.getItemCount();
             int height = 0;
@@ -61,7 +70,7 @@ public class ShotUtils {
                 height += holder.itemView.getMeasuredHeight();
             }
 
-            bigBitmap = Bitmap.createBitmap(view.getMeasuredWidth(), height, Bitmap.Config.ARGB_8888);
+            bigBitmap = Bitmap.createBitmap(view.getMeasuredWidth(), height + stampHeight, Bitmap.Config.ARGB_8888);
             Canvas bigCanvas = new Canvas(bigBitmap);
             Drawable lBackground = view.getBackground();
             if (lBackground instanceof ColorDrawable) {
@@ -100,6 +109,18 @@ public class ShotUtils {
                     e.printStackTrace();
                 }
             }
+            //分享水印
+            Bitmap stamp = Bitmap.createBitmap(view.getMeasuredWidth(),stampHeight, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(stamp);
+            canvas.drawBitmap(stamp, 0, 0, null);
+            TextPaint textPaint = new TextPaint();
+            textPaint.setAntiAlias(true);
+            textPaint.setTextSize(28.0F);
+            textPaint.setColor(context.getColor(R.color.item_btn_text));
+            StaticLayout sl= new StaticLayout(context.getResources().getString(R.string.share_stamp),
+                    textPaint, stamp.getWidth(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+            sl.draw(canvas);
+            bigCanvas.drawBitmap(stamp,0f,iHeight,paint);
         }
         return bigBitmap;
     }

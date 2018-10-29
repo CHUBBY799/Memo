@@ -4,7 +4,9 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -128,6 +130,9 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             case 3:
                 view = LayoutInflater.from(context).inflate(R.layout.title_recording,null);
                 return new TitleViewHolder(view);
+            case 4:
+                view = LayoutInflater.from(context).inflate(R.layout.item_recording_photo,null);
+                return new GuideViewHolder(view);
         }
         return null;
     }
@@ -199,6 +204,13 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 titleViewHolder.itemView.setTag(i);
                 titleViewHolder.editTitle.setText(map.get(i).getContent());
                 break;
+            case "guide":
+                GuideViewHolder guideViewHolder = ((GuideViewHolder)viewHolder);
+                guideViewHolder.itemView.setTag(i);
+                BitmapDrawable bd = (BitmapDrawable) context.getDrawable(Integer.parseInt(map.get(i).getContent()));
+                Bitmap bm= bd.getBitmap();
+                guideViewHolder.imageView.setImageBitmap(bm);
+                break;
         }
         if(i ==  requestFocusableIndex){
             textChanged.recyclerViewFocusable();
@@ -245,6 +257,8 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                 return 2;
             case "title":
                 return 3;
+            case "guide":
+                return 4;
         }
         return 0;
     }
@@ -736,6 +750,19 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
             }
         }
     }
+
+    public class GuideViewHolder extends RecyclerView.ViewHolder
+    {
+        private ImageView imageView;
+        public View itemView;
+        public GuideViewHolder(View itemView) {
+            super(itemView);
+            this.itemView = itemView;
+            imageView = (ImageView)itemView.findViewById(R.id.item_imageView);
+        }
+    }
+
+
 
     public void photoImageShelter(Button btnDelete,final ImageView imageView,View itemView){
         View v = (textChanged.getRecyclerView()).getFocusedChild();

@@ -5,7 +5,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.shining.memo.R;
+import com.shining.memo.presenter.RecordingPresenter;
+
+import java.util.HashMap;
+
 public class MemoDatabaseHelper extends SQLiteOpenHelper{
+    private Context context;
     private static final String CREATE_TASK="create table task("
             +"id integer primary key autoincrement, "
             +"category text, "
@@ -38,6 +44,7 @@ public class MemoDatabaseHelper extends SQLiteOpenHelper{
     public MemoDatabaseHelper(Context context, String name,
                               SQLiteDatabase.CursorFactory factory, int version){
         super(context,name,factory,version);
+        this.context = context;
     }
 
     @Override

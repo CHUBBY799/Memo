@@ -59,7 +59,8 @@
         <string name="note_delete_tip">你想删除此笔记?</string>
         <string name="delete_success_notice">删除成功</string>
         <string name="delete_failed_notice">删除失败</string>
-
+        <string name="share_stamp">通过\"小o备忘录\"分享</string>
+        <string name="welcome_hint">欢迎使用小o备忘录!</string>
 
         <!-- alarm string -->
         <string name="alarm_clock">闹钟</string>

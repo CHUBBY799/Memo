@@ -596,7 +596,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
                 break;
             case REQUEST_SHARE_PERMISSION:
                 if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView,null));
+                    shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(this,mRecyclerView,null));
                     ShotUtils.shareCustom(NoteActivity.this,shotPath);
                 }
                 break;
@@ -1010,7 +1010,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_SHARE_PERMISSION);
         }else {
-            shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(mRecyclerView,null));
+            shotPath = ShotUtils.saveBitmap(NoteActivity.this,ShotUtils.shotRecyclerView(this,mRecyclerView,null));
             ShotUtils.shareCustom(NoteActivity.this,shotPath);
         }
     }

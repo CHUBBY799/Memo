@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -14,9 +15,12 @@ import com.shining.memo.R;
 import com.shining.memo.home.fragment.ListFragment;
 import com.shining.memo.home.fragment.NoteFragment;
 import com.shining.memo.home.fragment.TaskFragment;
+import com.shining.memo.model.RecordingContent;
+import com.shining.memo.model.Task;
 import com.shining.memo.model.TaskImpl;
 import com.shining.memo.presenter.AlarmPresenter;
 import com.shining.memo.presenter.MemoContract;
+import com.shining.memo.presenter.RecordingPresenter;
 import com.shining.memo.presenter.TaskPresenter;
 import com.shining.memo.view.CalendarActivity;
 
@@ -24,6 +28,11 @@ import com.shining.memo.view.NoteActivity;
 import com.shining.memo.view.TaskActivity;
 
 import com.shining.memo.view.ListActivity;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
 
 
 public class MemoActivity extends AppCompatActivity implements MemoContract.View,View.OnClickListener{
@@ -68,8 +77,9 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
 
     public void initData(){
         calendarType = "task";
-        taskPresenter=new TaskPresenter(this,new TaskImpl(this));
         alarmPresenter=new AlarmPresenter(this);
+        taskPresenter=new TaskPresenter(this,new TaskImpl(this));
+        initGuide();
         task.setOnClickListener(this);
         list.setOnClickListener(this);
         note.setOnClickListener(this);
@@ -166,5 +176,44 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
         currentClickText=textView;
     }
 
+    private void initGuide(){
+        List<JSONObject> list = taskPresenter.returnTaskList();
+        if(list.size() == 0){
+            RecordingPresenter presenter = new RecordingPresenter(this);
+            Task task = new Task();
+            task.setType("text");
+            task.setUrgent(0);
+            task.setAlarm(0);
+            task.setCategory("task");
+            task.setTitle(this.getResources().getString(R.string.welcome_hint));
+            HashMap<Integer,RecordingContent> map = new HashMap<>();
+            RecordingContent content = new RecordingContent();
+            content.setType("title");
+            content.setColor("#666666");
+            content.setContent(this.getResources().getString(R.string.welcome_hint));
+            map.put(0,content);
+            content = new RecordingContent();
+            content.setType("guide");
+            content.setColor("#666666");
+            content.setContent(String.valueOf(R.drawable.useillustration1));
+            map.put(1,content);
+            content = new RecordingContent();
+            content.setType("guide");
+            content.setColor("#666666");
+            content.setContent(String.valueOf(R.drawable.useillustration2));
+            map.put(2,content);
+            content = new RecordingContent();
+            content.setType("guide");
+            content.setColor("#666666");
+            content.setContent(String.valueOf(R.drawable.useillustration3));
+            map.put(3,content);
+            content = new RecordingContent();
+            content.setType("guide");
+            content.setColor("#666666");
+            content.setContent(String.valueOf(R.drawable.useillustration4));
+            map.put(4,content);
+            presenter.saveRecording(task,map,null);
+        }
+    }
 
 }

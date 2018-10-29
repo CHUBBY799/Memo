@@ -33,7 +33,8 @@ public class AlarmPresenter {
         this.alarmModel = new AlarmImpl();
         this.taskModel = new TaskImpl(context);
         alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
-        dbHelper=new MemoDatabaseHelper(context,"memo.db",null,1);
+        dbHelper = new MemoDatabaseHelper(context,"memo.db",null,1);
+        dbHelper.getReadableDatabase();
     }
 
     public Alarm getAlarm(int taskId){
