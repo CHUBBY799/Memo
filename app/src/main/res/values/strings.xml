@@ -36,6 +36,7 @@
     <string name="main_no_data_note_bottom">Notes will appear here</string>
     <string name="main_no_data_list_top">No Lists</string>
     <string name="main_no_data_list_bottom">Lists will appear here</string>
+    <string name="main_delete">Delete</string>
 
 
     <!-- list string -->
@@ -117,6 +118,5 @@
     <string name="share_icon">share icon</string>
     <string name="save_icon">save icon</string>
     <string name="group_icon">group icon</string>
-    <string name="home_delete">home delete</string>
 
 </resources>

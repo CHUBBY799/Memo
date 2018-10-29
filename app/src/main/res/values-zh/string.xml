@@ -37,6 +37,7 @@
         <string name="main_no_data_note_bottom">日记将会在这里展示</string>
         <string name="main_no_data_list_top">无列表</string>
         <string name="main_no_data_list_bottom">列表将会在这里展示</string>
+        <string name="main_delete">删除</string>
 
         <!-- list string -->
         <string name="list_hint_title">请输入清单的标题</string>
@@ -117,6 +118,5 @@
         <string name="share_icon">share icon</string>
         <string name="save_icon">save icon</string>
         <string name="group_icon">group icon</string>
-        <string name="home_delete">home delete</string>
 
 </resources>
