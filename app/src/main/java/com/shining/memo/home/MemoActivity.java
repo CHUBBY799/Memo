@@ -194,25 +194,30 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
             content.setContent(this.getResources().getString(R.string.welcome_hint));
             map.put(0,content);
             content = new RecordingContent();
-            content.setType("guide");
+            content.setType("text");
             content.setColor("#666666");
-            content.setContent(String.valueOf(R.drawable.useillustration1));
+            content.setContent("使用教程(Tutorial)");
             map.put(1,content);
             content = new RecordingContent();
             content.setType("guide");
             content.setColor("#666666");
-            content.setContent(String.valueOf(R.drawable.useillustration2));
+            content.setContent(String.valueOf(R.drawable.useillustration1));
             map.put(2,content);
             content = new RecordingContent();
             content.setType("guide");
             content.setColor("#666666");
-            content.setContent(String.valueOf(R.drawable.useillustration3));
+            content.setContent(String.valueOf(R.drawable.useillustration2));
             map.put(3,content);
             content = new RecordingContent();
             content.setType("guide");
             content.setColor("#666666");
-            content.setContent(String.valueOf(R.drawable.useillustration4));
+            content.setContent(String.valueOf(R.drawable.useillustration3));
             map.put(4,content);
+            content = new RecordingContent();
+            content.setType("guide");
+            content.setColor("#666666");
+            content.setContent(String.valueOf(R.drawable.useillustration4));
+            map.put(5,content);
             presenter.saveRecording(task,map,null);
         }
     }
