@@ -22,4 +22,5 @@ public interface TaskModel {
     boolean hasAudioById(long id);
     void finishTaskById(int id);
     List<Task> getNotesByDateDesc();
+    int getTasks();
 }

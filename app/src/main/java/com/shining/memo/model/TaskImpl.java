@@ -246,4 +246,26 @@ public class TaskImpl implements TaskModel {
         }
         return notes;
     }
+
+    @Override
+    public int getTasks() {
+        SQLiteDatabase db=dbHelper.getReadableDatabase();
+        db.beginTransaction();
+        int result = 0;
+        Cursor cursor = null;
+        try{
+            cursor = db.rawQuery("select *  from task ",null);
+            if(cursor != null){
+                result = cursor.getCount();
+                cursor.close();
+            }
+            db.setTransactionSuccessful();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            db.endTransaction();
+            db.close();
+        }
+        return result;
+    }
 }

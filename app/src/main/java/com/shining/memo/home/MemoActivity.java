@@ -18,6 +18,7 @@ import com.shining.memo.home.fragment.TaskFragment;
 import com.shining.memo.model.RecordingContent;
 import com.shining.memo.model.Task;
 import com.shining.memo.model.TaskImpl;
+import com.shining.memo.model.TaskModel;
 import com.shining.memo.presenter.AlarmPresenter;
 import com.shining.memo.presenter.MemoContract;
 import com.shining.memo.presenter.RecordingPresenter;
@@ -177,8 +178,8 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
     }
 
     private void initGuide(){
-        List<JSONObject> list = taskPresenter.returnTaskList();
-        if(list.size() == 0){
+        TaskModel taskModel = new TaskImpl(this);
+        if(taskModel.getTasks() == 0){
             RecordingPresenter presenter = new RecordingPresenter(this);
             Task task = new Task();
             task.setType("text");
