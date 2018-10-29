@@ -60,7 +60,7 @@
     <string name="delete_success_notice">Delete successful</string>
     <string name="delete_failed_notice">Delete failed</string>
     <string name="share_stamp">share from \"ohMemo\"</string>
-    <string name="welcome_hint">Welcome to use ohMemo!</string>
+    <string name="welcome_hint">Welcome to ohMemo!</string>
 
     <!-- alarm string -->
     <string name="alarm_clock">Alarm Clock</string>
