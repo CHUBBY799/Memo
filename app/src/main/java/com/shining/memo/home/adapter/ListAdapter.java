@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.shining.memo.R;
 import com.shining.memo.bean.ListBean;
+import com.shining.memo.model.ListImpl;
+import com.shining.memo.model.ListModel;
 import com.shining.memo.view.ListActivity;
 
 import org.joda.time.LocalDate;
@@ -51,6 +53,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
         TextView listTitle = holder.listTitle;
         final ImageView finishedIcon = holder.finishedIcon;
         final LinearLayout listItem = holder.listItem;
+        ImageButton homeDelete = holder.homeDelete;
 
         for(int i = 0 ; i < itemContent[position].length ; i ++){
             final int index = i;
@@ -150,6 +153,22 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
             }
         });
 
+        homeDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ListModel listModel = new ListImpl(context);
+                listModel.deleteDataById(String.valueOf(id[holder.getAdapterPosition()]));
+                ListBean[] listBeans = listModel.queryAllData();
+                setInfo(listBeans);
+                notifyItemRemoved(holder.getAdapterPosition());
+                if (holder.getAdapterPosition() == length){
+                    notifyItemChanged(length);
+                }else {
+                    notifyItemRangeChanged(holder.getAdapterPosition(),length);
+                }
+            }
+        });
+
         expandIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,6 +258,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
         ImageButton expandIcon;
         TextView listTitle;
         ImageView finishedIcon;
+        ImageButton homeDelete;
         LinearLayout listItem;
 
         MyViewHolder(View contentView) {
@@ -247,6 +267,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder>{
             expandIcon = contentView.findViewById(R.id.expand_icon);
             finishedIcon = contentView.findViewById(R.id.finished_icon);
             listItem = contentView.findViewById(R.id.list_item);
+            homeDelete = contentView.findViewById(R.id.home_delete);
         }
     }
 }

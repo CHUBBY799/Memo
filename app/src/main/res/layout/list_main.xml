@@ -1,74 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<com.mcxtzhang.swipemenulib.SwipeMenuLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="27dp">
+    android:layout_marginBottom="27dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:swipeEnable="true"
+    app:ios="true">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/title_main"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageButton
-            android:id="@+id/expand_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="16dp"
-            android:background="@color/white"
-            android:contentDescription="@string/expand_icon"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/fold_icon"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/title_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/list_title"
+            <ImageButton
+                android:id="@+id/expand_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="16dp"
+                android:background="@color/white"
+                android:contentDescription="@string/expand_icon"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/fold_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/list_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="7dp"
+                android:layout_marginEnd="15dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="start"
+                android:textColor="@color/recording_title"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:singleLine="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/finished_icon"
+                app:layout_constraintStart_toEndOf="@+id/expand_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/finished_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="25dp"
+                android:contentDescription="@string/start_default"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/list_item"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="7dp"
-            android:layout_marginEnd="15dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="start"
-            android:textColor="@color/recording_title"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:singleLine="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/finished_icon"
-            app:layout_constraintStart_toEndOf="@+id/expand_icon"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/finished_icon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="25dp"
-            android:contentDescription="@string/start_default"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_main">
+        </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 
-    <LinearLayout
-        android:id="@+id/list_item"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="25dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_main">
-    </LinearLayout>
+    <ImageButton
+        android:id="@+id/home_delete"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/home_page_delete_icon"
+        android:contentDescription="@string/home_delete"
+        android:background="@drawable/bg_rect7_orange" />
 
-</android.support.constraint.ConstraintLayout>
+    <Button
+        android:layout_width="25dp"
+        android:layout_height="32dp"
+        android:background="@null"/>
+
+</com.mcxtzhang.swipemenulib.SwipeMenuLayout>

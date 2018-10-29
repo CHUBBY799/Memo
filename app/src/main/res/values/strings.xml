@@ -117,5 +117,6 @@
     <string name="share_icon">share icon</string>
     <string name="save_icon">save icon</string>
     <string name="group_icon">group icon</string>
+    <string name="home_delete">home delete</string>
 
 </resources>
