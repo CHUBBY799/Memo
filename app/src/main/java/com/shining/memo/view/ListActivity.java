@@ -261,10 +261,10 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     private void buildDialog(){
         AlertDialog dialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialog);
-        builder.setTitle("Delete");
-        builder.setMessage("Do you want to delete the list");
-        builder.setNegativeButton("Cancel", null);
-        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+        builder.setTitle(getContext().getString(R.string.main_delete));
+        builder.setMessage(getContext().getString(R.string.list_delete_tip));
+        builder.setNegativeButton(getContext().getString(R.string.cancel), null);
+        builder.setPositiveButton(getContext().getString(R.string.confirm), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ListPresenter listPresenter = new ListPresenter(ListActivity.this);

@@ -44,6 +44,7 @@
         <string name="expand_icon">expand icon</string>
         <string name="start_default">start default</string>
         <string name="list_add_item">添加一个子项</string>
+        <string name="list_delete_tip">你想删除此清单吗</string>
 
         <!-- task string -->
         <string name="edit_title_hint">请输入标题内容</string>
