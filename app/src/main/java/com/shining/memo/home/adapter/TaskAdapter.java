@@ -1,9 +1,11 @@
 package com.shining.memo.home.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shining.memo.R;
+import com.shining.memo.home.fragment.TaskFragment;
+import com.shining.memo.presenter.CalendarPresenter;
 import com.shining.memo.utils.DialogUtils;
 import com.shining.memo.utils.ToastUtils;
 import com.shining.memo.view.TaskActivity;
@@ -25,22 +29,20 @@ import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
     private static final String TAG = "TaskAdapter";
-//    private List<Task> tasks;
-//    private List<Boolean> hasAudio;
-//    private List<String> alarms;
 
     private List<JSONObject> tasks;
     private boolean click=false;
     private Context mContext;
+    private FragmentActivity taskFragment;
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         View mView;
         ImageView type,urgent,confirm,audioTitle1,audioTitle2;
-        TextView title,alarm;
+        TextView title,alarm,homeDelete;
         ImageButton complete;
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
-            mView=itemView;
+            mView=itemView.findViewById(R.id.main_task_content);
             type=itemView.findViewById(R.id.main_task_type);
             urgent=itemView.findViewById(R.id.main_task_urgent);
             confirm=itemView.findViewById(R.id.main_task_confirm);
@@ -49,22 +51,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
             complete=itemView.findViewById(R.id.main_task_complete);
             audioTitle1=itemView.findViewById(R.id.main_task_audio1);
             audioTitle2=itemView.findViewById(R.id.main_task_audio2);
+            homeDelete=itemView.findViewById(R.id.home_delete);
         }
     }
 
-//    public TaskAdapter(List<Task> tasks,List<Boolean> hasAudio,List<String> alarms){
-//        this.tasks=tasks;
-//        this.hasAudio=hasAudio;
-//        this.alarms=alarms;
-//    }
     public TaskAdapter(List<JSONObject> tasks, Context context){
         this.tasks=tasks;
         mContext=context;
+        this.taskFragment = (FragmentActivity) context;
     }
 
-    @NonNull
+    @SuppressLint("ClickableViewAccessibility")
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull final ViewGroup viewGroup, final int i) {
+    public  @NonNull ViewHolder onCreateViewHolder(@NonNull final ViewGroup viewGroup, final int i) {
         View view= LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.main_taskitem,viewGroup,false);
         final ViewHolder holder=new ViewHolder(view);
         holder.mView.setClickable(true);
@@ -76,46 +75,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
                 JSONObject task=tasks.get(position);
                 try{
                     int id=task.getInt("taskId");
-                    Log.d("helo", "onClick: "+id);
                     Intent intent=new Intent(viewGroup.getContext(), TaskActivity.class);
                     intent.putExtra("taskId",id);
                     viewGroup.getContext().startActivity(intent);
+                    taskFragment.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
             }
         });
-//        holder.complete.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!click) {
-//                    click=true;
-//                    final int position = holder.getLayoutPosition();
-//                    final JSONObject task = tasks.get(position);
-//                    try {
-//                        final int id = task.getInt("taskId");
-//                        Log.d("hh", "onClick: "+id);
-//                        holder.confirm.setVisibility(View.VISIBLE);
-//                        callback.finishTaskById(id);
-//                        holder.complete.setClickable(false);
-//                        holder.mView.setClickable(false);
-//                        tasks.remove(position);
-//                        android.os.Handler handler = new android.os.Handler();
-//                        handler.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                notifyItemRemoved(position);
-//                                notifyItemRangeRemoved(position,tasks.size());
-//                                click=false;
-//                            }
-//                        }, 1000);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                }
-//            }
-//        });
         holder.complete.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -173,12 +141,32 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
                 return true;
             }
         });
+
+        holder.homeDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position=holder.getLayoutPosition();
+                JSONObject task = tasks.get(position);
+                int id;
+                try{
+                    id = task.getInt("taskId");
+                    CalendarPresenter calendarPresenter = new CalendarPresenter(mContext);
+                    calendarPresenter.deleteData(String.valueOf(id), "task");
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                tasks.remove(holder.getAdapterPosition());
+                notifyItemRemoved(position);
+                notifyItemRangeRemoved(position, tasks.size());
+            }
+        });
+
         return holder;
     }
 
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.complete.setBackgroundResource(R.color.colorWhite);
         holder.complete.setClickable(true);
         holder.mView.setClickable(true);
@@ -216,8 +204,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
             if(task.getInt("alarm")==0){
                 holder.alarm.setText(mContext.getString(R.string.main_task_no_alarm));
             }else {
-//                String alarmHelp= Utils.formatToMain(task.getString("alarmDate")
-//                        ,task.getString("alarmTime"));
                 holder.alarm.setText(task.getString("alarmDate")+" "+task.getString("alarmTime"));
             }
         }catch (Exception e){

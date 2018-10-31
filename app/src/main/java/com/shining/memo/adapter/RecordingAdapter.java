@@ -938,7 +938,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                     textChanged.TextChanged(spannableString,index);
                     return true;
                 }else {
-                    ToastUtils.showShort(context,context.getResources().getString(R.string.no_selectd_text));
+                    ToastUtils.showShort(context,context.getResources().getString(R.string.no_selected_text));
                     return false;
                 }
             }
@@ -992,7 +992,7 @@ public class RecordingAdapter extends RecyclerView.Adapter implements AudioPlayP
                     textViewHolder.editText.setSelection(startIndex,endIndex);
                     textChanged.TextChanged(spannableString,index);
                 }else{
-                    ToastUtils.showShort(context,context.getResources().getString(R.string.no_selectd_text));
+                    ToastUtils.showShort(context,context.getResources().getString(R.string.no_selected_text));
                 }
             }
         }catch (Exception e){
