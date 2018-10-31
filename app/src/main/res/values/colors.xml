@@ -23,6 +23,7 @@
     <color name="shallow_memo">#e0e0e0</color>
     <color name="white_memo">#fafafa</color>
     <color name="no_data_top">#FFE5E5E5</color>
+    <color name="delete_bg">#FF4C4C</color>
 
     <!-- guide color -->
     <color name="guide_title">#666666</color>
