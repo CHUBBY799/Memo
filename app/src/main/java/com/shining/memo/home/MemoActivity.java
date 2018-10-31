@@ -1,6 +1,7 @@
 package com.shining.memo.home;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -178,8 +179,9 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
     }
 
     private void initGuide(){
-        TaskModel taskModel = new TaskImpl(this);
-        if(taskModel.getTasks() == 0){
+        SharedPreferences preferences= getSharedPreferences("countTask", 0);
+        int count = preferences.getInt("countTask", 0);// 取出数据
+        if(count == 0){
             RecordingPresenter presenter = new RecordingPresenter(this);
             Task task = new Task();
             task.setType("text");
@@ -219,6 +221,9 @@ public class MemoActivity extends AppCompatActivity implements MemoContract.View
             content.setContent(String.valueOf(R.drawable.useillustration4));
             map.put(5,content);
             presenter.saveRecording(task,map,null);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putInt("countTask", 1);
+            editor.apply();
         }
     }
 

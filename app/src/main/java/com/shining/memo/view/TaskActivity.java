@@ -718,7 +718,8 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
     private void onCreateDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.Theme_AppCompat_Light_Dialog);
         builder.setView(R.layout.countdown);
-        dialog = builder.show();dialogTv = dialog.findViewById(R.id.countdown_view);
+        dialog = builder.show();
+        dialogTv = dialog.findViewById(R.id.countdown_view);
         dialog.setCanceledOnTouchOutside(false);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.getWindow().setGravity(Gravity.BOTTOM);

@@ -1,13 +1,18 @@
 package com.shining.memo.view;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -33,12 +38,14 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
     private MonthCalendar monthCalendar;
     private RecyclerView calendar_event;
     private CalendarAdapter calendarAdapter;
+    private AlertDialog dialog;
 
     private TextView calendar_type;
     private TextView month_year;
     private ImageButton calendar_close;
     private ImageButton last_month;
     private ImageButton next_month;
+    private Button guide_confirm;
 
     private String calendarType;
     private LocalDate date;
@@ -52,6 +59,14 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         calendarType = intent.getStringExtra("calendarType");
         initView();
         initListener();
+        SharedPreferences preferences= getSharedPreferences("countCalendar", 0);
+        int count = preferences.getInt("countCalendar", 0);// 取出数据
+        if(count == 0){
+            onCreateDialog();
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putInt("countCalendar", 1);
+            editor.apply();
+        }
     }
 
 
@@ -107,6 +122,9 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
                     ncalendar.onMonthCalendarChanged(date, mSelectDateList);
                 }
                 break;
+            case R.id.calendar_guide_ok:
+                dialog.dismiss();
+                break;
             default:
                 break;
         }
@@ -155,5 +173,18 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
     public void onBackPressed(){
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+
+    private void onCreateDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.Theme_AppCompat_Light_Dialog);
+        builder.setView(R.layout.calendar_guide);
+        dialog = builder.show();
+        guide_confirm = dialog.findViewById(R.id.calendar_guide_ok);
+        guide_confirm.setOnClickListener(this);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.getWindow().setGravity(Gravity.CENTER);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.dialog_anim;
     }
 }

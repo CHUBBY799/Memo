@@ -53,7 +53,7 @@
         <string name="save_successful_notice">保存成功</string>
         <string name="save_failed_notice">保存失败</string>
         <string name="empty_text_notice">内容为空保存失败</string>
-        <string name="no_selectd_text">没有选中文本</string>
+        <string name="no_selectd_text">请先选择一段文字!</string>
         <string name="urgent">紧急</string>
         <string name="task_delete_title">删除任务</string>
         <string name="task_delete_tip">你想删除此任务?</string>
@@ -90,6 +90,8 @@
         <string name="calendar_friday">五</string>
         <string name="calendar_saturday">六</string>
         <string name="month_year">%1$s年 %2$2s月</string>
+        <string name="guide_hint">您可以进行多选来查看多天记录</string>
+        <string name="guide_ok">知道了</string>
 
         <!-- audio string -->
         <string name="audio">audio</string>

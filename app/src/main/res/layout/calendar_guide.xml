@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="240dp"
+        android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/calendar_guide_img"
+        android:layout_width="240dp"
+        android:layout_height="374.5dp"
+        android:src="@drawable/calendar_page_guide_img" />
+
+    <TextView
+        android:id="@+id/calendar_guide_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:text="@string/guide_hint"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:layout_marginTop="27.5dp"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_below="@+id/calendar_guide_img"/>
+    <Button
+        android:id="@+id/calendar_guide_ok"
+        android:layout_width="130dp"
+        android:layout_height="42dp"
+        android:textColor="@color/white"
+        android:text="@string/guide_ok"
+        android:textSize="16dp"
+        android:textAllCaps="false"
+        android:background="@drawable/calendar_guide_ripple"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="27.5dp"
+        android:layout_below="@+id/calendar_guide_tv"/>
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>
