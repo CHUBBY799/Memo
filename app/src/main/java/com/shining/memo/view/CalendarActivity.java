@@ -59,6 +59,10 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         calendarType = intent.getStringExtra("calendarType");
         initView();
         initListener();
+        isOpenGuide();
+    }
+
+    private void isOpenGuide(){
         SharedPreferences preferences= getSharedPreferences("countCalendar", 0);
         int count = preferences.getInt("countCalendar", 0);// 取出数据
         if(count == 0){
@@ -68,7 +72,6 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
             editor.apply();
         }
     }
-
 
     @Override
     public void onCalendarChanged(LocalDate date, List<LocalDate> dateList) {
