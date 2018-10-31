@@ -31,6 +31,7 @@
             <ImageView
                 android:layout_width="52dp"
                 android:layout_height="16dp"
+                android:layout_marginStart="3dp"
                 android:src="@drawable/main_task_audio"
                 android:contentDescription="@string/image_icon"/>
         </LinearLayout>

@@ -2,7 +2,6 @@ package com.shining.memo.view;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -45,7 +44,6 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
     private ImageButton calendar_close;
     private ImageButton last_month;
     private ImageButton next_month;
-    private Button guide_confirm;
 
     private String calendarType;
     private LocalDate date;
@@ -183,11 +181,13 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
         AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.Theme_AppCompat_Light_Dialog);
         builder.setView(R.layout.calendar_guide);
         dialog = builder.show();
-        guide_confirm = dialog.findViewById(R.id.calendar_guide_ok);
+        Button guide_confirm = dialog.findViewById(R.id.calendar_guide_ok);
         guide_confirm.setOnClickListener(this);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        dialog.getWindow().setGravity(Gravity.CENTER);
-        dialog.getWindow().getAttributes().windowAnimations = R.style.dialog_anim;
+        if (dialog.getWindow() != null){
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            dialog.getWindow().setGravity(Gravity.CENTER);
+            dialog.getWindow().getAttributes().windowAnimations = R.style.dialog_anim;
+        }
     }
 }

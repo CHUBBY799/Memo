@@ -2,6 +2,7 @@
 <com.mcxtzhang.swipemenulib.SwipeMenuLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipeMenuLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -69,11 +70,10 @@
                 android:layout_width="52dp"
                 android:layout_height="16dp"
                 android:layout_marginStart="6dp"
-                android:layout_marginTop="4dp"
                 android:contentDescription="@string/image_icon"
                 android:src="@drawable/main_task_audio"
                 android:visibility="invisible"
-                app:layout_constraintLeft_toRightOf="@+id/main_task_title"
+                app:layout_constraintStart_toEndOf="@+id/main_task_type"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
