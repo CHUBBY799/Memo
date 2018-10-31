@@ -143,4 +143,22 @@ public class  CalendarImpl implements CalendarModel{
 
         return taskDataArr;
     }
+
+    @Override
+    public void  deleteData(String id, String type){
+        switch (type){
+            case "list":
+                db.delete("tb_list","id = ?", new String[]{id});
+                break;
+
+            case "task":
+                db.delete("task","id = ?", new String[]{id});
+                break;
+
+            case "note":
+                db.delete("task","id = ?", new String[]{id});
+                break;
+            default:
+        }
+    }
 }

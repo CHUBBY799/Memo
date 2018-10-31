@@ -28,6 +28,7 @@ public class ListFragment extends Fragment {
     private RecyclerView listFragment;
     private ListAdapter listAdapter;
     private View mNodata;
+    private LinearLayoutManager layoutManager;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -52,7 +53,7 @@ public class ListFragment extends Fragment {
             listFragment = getActivity().findViewById(R.id.list_fragment);
         }
 
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        layoutManager = new LinearLayoutManager(context);
         listFragment.setLayoutManager(layoutManager);
         listAdapter = new ListAdapter(context, getActivity());
         listFragment.setOnTouchListener(new View.OnTouchListener() {
@@ -64,19 +65,7 @@ public class ListFragment extends Fragment {
                     case MotionEvent.ACTION_MOVE:
                         break;
                     case MotionEvent.ACTION_UP:
-                        int itemCount = listAdapter.getItemCount();
-                        for (int i = 0 ; i < itemCount ; i++){
-                            View view = layoutManager.findViewByPosition(i);
-                            if (view != null){
-                                SwipeMenuLayout swipeMenuLayout = view.findViewById(R.id.swipeMenuLayout);
-                                ImageButton expandICon = view.findViewById(R.id.expand_icon);
-                                int[] location = new int[2] ;
-                                expandICon.getLocationOnScreen(location);
-                                if (location[0] < 0){
-                                    swipeMenuLayout.smoothClose();
-                                }
-                            }
-                        }
+                        smoothClose();
                         break;
                 }
                 return false;
@@ -85,6 +74,28 @@ public class ListFragment extends Fragment {
         });
     }
 
+    /**
+     * 点击recycleView的空白处关闭侧滑删除菜单
+     */
+    private void smoothClose(){
+        int itemCount = listAdapter.getItemCount();
+        for (int i = 0 ; i < itemCount ; i++){
+            View view = layoutManager.findViewByPosition(i);
+            if (view != null){
+                SwipeMenuLayout swipeMenuLayout = view.findViewById(R.id.swipeMenuLayout);
+                ImageButton expandICon = view.findViewById(R.id.expand_icon);
+                int[] location = new int[2] ;
+                expandICon.getLocationOnScreen(location);
+                if (location[0] < 0){
+                    swipeMenuLayout.smoothClose();
+                }
+            }
+        }
+    }
+
+    /**
+     * listFragment进入前台
+     */
     @Override
     public void onResume(){
         super.onResume();

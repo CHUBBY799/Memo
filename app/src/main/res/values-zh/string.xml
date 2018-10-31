@@ -53,7 +53,7 @@
         <string name="save_successful_notice">保存成功</string>
         <string name="save_failed_notice">保存失败</string>
         <string name="empty_text_notice">内容为空保存失败</string>
-        <string name="no_selectd_text">没有选中文本</string>
+        <string name="no_selected_text">请选择一段文字</string>
         <string name="urgent">紧急</string>
         <string name="task_delete_title">删除任务</string>
         <string name="task_delete_tip">你想删除此任务?</string>
@@ -110,14 +110,15 @@
         <string name="no_memory_dir">没有找到存储目录！</string>
 
         <!-- ImageButton contentDescription -->
-        <string name="close_icon">close icon</string>
-        <string name="calendar_icon">calendar icon</string>
-        <string name="last_month_icon">last month icon</string>
-        <string name="next_month_icon">next month icon</string>
-        <string name="back_icon">back icon</string>
-        <string name="delete_icon">delete icon</string>
-        <string name="share_icon">share icon</string>
-        <string name="save_icon">save icon</string>
-        <string name="group_icon">group icon</string>
+        <string name="close_icon">关闭图标</string>
+        <string name="calendar_icon">日历图标</string>
+        <string name="last_month_icon">上个月按钮图标</string>
+        <string name="next_month_icon">下个月按钮图标</string>
+        <string name="back_icon">返回图标</string>
+        <string name="delete_icon">删除图标</string>
+        <string name="share_icon">分享图标</string>
+        <string name="save_icon">保存图标</string>
+        <string name="group_icon">群组图标</string>
+        <string name="image_icon">图片图标</string>
 
 </resources>
