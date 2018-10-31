@@ -53,7 +53,7 @@
         <string name="save_successful_notice">保存成功</string>
         <string name="save_failed_notice">保存失败</string>
         <string name="empty_text_notice">内容为空保存失败</string>
-        <string name="no_selected_text">请选择一段文字</string>
+        <string name="no_selected_text">请先选择一段文字</string>
         <string name="urgent">紧急</string>
         <string name="task_delete_title">删除任务</string>
         <string name="task_delete_tip">你想删除此任务?</string>

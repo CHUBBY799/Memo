@@ -52,7 +52,7 @@
     <string name="save_successful_notice">save successful</string>
     <string name="save_failed_notice">save failed</string>
     <string name="empty_text_notice">save failed for empty text</string>
-    <string name="no_selected_text">Please select a passage</string>
+    <string name="no_selected_text">Please select a passage first</string>
     <string name="urgent">urgent</string>
     <string name="task_delete_title">Delete Task</string>
     <string name="task_delete_tip">Do you wan to delete the task?</string>
