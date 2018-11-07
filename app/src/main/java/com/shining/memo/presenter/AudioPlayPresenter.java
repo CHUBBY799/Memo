@@ -55,6 +55,11 @@ public class AudioPlayPresenter {
                             mMediaPlayer = null;
                             playFilePath = "";
                             onStopPlay.onStopPlay(currentButton);
+                            audioManager.abandonAudioFocus(afChangeListener);
+                            if(mTvTime != null)
+                                mTvTime.setText(timeDuration);
+                            if(seekBar != null)
+                                seekBar.setProgress(0);
                         }
                     });
 
