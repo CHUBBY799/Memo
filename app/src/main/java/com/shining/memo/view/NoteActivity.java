@@ -1001,6 +1001,7 @@ public class NoteActivity extends Activity implements View.OnClickListener,ViewR
 
     private void returnHomePage(){
         finish();
+        adapter.presenter.onStop();
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
 

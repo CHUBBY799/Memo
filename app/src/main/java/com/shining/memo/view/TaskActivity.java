@@ -1091,12 +1091,14 @@ public class TaskActivity extends Activity implements View.OnClickListener,ViewR
 
     private void returnHomePage(){
         if(isNotification){
+            adapter.presenter.onStop();
             Intent intent = new Intent();
             intent.setClass(this,MemoActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         }else {
             finish();
+            adapter.presenter.onStop();
             overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
         }
     }
