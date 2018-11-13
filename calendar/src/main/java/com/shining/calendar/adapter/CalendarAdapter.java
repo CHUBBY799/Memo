@@ -39,11 +39,11 @@ public abstract class CalendarAdapter extends PagerAdapter {
         return view == object;
     }
 
-
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((View) object);
     }
+
     public SparseArray<CalendarView> getCalendarViews() {
         return mCalendarViews;
     }

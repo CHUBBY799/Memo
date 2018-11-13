@@ -110,17 +110,17 @@ public class CalendarActivity extends AppCompatActivity implements OnCalendarCha
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 break;
             case R.id.last_month:
-                date = date.plusMonths(-1).dayOfMonth().withMaximumValue();
+                LocalDate lastDate = date.plusMonths(-1).dayOfMonth().withMaximumValue();
                 if (monthCalendar != null){
-                    monthCalendar.onClickLastMonth(date, true);
-                    ncalendar.onMonthCalendarChanged(date, mSelectDateList);
+                    monthCalendar.onClickLastMonth(lastDate, true);
+                    ncalendar.onMonthCalendarChanged(lastDate, mSelectDateList);
                 }
                 break;
             case R.id.next_month:
-                date = date.plusMonths(1).dayOfMonth().withMaximumValue();
+                LocalDate nextDate = date.plusMonths(1).dayOfMonth().withMaximumValue();
                 if (monthCalendar != null){
-                    monthCalendar.onClickNextMonth(date, true);
-                    ncalendar.onMonthCalendarChanged(date, mSelectDateList);
+                    monthCalendar.onClickNextMonth(nextDate, true);
+                    ncalendar.onMonthCalendarChanged(nextDate, mSelectDateList);
                 }
                 break;
             case R.id.calendar_guide_ok:

@@ -11,6 +11,7 @@ import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,8 +93,6 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
 
                 monthRect = new Rect(0, monthCalendar.getTop(), monthCalendar.getWidth(), monthCalendar.getHeight());
                 weekRect = new Rect(0, weekCalendar.getTop(), weekCalendar.getWidth(), weekCalendar.getHeight());
-
-
             }
         });
 
@@ -276,6 +275,7 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
         super.onFinishInflate();
         //总共有三个view，0,1,2
         childView = getChildAt(2);
+        Log.d("NCalendar", childView.getClass().getTypeName() + " " + childView.getTop());
         if (childView instanceof NestedScrollingChild) {
             targetView = childView;
         } else {
@@ -324,6 +324,7 @@ public class NCalendar extends FrameLayout implements NestedScrollingParent, Val
 
         weekCalendar.layout(0, 0, r, weekHeight);
 
+        Log.d("NCalendar", "monthTop="+monthCalendarTop+" "+"childTop="+childViewTop);
     }
 
 

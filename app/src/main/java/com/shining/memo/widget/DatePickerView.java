@@ -156,6 +156,10 @@ public class DatePickerView extends View {
         timer.schedule(mTask, 0, 10);
     }
 
+    /**
+     * 选择的下标永远等于mDataList.size() / 2
+     * @param selected 选择的下标
+     */
     public void setSelected(int selected) {
         mCurrentSelected = selected;
         int distance = mDataList.size() / 2 - mCurrentSelected;
