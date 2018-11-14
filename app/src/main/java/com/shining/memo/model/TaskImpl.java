@@ -144,7 +144,7 @@ public class TaskImpl implements TaskModel {
         Cursor cursor=db.rawQuery("select" +selectColNames
                 + "from task t inner join alarm a on t.id=a.taskId "
                 + "where category = ? and urgent=? and deleted=0 and finished=0 "
-                + "order by alarmDate desc,alarmTime desc",new String[]{"task",String.valueOf(urgent)});
+                + "order by alarmDate asc,alarmTime asc",new String[]{"task",String.valueOf(urgent)});
         try{
             while (cursor.moveToNext()){
                 JSONObject object=new JSONObject();
@@ -191,7 +191,7 @@ public class TaskImpl implements TaskModel {
         Cursor cursor=db.rawQuery("select id as taskId,type,title " +
                 "from task " +
                 "where category = ? and urgent = ? and finished =0 and deleted =0 and alarm = 0 " +
-                "order by date desc,time desc",new String[]{"task",String.valueOf(urgent)});
+                "order by date asc,time asc",new String[]{"task",String.valueOf(urgent)});
         try{
             while (cursor.moveToNext()){
                 JSONObject object=new JSONObject();
