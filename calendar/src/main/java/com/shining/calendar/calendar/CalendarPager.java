@@ -128,9 +128,6 @@ public abstract class CalendarPager extends ViewPager {
         addOnPageChangeListener(onPageChangeListener);
     }
 
-
-
-
     protected abstract CalendarAdapter getCalendarAdapter();
 
     protected abstract void initCurrentCalendarView(int position);

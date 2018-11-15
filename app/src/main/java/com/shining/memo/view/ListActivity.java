@@ -77,7 +77,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         initView();
-        initComponent();
+        initListener();
         initData();
     }
 
@@ -248,7 +248,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 初始化组件
      */
-    private void initComponent(){
+    private void initListener(){
         listCancel.setOnClickListener(this);
         listConfirm.setOnClickListener(this);
         listShare.setOnClickListener(this);
@@ -399,6 +399,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                     shotPath = "";
                 }
                 break;
+            default:
         }
     }
 
